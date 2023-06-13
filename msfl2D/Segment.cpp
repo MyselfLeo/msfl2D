@@ -2,7 +2,6 @@
 // Created by leo on 12/06/23.
 //
 
-#include <ostream>
 #include "Segment.hpp"
 
 Msfl2D::Segment::Segment() : min(0), max(0) {}

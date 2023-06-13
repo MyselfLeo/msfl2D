@@ -5,18 +5,46 @@
 #ifndef MSFL2D_SHAPE_HPP
 #define MSFL2D_SHAPE_HPP
 
+#include "Segment.hpp"
+#include "Line.hpp"
+
 namespace Msfl2D {
 
+
+/**
+ * This exception is raised an impossible geometrical action is effected.
+ */
+class GeometryException: public std::exception {
+private:
+    char* message;
+public:
+    GeometryException(char * msg): message(msg) {}
+    char* what() {
+        return message;
+    }
+};
+
+
+
     /**
-     * @brief Base class for the shapes used in the physic engine.
+     * Base class for the shapes used in the physic engine.
      * Derived shapes must implement the `project` method, which is used for performing SAT
      * (Separating Axis Theorem) collision calculation.
      */
     class Shape {
     public:
+        Vec2D position;
 
     protected:
 
+        ~Shape() = default;
+
+        /**
+         * Projects the shape onto the line
+         * @param line the line to project onto
+         * @return the segment formed by the projection.
+         */
+        virtual Segment project(const Line& line) const = 0;
 
     private:
     };

@@ -3,4 +3,6 @@ add_library(
 
         Shape.cpp Shape.hpp
         Vec2D.cpp Vec2D.hpp
-        Segment.cpp Segment.hpp)
+        Segment.cpp Segment.hpp
+        Line.cpp Line.hpp
+        ConvexPolygon.cpp ConvexPolygon.hpp)

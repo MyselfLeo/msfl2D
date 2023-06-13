@@ -92,6 +92,9 @@ namespace Msfl2D {
 
 
         // Operator overloading for base types
+        bool operator==(const Vec2D& other) const;
+        bool operator!=(const Vec2D& other) const;
+
         Vec2D operator+(const Vec2D& other) const;
         Vec2D& operator+=(const Vec2D& other);
 

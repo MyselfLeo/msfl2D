@@ -11,6 +11,13 @@
 namespace Msfl2D {
     const Vec2D Vec2D::ZERO = {0, 0};
 
+    bool Vec2D::operator==(const Vec2D &other) const {
+        return x == other.x && y == other.y;
+    }
+
+    bool Vec2D::operator!=(const Msfl2D::Vec2D &other) const {
+        return x != other.x || y != other.y;
+    }
 
     inline double Vec2D::norm() const {
         return sqrt(x*x + y*y);

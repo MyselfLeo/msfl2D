@@ -5,10 +5,12 @@
 #ifndef MSFL2D_SEGMENT_HPP
 #define MSFL2D_SEGMENT_HPP
 
+#include <iostream>
+
 namespace Msfl2D {
 
     /**
-     * @brief A segment of a line.
+     * A segment of a line.
      */
     class Segment {
     public:
