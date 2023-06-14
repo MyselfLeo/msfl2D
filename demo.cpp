@@ -8,6 +8,8 @@
 using namespace Msfl2D;
 
 
+
+
 int main() {
     Vec2D vs[3] = {{0, 1}, {1, 0}, {-2, -2}};
 
