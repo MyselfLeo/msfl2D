@@ -21,7 +21,7 @@ namespace Msfl2D {
 
 
     ConvexPolygon::ConvexPolygon(const std::vector<Vec2D> &vertices) {
-        // todo: check that the polygon is convx
+        // todo: check that the polygon is convex
 
         // Compute the center of the polygon.
         this->position = vec2D_average(vertices);
