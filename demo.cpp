@@ -220,6 +220,7 @@ int main() {
 
         // Update screen
         render(window, poly);
+
     }
 
     // SDL & ImGui cleanup
