@@ -43,6 +43,8 @@ namespace Msfl2D {
 
         Segment project(const Msfl2D::Line &line) const override;
 
+        bool is_point_inside(const Vec2D& p) const override;
+
 
     private:
         //std::vector<Vec2D> vertices;

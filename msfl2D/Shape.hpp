@@ -46,6 +46,14 @@ public:
          */
         virtual Segment project(const Line& line) const = 0;
 
+        /**
+         * Check if the given point is inside or outside the shape. This function should return true if the
+         * point is directly on the polygon.
+         * @param p the point to check
+         * @return true if inside, false if outside
+         */
+         virtual bool is_point_inside(const Vec2D& p) const = 0;
+
     private:
     };
 

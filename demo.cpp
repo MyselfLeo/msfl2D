@@ -25,8 +25,9 @@ const int CAMERA_SCREEN_POS[2] = {WINDOW_SIZE[0]/2, WINDOW_SIZE[1]/2};
 const double CAMERA_ZOOM_LVL = 20;
 
 // Rendering related values
-const int BACKGROUND_COLOR[4] = {0, 0, 0, 255};
-const int SHAPE_COLOR[4] = {255, 255, 255, 255};
+const Uint8 BACKGROUND_COLOR[4] = {0, 0, 0, 255};
+const Uint8 BACKGROUND_ACCENT_COLOR[4] = {50, 50, 50, 255};
+const Uint8 SHAPE_COLOR[4] = {255, 255, 255, 255};
 
 /**
  * Print the last SDL error to the error output and exit the program with EXIT_FAILURE as its exit code.
@@ -43,8 +44,19 @@ void sdl_failure() {
  */
 Vec2D world_to_screen(const Vec2D& coordinates) {
     Vec2D res = coordinates * CAMERA_ZOOM_LVL;
-    res.y *= 1;
+    res.y *= -1;
     res += Vec2D(CAMERA_SCREEN_POS[0], CAMERA_SCREEN_POS[1]);
+    return res;
+}
+
+/**
+ * Compute the world-space coordinates of a point in the screen space.
+
+ */
+Vec2D screen_to_world(const Vec2D& coordinates) {
+    Vec2D res = coordinates - Vec2D(CAMERA_SCREEN_POS[0], CAMERA_SCREEN_POS[1]);
+    res.y *= -1;
+    res /= CAMERA_ZOOM_LVL;
     return res;
 }
 
@@ -73,8 +85,88 @@ void renderer_draw_convex_polygon(SDL_Renderer * renderer, const ConvexPolygon& 
 }
 
 
+void render_draw_convex_polygon_fill(SDL_Renderer * renderer, const ConvexPolygon& poly) {
+    SDL_Color vertex_color = {SHAPE_COLOR[0], SHAPE_COLOR[1], SHAPE_COLOR[2], SHAPE_COLOR[3]};
+
+    // convert Msfl2D polygon data into SDL geometry data
+    std::vector<SDL_Vertex> sdl_vertices;
+
+    Vec2D poly_center_pos = world_to_screen(poly.position);
+    SDL_Vertex center_vertex = {
+            {static_cast<float>(poly_center_pos.x), static_cast<float>(poly_center_pos.y)},
+            {vertex_color},
+            {1, 1}
+    };
 
 
+    for (int i=0; i<poly.vertices.size(); i++) {
+        Vec2D current_v = poly.vertices[i];
+        Vec2D next_v = poly.vertices[(i+1) % poly.vertices.size()];
+
+        Vec2D screen_p = world_to_screen(current_v);
+        sdl_vertices.push_back({
+           {static_cast<float>(screen_p.x), static_cast<float>(screen_p.y)},
+           vertex_color,
+           {1, 1}
+        });
+
+        sdl_vertices.push_back(center_vertex);
+
+        screen_p = world_to_screen(next_v);
+        sdl_vertices.push_back({
+           {static_cast<float>(screen_p.x), static_cast<float>(screen_p.y)},
+           vertex_color,
+           {1, 1}
+        });
+    }
+
+    // Draw the polygon
+    SDL_RenderGeometry(
+            renderer,
+            nullptr,
+            sdl_vertices.data(),
+            sdl_vertices.size(),
+            nullptr,
+            0);
+    }
+
+
+
+// Draw useful info in the background
+void render_draw_background(SDL_Renderer * renderer) {
+    int e = SDL_SetRenderDrawColor(
+        renderer,
+        BACKGROUND_ACCENT_COLOR[0],
+        BACKGROUND_ACCENT_COLOR[1],
+        BACKGROUND_ACCENT_COLOR[2],
+        BACKGROUND_ACCENT_COLOR[3]);
+    if (e < 0) sdl_failure();
+
+    SDL_RenderDrawLine(renderer, CAMERA_SCREEN_POS[0], 0, CAMERA_SCREEN_POS[0], WINDOW_SIZE[1]);
+    SDL_RenderDrawLine(renderer, 0, CAMERA_SCREEN_POS[1], WINDOW_SIZE[0], CAMERA_SCREEN_POS[1]);
+}
+
+
+
+Vec2D get_mouse_pos() {
+    int x, y;
+    SDL_GetMouseState(&x, &y);
+    return {x * 1.0, y * 1.0};
+}
+
+
+
+
+void render_window_main() {
+    ImGui::Begin("General info");
+
+    Vec2D screen_mouse_pos = get_mouse_pos();
+    Vec2D world_mouse_pos = screen_to_world(screen_mouse_pos);
+    ImGui::Text("Screen mouse position: %.0f  %.0f", screen_mouse_pos.x, screen_mouse_pos.y);
+    ImGui::Text("World mouse position: %.0f  %.0f", world_mouse_pos.x, world_mouse_pos.y);
+
+    ImGui::End();
+}
 
 
 
@@ -149,9 +241,19 @@ void render(SDL_Window * window, const ConvexPolygon& p) {
 
 
 
-    // drawing happens here
-    renderer_draw_convex_polygon(renderer, p);
-    ImGui::ShowDemoWindow();
+    // Background drawing
+    render_draw_background(renderer);
+
+
+    // Polygon drawing
+    if (p.is_point_inside(screen_to_world(get_mouse_pos()))) {render_draw_convex_polygon_fill(renderer, p);}
+    else {renderer_draw_convex_polygon(renderer, p);}
+
+
+
+
+    // Window drawing
+    render_window_main();
 
 
 
@@ -193,6 +295,8 @@ int main() {
 
     ImGuiIO& io = ImGui::GetIO(); (void)io;
 
+    // not a convexpolygon; should result in a crash
+    //ConvexPolygon poly = ConvexPolygon({{1,1}, {1, -1}, {-1, -1}, {-1, 1}, {-2, 3}});
 
     ConvexPolygon poly = ConvexPolygon({{1,1}, {1, -1}, {-1, -1}, {-1, 1}});
 
