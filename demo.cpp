@@ -17,17 +17,20 @@ using namespace Msfl2D;
 
 const int WINDOW_FLAGS = SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI;
 const int RENDERER_FLAGS = SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED;
-const int WINDOW_SIZE[2] = {1280, 720};
+int WINDOW_SIZE[2] = {1280, 720};
 const char * WINDOW_TITLE = "Msfl2D Demo";
 
 // Camera related values
-const int CAMERA_SCREEN_POS[2] = {WINDOW_SIZE[0]/2, WINDOW_SIZE[1]/2};
+int CAMERA_SCREEN_POS[2] = {WINDOW_SIZE[0]/2, WINDOW_SIZE[1]/2};
 const double CAMERA_ZOOM_LVL = 20;
 
 // Rendering related values
 const Uint8 BACKGROUND_COLOR[4] = {0, 0, 0, 255};
 const Uint8 BACKGROUND_ACCENT_COLOR[4] = {50, 50, 50, 255};
 const Uint8 SHAPE_COLOR[4] = {255, 255, 255, 255};
+
+// UI related values
+ConvexPolygon* hovered_shape = nullptr;
 
 /**
  * Print the last SDL error to the error output and exit the program with EXIT_FAILURE as its exit code.
@@ -158,7 +161,7 @@ Vec2D get_mouse_pos() {
 
 
 void render_window_main() {
-    ImGui::Begin("General info");
+    ImGui::Begin("General info", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 
     Vec2D screen_mouse_pos = get_mouse_pos();
     Vec2D world_mouse_pos = screen_to_world(screen_mouse_pos);
@@ -168,7 +171,19 @@ void render_window_main() {
     ImGui::End();
 }
 
+void render_window_hovered_shape() {
+    ImGui::Begin("Hovered Shape", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 
+    if (hovered_shape == nullptr) {
+        ImGui::Text("Not hovering a shape");
+    }
+    else {
+        ImGui::Text("Nb of vertices: %zu", hovered_shape->vertices.size());
+        ImGui::Text("Position: %.0f  %.0f", hovered_shape->position.x, hovered_shape->position.y);
+    }
+
+    ImGui::End();
+}
 
 
 
@@ -221,8 +236,13 @@ void process_event(SDL_Event& event) {
 
 
 
-void render(SDL_Window * window, const ConvexPolygon& p) {
+void render(SDL_Window * window, std::vector<ConvexPolygon>& polygons) {
     SDL_Renderer * renderer = SDL_GetRenderer(window);
+
+
+    SDL_GetWindowSize(window, &WINDOW_SIZE[0], &WINDOW_SIZE[1]);
+    CAMERA_SCREEN_POS[0] = WINDOW_SIZE[0] / 2;
+    CAMERA_SCREEN_POS[1] = WINDOW_SIZE[1] / 2;
 
     // Clearing the last frame
     SDL_SetRenderDrawColor(
@@ -246,14 +266,20 @@ void render(SDL_Window * window, const ConvexPolygon& p) {
 
 
     // Polygon drawing
-    if (p.is_point_inside(screen_to_world(get_mouse_pos()))) {render_draw_convex_polygon_fill(renderer, p);}
-    else {renderer_draw_convex_polygon(renderer, p);}
-
+    hovered_shape = nullptr;
+    for (auto& p: polygons) {
+        if (p.is_point_inside(screen_to_world(get_mouse_pos()))) {
+            hovered_shape = &p;
+            render_draw_convex_polygon_fill(renderer, p);
+        }
+        else {renderer_draw_convex_polygon(renderer, p);}
+    }
 
 
 
     // Window drawing
     render_window_main();
+    render_window_hovered_shape();
 
 
 
@@ -298,7 +324,9 @@ int main() {
     // not a convexpolygon; should result in a crash
     //ConvexPolygon poly = ConvexPolygon({{1,1}, {1, -1}, {-1, -1}, {-1, 1}, {-2, 3}});
 
-    ConvexPolygon poly = ConvexPolygon({{1,1}, {1, -1}, {-1, -1}, {-1, 1}});
+    std::vector<ConvexPolygon> polys = {
+            ConvexPolygon({{1,1}, {1, -1}, {-1, -1}, {-1, 1}})
+    };
 
 
     // Main event loop
@@ -322,8 +350,8 @@ int main() {
         }
 
 
-        // Update screen
-        render(window, poly);
+        // Update screenpoly
+        render(window, polys);
 
     }
 
