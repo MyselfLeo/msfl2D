@@ -1,5 +1,5 @@
 //
-// Created by leo on 5/19/23.
+// Created by myselfleo on 5/19/23.
 //
 
 #ifndef P2D_VEC2D_HPP
@@ -89,6 +89,12 @@ namespace Msfl2D {
          * @return the distance
          */
         static double distance(const Vec2D& v1, const Vec2D& v2);
+
+        /**
+         * Return the determinant of the 2x2 matrix formed by the 2 vectors stacked next to each other as column vectors.
+         * @return The determinant of the 2x2 matrix (v1 v2)
+         */
+        static double det(const Vec2D& v1, const Vec2D& v2);
 
 
         // Operator overloading for base types

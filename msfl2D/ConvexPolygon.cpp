@@ -1,9 +1,11 @@
 //
-// Created by leo on 14/06/23.
+// Created by myselfleo on 14/06/23.
 //
 
+#include <cmath>
 #include "ConvexPolygon.hpp"
 #include "Line.hpp"
+#include "GeometryException.hpp"
 
 namespace Msfl2D {
 
@@ -23,19 +25,23 @@ namespace Msfl2D {
             v -= this->position;
         }
 
-        // todo: check that the polygon is convex
+        if (!is_convex()) {
+            throw GeometryException("The vertices do not form a convex polygon.");
+        }
     }
 
 
     ConvexPolygon::ConvexPolygon(const std::vector<Vec2D> &vertices) {
-        // todo: check that the polygon is convex
-
         // Compute the center of the polygon.
         this->position = vec2D_average(vertices);
 
         // Convert the absolution position of the vertices into relative ones.
         for (auto& v: vertices) {
             this->vertices.push_back(v - this->position);
+        }
+
+        if (!is_convex()) {
+            throw GeometryException("The vertices do not form a convex polygon.");
         }
     }
 
@@ -70,6 +76,34 @@ namespace Msfl2D {
             p1 = vertices[i] + position;
             p2 = vertices[(i+1) % vertices.size()] + position;
             if (Line::side(p1, p2, p) != expected_side) {return false;}
+        }
+
+        return true;
+    }
+
+    bool ConvexPolygon::is_convex() const {
+        // The polygon is convex if every inner angle acute.
+        // We need the counterclockwise angle (as we are iterating over the vertices clockwise).
+        // For that, we use the dot product, the determinant of the 2 vectors along with atan2; see below.
+
+        // we just iterate over each vertex i, and we use as vectors the segments [i i-1] and [i i+1].
+        for (unsigned int i=0; i<vertices.size(); i++) {
+            // modulo operator is cringe so i do it cringier. For some reason it works for i+1 tho
+            unsigned int prev_i;
+            if (i == 0) {prev_i = vertices.size() - 1;}
+            else {prev_i = i - 1;}
+
+            Vec2D a = vertices[prev_i] - vertices[i];
+            Vec2D b = vertices[(i+1) % vertices.size()] - vertices[i];
+
+            // in radians, > 0.
+            double dot = Vec2D::dot(a, b);
+            double det = Vec2D::det(a, b);
+
+            double angle = atan2(det, dot);
+
+            // angle is > 0 is the inner angle is acute, < 0 other wise.
+            if (angle < 0) {return false;}
         }
 
         return true;

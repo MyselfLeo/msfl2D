@@ -1,5 +1,5 @@
 //
-// Created by leo on 14/06/23.
+// Created by myselfleo on 14/06/23.
 //
 
 #ifndef MSFL2D_CONVEXPOLYGON_HPP
@@ -55,6 +55,12 @@ namespace Msfl2D {
          * Returns the average position of the Vec2Ds.
          */
         static Vec2D vec2D_average(const std::vector<Vec2D>& vectors);
+
+        /**
+         * Check if self is convex.
+         * @return true if self is convex, false otherwise
+         */
+         bool is_convex() const;
     };
 
 } // Msfl2D

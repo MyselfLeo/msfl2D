@@ -1,5 +1,5 @@
 //
-// Created by leo on 12/06/23.
+// Created by myselfleo on 12/06/23.
 //
 
 #ifndef MSFL2D_SHAPE_HPP
@@ -9,23 +9,6 @@
 #include "Line.hpp"
 
 namespace Msfl2D {
-
-
-/**
- * This exception is raised an impossible geometrical action is effected.
- */
-class GeometryException: public std::exception {
-private:
-    char* message;
-public:
-    GeometryException(char * msg): message(msg) {}
-    char* what() {
-        return message;
-    }
-};
-
-
-
     /**
      * Base class for the shapes used in the physic engine.
      * Derived shapes must implement the `project` method, which is used for performing SAT

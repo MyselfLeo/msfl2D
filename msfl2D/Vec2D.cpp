@@ -1,5 +1,5 @@
 //
-// Created by leo on 5/19/23.
+// Created by myselfleo on 5/19/23.
 //
 
 #include <cmath>
@@ -104,6 +104,10 @@ namespace Msfl2D {
 
     Vec2D Vec2D::operator-() const {
         return {-x, -y};
+    }
+
+    double Vec2D::det(const Vec2D &v1, const Vec2D &v2) {
+        return v1.x * v2.y - v1.y * v2.x;
     }
 } // Msfl2D
 

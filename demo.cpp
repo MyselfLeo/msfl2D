@@ -318,16 +318,29 @@ void cleanup(SDL_Window * window) {
 
 int main(int argc, char *argv[]) {
     // Create a window
-    SDL_Window * window = init_renderer();
+    SDL_Window *window = init_renderer();
 
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-
-    // not a convexpolygon; should result in a crash
-    //ConvexPolygon poly = ConvexPolygon({{1,1}, {1, -1}, {-1, -1}, {-1, 1}, {-2, 3}});
+    ImGuiIO &io = ImGui::GetIO(); (void) io;
 
     std::vector<ConvexPolygon> polys = {
-            ConvexPolygon({{1,1}, {1, -1}, {-1, -1}, {-1, 1}}, {3, 0}),
-            ConvexPolygon({{1,1}, {1.5,0}, {1, -1}, {-1, -1}, {-1, 1}}, {5, 3})
+            ConvexPolygon({
+                            {1,  1},
+                           {1,  -1},
+                           {-1, -1},
+                           {-1, 1}}, {3, 0}),
+
+            ConvexPolygon({{1,   1},
+                           {1.5, 0},
+                           {1,   -1},
+                           {-1,  -1},
+                           {-1,  1}}, {5, 3}),
+
+            // Concave polygon; adding it will lead to a crash at startup
+            ConvexPolygon({{1,  1},
+                           {1,  -1},
+                           {-1, -1},
+                           {-1, 1},
+                           {-2, 3}}, {-2, -3})
     };
 
 
@@ -351,7 +364,7 @@ int main(int argc, char *argv[]) {
             }
         }
 
-        // Update screenpoly
+        // Update screen
         render(window, polys);
 
     }
