@@ -1,5 +1,6 @@
 add_library(
         msfl2D
+        STATIC
 
         Shape.cpp Shape.hpp
         Vec2D.cpp Vec2D.hpp

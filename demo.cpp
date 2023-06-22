@@ -36,6 +36,7 @@ ConvexPolygon* hovered_shape = nullptr;
  * Print the last SDL error to the error output and exit the program with EXIT_FAILURE as its exit code.
  */
 void sdl_failure() {
+    std::cerr << "SDL Error:" << std::endl;
     std::cerr << SDL_GetError() << std::endl;
     exit(EXIT_FAILURE);
 }
@@ -315,7 +316,7 @@ void cleanup(SDL_Window * window) {
 
 
 
-int main() {
+int main(int argc, char *argv[]) {
     // Create a window
     SDL_Window * window = init_renderer();
 

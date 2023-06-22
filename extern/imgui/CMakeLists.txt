@@ -1,5 +1,6 @@
 add_library(
         imgui
+        STATIC
 
         imconfig.h
         imgui_internal.h
@@ -17,3 +18,8 @@ add_library(
         imgui_impl_sdl2.cpp imgui_impl_sdl2.h
         imgui_impl_sdlrenderer2.cpp imgui_impl_sdlrenderer2.h
         )
+
+find_package(SDL2 REQUIRED)
+
+include_directories(${SDL2_INCLUDE_DIRS})
+target_link_libraries(imgui ${SDL2_STATIC_LIBRARIES})
