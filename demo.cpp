@@ -80,8 +80,8 @@ void renderer_draw_convex_polygon(SDL_Renderer * renderer, const ConvexPolygon& 
     if (e < 0) sdl_failure();
 
     for (int i=0; i<poly.vertices.size(); i++) {
-        Vec2D screen_p_1 = world_to_screen(poly.vertices[i]);
-        Vec2D screen_p_2 = world_to_screen(poly.vertices[(i+1) % poly.vertices.size()]);
+        Vec2D screen_p_1 = world_to_screen(poly.vertices[i] + poly.position);
+        Vec2D screen_p_2 = world_to_screen(poly.vertices[(i+1) % poly.vertices.size()] + poly.position);
 
         e = SDL_RenderDrawLine(renderer, screen_p_1.x, screen_p_1.y, screen_p_2.x, screen_p_2.y);
         if (e < 0) sdl_failure();
@@ -104,8 +104,8 @@ void render_draw_convex_polygon_fill(SDL_Renderer * renderer, const ConvexPolygo
 
 
     for (int i=0; i<poly.vertices.size(); i++) {
-        Vec2D current_v = poly.vertices[i];
-        Vec2D next_v = poly.vertices[(i+1) % poly.vertices.size()];
+        Vec2D current_v = poly.vertices[i] + poly.position;
+        Vec2D next_v = poly.vertices[(i+1) % poly.vertices.size()] + poly.position;
 
         Vec2D screen_p = world_to_screen(current_v);
         sdl_vertices.push_back({
@@ -326,7 +326,8 @@ int main(int argc, char *argv[]) {
     //ConvexPolygon poly = ConvexPolygon({{1,1}, {1, -1}, {-1, -1}, {-1, 1}, {-2, 3}});
 
     std::vector<ConvexPolygon> polys = {
-            ConvexPolygon({{1,1}, {1, -1}, {-1, -1}, {-1, 1}})
+            ConvexPolygon({{1,1}, {1, -1}, {-1, -1}, {-1, 1}}, {3, 0}),
+            ConvexPolygon({{1,1}, {1.5,0}, {1, -1}, {-1, -1}, {-1, 1}}, {5, 3})
     };
 
 
@@ -349,7 +350,6 @@ int main(int argc, char *argv[]) {
                 stop = true;
             }
         }
-
 
         // Update screenpoly
         render(window, polys);

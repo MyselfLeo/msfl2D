@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.25)
 project(msfl2D)
 
 set(CMAKE_CXX_STANDARD 17)
-
 set(CMAKE_MODULE_PATH "P:/lib")
+set(CMAKE_BUILD_TYPE Debug)
 
 # msfl2D (demo.cpp is a demo renderer)
 add_subdirectory(msfl2D)

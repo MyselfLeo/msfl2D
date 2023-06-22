@@ -7,17 +7,23 @@
 
 namespace Msfl2D {
 
-    ConvexPolygon::ConvexPolygon(const std::vector<Vec2D> &vertices, Vec2D center) {
-        // Check that the average of the given vertices is {0, 0}. If it is not the case, the
-        // polygon is invalid and therefore cannot be constructed.
-        if (ConvexPolygon::vec2D_average(vertices) != Vec2D(0, 0)) {
-            throw GeometryException("The average position of the vertices is not equal to {0, 0}. It does not represent a real polygon!");
+    ConvexPolygon::ConvexPolygon(const std::vector<Vec2D> &vertices, Vec2D zero) {
+        // Add the given vertices to the shape, adding the zero coordinates to it (make it absolute).
+        // At that point, the vertices coordinates are absolute; we'll make them relative to the center later
+        // (we first need to compute it)
+        for (auto& v: vertices) {
+            this->vertices.push_back(v + zero);
+        }
+
+        // Compute the center of the polygon.
+        this->position = vec2D_average(this->vertices);
+
+        // Update the vertices so that they are relative to the center of the ConvexPolygon
+        for (auto& v: this->vertices) {
+            v -= this->position;
         }
 
         // todo: check that the polygon is convex
-
-        this->vertices = vertices;
-        this->position = center;
     }
 
 

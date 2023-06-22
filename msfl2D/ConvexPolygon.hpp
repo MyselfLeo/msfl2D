@@ -21,13 +21,15 @@ namespace Msfl2D {
         std::vector<Vec2D> vertices;
 
         /**
-         * Construct a ConvexPolygon with a list of vertices relative to the polygon's center.
-         * Note that in that case, the average position of the vertices should be {0, 0}. This constructor checks for that
-         * condition and throw a GeometryException if not met.
-         * @param vertices list of vertices relative to the ConvexPolygon's center, in clockwise order.
-         * @param center center of the polygon (= average absolute position of the vertices) of the polygon
+         * Construct a ConvexPolygon with a list of vertices relative to a given point (the zero point).
+         * Most of the time, the center of the resulting ConvexPolygon will NOT be the given zero. This is because
+         * the center is computed as the average position of the vertices; but you may give vertices whose average is
+         * not (0, 0).
+         *
+         * @param vertices list of vertices relative to the given zero, in clockwise order.
+         * @param zero point to which the vertices are relative to.
          */
-        ConvexPolygon(const std::vector<Vec2D>& vertices, Vec2D center);
+        ConvexPolygon(const std::vector<Vec2D>& vertices, Vec2D zero);
 
         /**
          * Construct a ConvexPolygon with a list of vertices in a 2D space.
