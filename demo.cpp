@@ -336,11 +336,11 @@ int main(int argc, char *argv[]) {
                            {-1,  1}}, {5, 3}),
 
             // Concave polygon; adding it will lead to a crash at startup
-            ConvexPolygon({{1,  1},
+            /*ConvexPolygon({{1,  1},
                            {1,  -1},
                            {-1, -1},
                            {-1, 1},
-                           {-2, 3}}, {-2, -3})
+                           {-2, 3}}, {-2, -3})*/
     };
 
 
