@@ -57,6 +57,7 @@ namespace Msfl2D {
     }
 
     double Line::find_x(double y) const {
+        if (vertical) {return vert_x;}
         if (a == 0) {throw GeometryException("Infinite number of solutions for x = ? in an horizontal line.");}
         return (y - b) / a;
     }

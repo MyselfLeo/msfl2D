@@ -154,7 +154,17 @@ void render_draw_background(SDL_Renderer * renderer) {
 
 // Draw a line on the screen
 void render_draw_line(SDL_Renderer * renderer, const Line& line) {
-
+    Vec2D p1;
+    Vec2D p2;
+    if (line.is_vertical()) {
+        p1 = world_to_screen({line.find_x(0), 0});
+        p1.y = 0;
+        p2 = world_to_screen({line.find_x(0), 0});
+        p2.y = WINDOW_SIZE[1];
+    }
+    else {
+        // don't mind me
+    }
 }
 
 
