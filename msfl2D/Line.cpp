@@ -6,78 +6,55 @@
 #include "GeometryException.hpp"
 
 namespace Msfl2D {
-
-    Line::Line(double a, double b): a(a), b(b), vertical(false) {}
-
-
-    Line::Line(const Vec2D &p1, const Vec2D &p2) {
+    Line::Line(const Vec2D &p1, const Vec2D &p2): p1(p1), p2(p2) {
         if (p1 == p2) {throw GeometryException("The 2 given points are equal.");}
+    }
 
-        if (p2.x == p1.x) {
-            vertical = true;
-            vert_x = p1.x;
-            reversed = p2.y < p1.y;
-        }
-        else {
-            vertical = false;
-            a = (p2.y - p1.y) / (p2.x - p1.x);
-            b = p1.y - a * p1.x;                // p1.y = a * p1.x + b   <=>   b = p1.y - a * p1.x
-        }
+
+    Line Line::from_director_vector(const Vec2D &p, const Vec2D &dir_vec) {
+        return Line(p, p + dir_vec);
     }
 
 
 
     LineSide Line::side(const Vec2D &p) const {
-        if (vertical) {
-            // we just have to check the x axis and the line orientation; no need for vector math
-            if (p.x == vert_x) {return MIDDLE;}
-
-            // With (p.x > x), true = right and false = left.
-            // If the line is reversed, then we should have false = right and true = left.
-            // this inversion is made using the XOR (^) operator.
-            else if ((p.x > vert_x) ^ reversed) {return RIGHT;}
-            else {return LEFT;}
-        }
-        else {
-            double orient = Vec2D::cross(get_vec(), p);
-            if (orient > 0) {return LEFT;}
-            if (orient < 0) {return RIGHT;}
-            return MIDDLE;
-        }
+        return Line::side(p1, p2, p);
     }
 
 
     LineSide Line::side(const Vec2D &p1, const Vec2D &p2, const Vec2D &p) {
-        return Line(p1, p2).side(p);
+        // cross product of (p2-p1, p-p1)
+        double orient = (p2.x - p1.x) * (p.y - p1.y) - (p2.y - p1.y) * (p.x - p1.x);
+        if (orient > 0) {return LEFT;}
+        if (orient < 0) {return RIGHT;}
+        return MIDDLE;
     }
 
     double Line::find_y(double x) const {
-        if (vertical) {throw GeometryException("Infinite number of solutions for y = ? in a vertical line.");}
-        return a * x + b;
+        if (p1.x == p2.x) {throw GeometryException("Infinite number of solutions for y = ? in a vertical line.");}
+        return get_slope() * x + get_zero();
     }
 
     double Line::find_x(double y) const {
-        if (vertical) {return vert_x;}
-        if (a == 0) {throw GeometryException("Infinite number of solutions for x = ? in an horizontal line.");}
-        return (y - b) / a;
+        if (is_vertical()) {return p1.x;}
+        if (p1.y == p2.y) {throw GeometryException("Infinite number of solutions for x = ? in an horizontal line.");}
+        return (y - get_zero()) / get_slope();
     }
 
     bool Line::is_vertical() const {
-        return vertical;
+        return p1.x == p2.x;
     }
 
     Vec2D Line::get_vec() const {
-        if (vertical) {
-            if (reversed) {return {0, -1};}
-            else {return {0, 1};}
-        }
-        else {
-            return {1, a};
-        }
+        return (p2 - p1).normalized();
     }
 
     double Line::get_slope() const {
-        if (vertical) {throw GeometryException("No slope for a vertical line.");}
-        return a;
+        if (is_vertical()) {throw GeometryException("No slope for a vertical line.");}
+        return (p2.y - p1.y) / (p2.x - p1.x);
+    }
+
+    double Line::get_zero() const {
+        return p1.y - get_slope() * p1.x;
     }
 } // Msfl2D

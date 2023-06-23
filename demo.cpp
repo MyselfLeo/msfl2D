@@ -2,6 +2,7 @@
 // Created by leo on 12/06/23.
 //
 #include <iostream>
+#include <cmath>
 
 #include <SDL2/SDL.h>
 
@@ -31,6 +32,7 @@ const Uint8 SHAPE_COLOR[4] = {255, 255, 255, 255};
 
 // UI related values
 ConvexPolygon* hovered_shape = nullptr;
+ConvexPolygon* selected_shape = nullptr;
 
 /**
  * Print the last SDL error to the error output and exit the program with EXIT_FAILURE as its exit code.
@@ -173,18 +175,15 @@ void render_draw_line(SDL_Renderer * renderer, const Line& line) {
     }
     else {
         double slope = line.get_slope() * -1;
-        Vec2D passage_point = world_to_screen({0, line.find_y(0)});
+        Vec2D passage_point = world_to_screen({0, line.get_zero()});
 
         // Create a screen-space line
         Line screen_space_line = Line(passage_point, passage_point + Vec2D(1, slope));
 
         // Get the points at x = 0 and x = WINDOW_SIZE[0].
         p1 = {0, screen_space_line.find_y(0)};
-        p2 = {static_cast<double>(WINDOW_SIZE[1]), screen_space_line.find_y(WINDOW_SIZE[1])};
+        p2 = {static_cast<double>(WINDOW_SIZE[0]), screen_space_line.find_y(WINDOW_SIZE[0])};
     }
-
-    std::cout << p1 << std::endl;
-    std::cout << p2 << std::endl;
 
     // now, we just draw the line
     SDL_RenderDrawLine(renderer, p1.x, p1.y, p2.x, p2.y);
@@ -315,8 +314,12 @@ void render(SDL_Window * window, std::vector<ConvexPolygon>& polygons) {
         else {renderer_draw_convex_polygon(renderer, p);}
     }
 
-   //render_draw_line(renderer, Line({-10, -10}, {10, 10}));
 
+    /*
+    double t = ImGui::GetTime();
+    Vec2D dir_vec = {cos(t), sin(t)};
+    render_draw_line(renderer, Line({0, 0}, dir_vec));
+    */
 
 
     // Window drawing

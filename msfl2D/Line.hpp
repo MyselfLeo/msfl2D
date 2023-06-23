@@ -23,15 +23,16 @@ namespace Msfl2D {
     class Line {
     public:
         /**
-         * Construct a line using its a and b parameters, such as the line equation is y = ax + b.
-         */
-        Line(double a, double b);
-
-        /*
          * Construct a line using 2 different points on that line.
          * Throw a GeometryException if the given points are equal.
          */
         Line(const Vec2D& p1, const Vec2D& p2);
+
+        /**
+         * Returns a line using a point and a director vector.
+         * The second point is just the point + the vector.
+         */
+        static Line from_director_vector(const Vec2D& p, const Vec2D& dir_vec);
 
         /**
          * Return which side is the point along the line.
@@ -67,20 +68,19 @@ namespace Msfl2D {
         Vec2D get_vec() const;
 
         /**
-         * Return the slope of the line.
+         * Return the slope of the line. This is the 'a' in the equation y = ax + b
          */
         double get_slope() const;
 
+        /**
+         * Return the y value for x = 0. This is the 'b' in the equation y = ax + b
+         */
+        double get_zero() const;
+
     private:
-        // non-vertical lines
-        double a;
-        double b;
-
-        // vertical lines
-        bool vertical;
-        double vert_x;
-        bool reversed; // false = neg to pos, true = pos to neg
-
+        // A line is represented by 2 different points.
+        Vec2D p1;
+        Vec2D p2;
     };
 
 } // Msfl2D
