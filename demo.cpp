@@ -152,6 +152,12 @@ void render_draw_background(SDL_Renderer * renderer) {
 
 
 
+// Draw a line on the screen
+void render_draw_line(SDL_Renderer * renderer, const Line& line) {
+
+}
+
+
 Vec2D get_mouse_pos() {
     int x, y;
     SDL_GetMouseState(&x, &y);
