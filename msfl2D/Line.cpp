@@ -39,7 +39,7 @@ namespace Msfl2D {
             else {return LEFT;}
         }
         else {
-            double orient = Vec2D::cross(Vec2D(1, a), p);
+            double orient = Vec2D::cross(get_vec(), p);
             if (orient > 0) {return LEFT;}
             if (orient < 0) {return RIGHT;}
             return MIDDLE;
@@ -74,5 +74,10 @@ namespace Msfl2D {
         else {
             return {1, a};
         }
+    }
+
+    double Line::get_slope() const {
+        if (vertical) {throw GeometryException("No slope for a vertical line.");}
+        return a;
     }
 } // Msfl2D

@@ -49,6 +49,7 @@ namespace Msfl2D {
         /**
          * Returns the cross product of 2 vectors.
          * The cross product of 2D vectors is not a vector like in 3D but a scalar.
+         * This function is equivalent to Vec2D::det().
          * @param v1 a Vec2D
          * @param v2 a Vec2D
          * @return the cross product of the two vectors
@@ -92,6 +93,7 @@ namespace Msfl2D {
 
         /**
          * Return the determinant of the 2x2 matrix formed by the 2 vectors stacked next to each other as column vectors.
+         * This function is equivalent to Vec2D::cross().
          * @return The determinant of the 2x2 matrix (v1 v2)
          */
         static double det(const Vec2D& v1, const Vec2D& v2);

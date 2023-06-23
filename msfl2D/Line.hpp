@@ -66,6 +66,11 @@ namespace Msfl2D {
          */
         Vec2D get_vec() const;
 
+        /**
+         * Return the slope of the line.
+         */
+        double get_slope() const;
+
     private:
         // non-vertical lines
         double a;

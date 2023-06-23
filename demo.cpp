@@ -154,8 +154,17 @@ void render_draw_background(SDL_Renderer * renderer) {
 
 // Draw a line on the screen
 void render_draw_line(SDL_Renderer * renderer, const Line& line) {
+    int e = SDL_SetRenderDrawColor(
+        renderer,
+        SHAPE_COLOR[0],
+        SHAPE_COLOR[1],
+        SHAPE_COLOR[2],
+        SHAPE_COLOR[3]);
+    if (e < 0) sdl_failure();
+
     Vec2D p1;
     Vec2D p2;
+
     if (line.is_vertical()) {
         p1 = world_to_screen({line.find_x(0), 0});
         p1.y = 0;
@@ -163,8 +172,22 @@ void render_draw_line(SDL_Renderer * renderer, const Line& line) {
         p2.y = WINDOW_SIZE[1];
     }
     else {
-        // don't mind me
+        double slope = line.get_slope() * -1;
+        Vec2D passage_point = world_to_screen({0, line.find_y(0)});
+
+        // Create a screen-space line
+        Line screen_space_line = Line(passage_point, passage_point + Vec2D(1, slope));
+
+        // Get the points at x = 0 and x = WINDOW_SIZE[0].
+        p1 = {0, screen_space_line.find_y(0)};
+        p2 = {static_cast<double>(WINDOW_SIZE[1]), screen_space_line.find_y(WINDOW_SIZE[1])};
     }
+
+    std::cout << p1 << std::endl;
+    std::cout << p2 << std::endl;
+
+    // now, we just draw the line
+    SDL_RenderDrawLine(renderer, p1.x, p1.y, p2.x, p2.y);
 }
 
 
@@ -291,6 +314,8 @@ void render(SDL_Window * window, std::vector<ConvexPolygon>& polygons) {
         }
         else {renderer_draw_convex_polygon(renderer, p);}
     }
+
+   //render_draw_line(renderer, Line({-10, -10}, {10, 10}));
 
 
 
