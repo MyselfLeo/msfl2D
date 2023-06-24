@@ -10,6 +10,8 @@
 
 namespace Msfl2D {
 
+    // Predefinition of Line to prevent circular import
+    class Line;
 
     /**
      * A Vector in a 2D space.
@@ -56,24 +58,6 @@ namespace Msfl2D {
          */
          static double cross(const Vec2D& v1, const Vec2D& v2);
 
-         /**
-          * Returns the cross product of a vector and a scalar.
-          * Basically, for a vector A and a scalar s, it computes (s * A.y, - s * A.x).
-          * @param v a Vec2D
-          * @param s a scalar
-          * @return the cross product of a vector and a scalar
-          */
-          static Vec2D cross(const Vec2D& v, double s);
-
-          /**
-          * Returns the cross product of a vector and a scalar.
-          * Basically, for a vector A and a scalar s, it computes (-s * A.y, s * A.x).
-          * @param s a scalar
-          * @param v a Vec2D
-          * @return the cross product of a vector and a scalar
-          */
-          static Vec2D cross(double s, const Vec2D& v);
-
 
         /**
          * Returns the square of the distance between 2 points represented by the 2 Vec2D.
@@ -97,6 +81,12 @@ namespace Msfl2D {
          * @return The determinant of the 2x2 matrix (v1 v2)
          */
         static double det(const Vec2D& v1, const Vec2D& v2);
+
+
+        /**
+         * Project the point onto the line, return the distance from the origin of the line.
+         */
+        double project(const Line& line) const;
 
 
         // Operator overloading for base types

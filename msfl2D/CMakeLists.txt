@@ -7,4 +7,6 @@ add_library(
         Segment.cpp Segment.hpp
         Line.cpp Line.hpp
         ConvexPolygon.cpp ConvexPolygon.hpp
-        World.cpp World.hpp GeometryException.cpp GeometryException.hpp)
+        World.cpp World.hpp
+        GeometryException.cpp GeometryException.hpp
+)

@@ -5,7 +5,7 @@
 #include <cmath>
 
 #include "Vec2D.hpp"
-
+#include "Line.hpp"
 
 
 namespace Msfl2D {
@@ -35,17 +35,6 @@ namespace Msfl2D {
     double Vec2D::cross(const Msfl2D::Vec2D &v1, const Msfl2D::Vec2D &v2) {
         return v1.x * v2.y - v1.y * v2.x;
     }
-
-    Vec2D Vec2D::cross(const Vec2D &v, double s) {
-        return {s * v.y, -s*v.x};
-    }
-
-    Vec2D Vec2D::cross(double s, const Vec2D &v) {
-        return {-s * v.y, s*v.x};
-    }
-
-
-
 
 
     Vec2D Vec2D::operator+(const Vec2D &other) const {
@@ -108,6 +97,12 @@ namespace Msfl2D {
 
     double Vec2D::det(const Vec2D &v1, const Vec2D &v2) {
         return v1.x * v2.y - v1.y * v2.x;
+    }
+
+    double Vec2D::project(const Line &line) const {
+        Vec2D line_vec_dir = line.get_vec();
+        Vec2D point_vec_dir = *this - line.get_origin();
+        return Vec2D::dot(point_vec_dir, line_vec_dir) / Vec2D::dot(line_vec_dir, line_vec_dir);
     }
 } // Msfl2D
 

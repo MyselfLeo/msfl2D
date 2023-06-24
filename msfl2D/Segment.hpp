@@ -6,6 +6,9 @@
 #define MSFL2D_SEGMENT_HPP
 
 #include <iostream>
+#include <tuple>
+
+#include "Vec2D.hpp"
 
 namespace Msfl2D {
 
@@ -36,6 +39,13 @@ namespace Msfl2D {
          * @return this portion or an empty Segment (min = 0, max = 0) if not colliding.
          */
         static Segment intersection(const Segment& s1, const Segment& s2);
+
+
+        /**
+         * Return the coordinates of the end points of the segment in the context of the given line.
+         * @param line The line on which the segment lies.
+         */
+        std::tuple<Vec2D, Vec2D> coordinates(const Line& line) const;
 
 
         // Allow printing the segment data to the command-line

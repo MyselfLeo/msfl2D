@@ -3,10 +3,13 @@
 //
 
 #include "Segment.hpp"
+#include "Line.hpp"
 
-Msfl2D::Segment::Segment() : min(0), max(0) {}
+using namespace Msfl2D;
 
-Msfl2D::Segment::Segment(double p1, double p2) {
+Segment::Segment() : min(0), max(0) {}
+
+Segment::Segment(double p1, double p2) {
     // We sort the end points so the user don't have to. (the user is me)
     if (p1 > p2) {
         min = p2;
@@ -18,10 +21,10 @@ Msfl2D::Segment::Segment(double p1, double p2) {
     }
 }
 
-Msfl2D::Segment Msfl2D::Segment::intersection(const Msfl2D::Segment &s1, const Msfl2D::Segment &s2) {
+Segment Segment::intersection(const Segment &s1, const Segment &s2) {
     // Find the "first" and "second" segment: the "first" is the one with the lowest "min".
-    Msfl2D::Segment first;
-    Msfl2D::Segment second;
+    Segment first;
+    Segment second;
     if (s1.min < s2.min) {
         first = s1;
         second = s2;
@@ -41,7 +44,19 @@ Msfl2D::Segment Msfl2D::Segment::intersection(const Msfl2D::Segment &s1, const M
     }
 }
 
-std::ostream &Msfl2D::operator<<(std::ostream &os, const Msfl2D::Segment &seg) {
+
+std::tuple<Vec2D, Vec2D> Segment::coordinates(const Line& line) const {
+    Vec2D origin = line.get_origin();
+    Vec2D dir_vec = line.get_vec();
+    return {
+        origin + dir_vec * min,
+        origin + dir_vec * max
+    };
+}
+
+
+
+std::ostream &operator<<(std::ostream &os, const Segment &seg) {
     os << "[" << seg.min << ", " << seg.max << "]";
     return os;
 }

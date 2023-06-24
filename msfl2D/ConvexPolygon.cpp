@@ -49,7 +49,18 @@ namespace Msfl2D {
 
 
     Segment ConvexPolygon::project(const Line &line) const {
-        return Segment();
+        double min = vertices[0].project(line);
+        double max = min;
+
+        // We project each vertex of the polygon. We keep the minimal and maximal point (the one closest to the line's
+        // zero and the farest one)
+        for (auto& v: vertices) {
+            double proj = v.project(line);
+            if (proj < min) {min = proj;}
+            if (proj > max) {max = proj;}
+        }
+
+        return {min, max};
     }
 
 
@@ -75,7 +86,10 @@ namespace Msfl2D {
             // Compute points of the line
             p1 = vertices[i] + position;
             p2 = vertices[(i+1) % vertices.size()] + position;
-            if (Line::side(p1, p2, p) != expected_side) {return false;}
+            LineSide side = Line::side(p1, p2, p);
+            // Only exit if the point is outside of the polygon.
+            // The Shape class expects that "is_point_inside" returns true if the point is on the shape.
+            if (side != expected_side && side != LineSide::MIDDLE) {return false;}
         }
 
         return true;

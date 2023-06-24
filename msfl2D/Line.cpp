@@ -57,4 +57,8 @@ namespace Msfl2D {
     double Line::get_zero() const {
         return p1.y - get_slope() * p1.x;
     }
+
+    Vec2D Line::get_origin() const {
+        return p1;
+    }
 } // Msfl2D

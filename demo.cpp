@@ -1,6 +1,9 @@
 //
-// Created by leo on 12/06/23.
+// Created by myselfleo on 12/06/23.
 //
+
+// This file is huge and unreadable. This is just a demo.
+
 #include <iostream>
 #include <cmath>
 
@@ -29,6 +32,7 @@ const double CAMERA_ZOOM_LVL = 20;
 const Uint8 BACKGROUND_COLOR[4] = {0, 0, 0, 255};
 const Uint8 BACKGROUND_ACCENT_COLOR[4] = {50, 50, 50, 255};
 const Uint8 SHAPE_COLOR[4] = {255, 255, 255, 255};
+const Uint8 SEGMENT_COLOR[4] = {255, 0, 0, 255};
 
 // UI related values
 ConvexPolygon* hovered_shape = nullptr;
@@ -190,6 +194,33 @@ void render_draw_line(SDL_Renderer * renderer, const Line& line) {
 }
 
 
+
+void render_draw_segment(SDL_Renderer * renderer, const Segment& segment, const Line& line) {
+    int e = SDL_SetRenderDrawColor(
+        renderer,
+        SEGMENT_COLOR[0],
+        SEGMENT_COLOR[1],
+        SEGMENT_COLOR[2],
+        SEGMENT_COLOR[3]);
+    if (e < 0) sdl_failure();
+
+    std::tuple<Vec2D, Vec2D> points = segment.coordinates(line);
+
+    // convert world coordinates to screen coordinates
+    Vec2D p1 = world_to_screen(std::get<0>(points));
+    Vec2D p2 = world_to_screen(std::get<01>(points));
+
+    SDL_RenderDrawLine(renderer, p1.x, p1.y, p2.x, p2.y);
+    SDL_RenderDrawLine(renderer, p1.x-1, p1.y-1, p2.x-1, p2.y-1); // double it and give it to the next person
+}
+
+
+
+void render_draw_point(SDL_Renderer * renderer, const Vec2D& point) {
+
+}
+
+
 Vec2D get_mouse_pos() {
     int x, y;
     SDL_GetMouseState(&x, &y);
@@ -315,11 +346,23 @@ void render(SDL_Window * window, std::vector<ConvexPolygon>& polygons) {
     }
 
 
-    /*
+
     double t = ImGui::GetTime();
-    Vec2D dir_vec = {cos(t), sin(t)};
-    render_draw_line(renderer, Line({0, 0}, dir_vec));
-    */
+    //Vec2D dir_vec = {cos(t), sin(t)};
+    Vec2D dir_vec = {1, 1};
+    Line line = Line({3, 2}, dir_vec);
+    render_draw_line(renderer, line);
+
+    /*// Projected segments
+    for (auto& p: polygons) {
+        Segment projection = p.project(line);
+        render_draw_segment(renderer, projection, line);
+    }*/
+
+    // Projected segments
+    Segment projection = polygons[0].project(line);
+    render_draw_segment(renderer, projection, line);
+
 
 
     // Window drawing

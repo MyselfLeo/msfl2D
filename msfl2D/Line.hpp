@@ -18,7 +18,8 @@ enum LineSide {
 namespace Msfl2D {
 
     /**
-     * An infinite line in a 2D space.
+     * An infinite line in a 2D space. It is represented by 2 points. Note that when projecting geometry onto a line,
+     * the origin of the line (= the local zero) will be considered on the first point.
      */
     class Line {
     public:
@@ -76,6 +77,11 @@ namespace Msfl2D {
          * Return the y value for x = 0. This is the 'b' in the equation y = ax + b
          */
         double get_zero() const;
+
+        /**
+         * Return the coordinates of the line's origin in the global space.
+         */
+        Vec2D get_origin() const;
 
     private:
         // A line is represented by 2 different points.
