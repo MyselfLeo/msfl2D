@@ -37,13 +37,24 @@ namespace Msfl2D {
          */
         explicit ConvexPolygon(const std::vector<Vec2D>& vertices);
 
+        ~ConvexPolygon() override = default;
 
-
-        ~ConvexPolygon() = default;
-
-        Segment project(const Msfl2D::Line &line) const override;
+        Segment project(const Line &line) const override;
 
         bool is_point_inside(const Vec2D& p) const override;
+
+        /**
+         * Return a reference to the polygon's vertex at the given index.
+         * If the index is too great, this method throws a GeometryException.
+         * @param idx index of the vertex to get
+         * @return a reference to the vertex
+         */
+        Vec2D& get_vertex(int idx);
+
+        /**
+         * Return the number of vertices of this polygon.
+         */
+        int nb_vertices() const;
 
 
     private:

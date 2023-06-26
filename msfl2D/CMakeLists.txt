@@ -9,4 +9,4 @@ add_library(
         ConvexPolygon.cpp ConvexPolygon.hpp
         World.cpp World.hpp
         GeometryException.cpp GeometryException.hpp
-)
+        Body.cpp Body.hpp)

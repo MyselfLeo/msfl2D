@@ -122,4 +122,13 @@ namespace Msfl2D {
 
         return true;
     }
+
+    Vec2D &ConvexPolygon::get_vertex(int idx) {
+        if (idx > vertices.size() - 1) {throw GeometryException("Tried to access an inexistant vertex");}
+        return vertices[idx];
+    }
+
+    int ConvexPolygon::nb_vertices() const {
+        return vertices.size();
+    }
 } // Msfl2D

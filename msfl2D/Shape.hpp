@@ -18,9 +18,9 @@ namespace Msfl2D {
     public:
         Vec2D position;
 
-    protected:
+        virtual ~Shape() = 0;
 
-        ~Shape() = default;
+    protected:
 
         /**
          * Projects the shape onto the line
