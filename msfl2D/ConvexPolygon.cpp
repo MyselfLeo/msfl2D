@@ -49,13 +49,13 @@ namespace Msfl2D {
 
 
     Segment ConvexPolygon::project(const Line &line) const {
-        double min = vertices[0].project(line);
+        double min = (vertices[0] + position).project(line); // add the center of the polygon to get the global position of each vertices
         double max = min;
 
         // We project each vertex of the polygon. We keep the minimal and maximal point (the one closest to the line's
         // zero and the farest one)
         for (auto& v: vertices) {
-            double proj = v.project(line);
+            double proj = (v + position).project(line);
             if (proj < min) {min = proj;}
             if (proj > max) {max = proj;}
         }

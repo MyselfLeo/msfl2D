@@ -38,9 +38,10 @@ const Uint8 SEGMENT_COLOR[4] = {255, 0, 0, 255};
 // UI related values
 ConvexPolygon* hovered_shape = nullptr;
 ConvexPolygon* selected_shape = nullptr;
+int selection_offset[2] = {0, 0};
 
 // DEBUG
-int PROJECTED_POINT[2] = {0, 0};
+double PROJECTED_POINT[2] = {0, 0};
 
 /**
  * Print the last SDL error to the error output and exit the program with EXIT_FAILURE as its exit code.
@@ -319,15 +320,36 @@ SDL_Window * init_renderer() {
 void unique_input_process() {
     const Uint8* keys_state = SDL_GetKeyboardState(nullptr);
 
-    if (keys_state[SDL_SCANCODE_UP]) {PROJECTED_POINT[1] += 1;}
-    if (keys_state[SDL_SCANCODE_DOWN]) {PROJECTED_POINT[1] -= 1;}
-    if (keys_state[SDL_SCANCODE_RIGHT]) {PROJECTED_POINT[0] += 1;}
-    if (keys_state[SDL_SCANCODE_LEFT]) {PROJECTED_POINT[0] -= 1;}
+    if (keys_state[SDL_SCANCODE_UP]) {PROJECTED_POINT[1] += 0.1;}
+    if (keys_state[SDL_SCANCODE_DOWN]) {PROJECTED_POINT[1] -= 0.1;}
+    if (keys_state[SDL_SCANCODE_RIGHT]) {PROJECTED_POINT[0] += 0.1;}
+    if (keys_state[SDL_SCANCODE_LEFT]) {PROJECTED_POINT[0] -= 0.1;}
 }
 
 
-void process_event(SDL_Event& event) {
-    //todo
+
+void process_event(SDL_Event& event, std::vector<ConvexPolygon>& polygons) {
+    switch (event.type) {
+        case SDL_MOUSEBUTTONDOWN: {
+            if (selected_shape != nullptr) {selected_shape = nullptr;}
+            else {
+                for (auto& p: polygons) {
+                    if (p.is_point_inside(screen_to_world(get_mouse_pos()))) {
+                        selected_shape = &p;
+                        Vec2D offset = world_to_screen(p.position) - get_mouse_pos();
+                        selection_offset[0] = offset.x;
+                        selection_offset[1] = offset.y;
+                        break;
+                    }
+                }
+            }
+        } break;
+
+        case SDL_MOUSEBUTTONUP: {
+            if (selected_shape == nullptr) {break;}
+            else {selected_shape = nullptr;}
+        } break;
+    }
 }
 
 
@@ -377,10 +399,11 @@ void render(SDL_Window * window, std::vector<ConvexPolygon>& polygons) {
 
 
 
+
     double t = ImGui::GetTime();
-    //Vec2D dir_vec = {cos(t), sin(t)};
-    Vec2D dir_vec = {1, 1};
-    Line line = Line::from_director_vector({3, 2}, dir_vec);
+    Vec2D dir_vec = {cos(t), sin(t)};
+    //Vec2D dir_vec = {1, 0};
+    Line line = Line::from_director_vector({0, 0}, dir_vec);
     render_draw_line(renderer, line);
 
     render_draw_point(renderer, line.get_origin(), 6);
@@ -393,18 +416,11 @@ void render(SDL_Window * window, std::vector<ConvexPolygon>& polygons) {
     render_draw_point(renderer, proj, 5);
 
 
-    /*// Projected segments
+    // Projected segments
     for (auto& p: polygons) {
         Segment projection = p.project(line);
         render_draw_segment(renderer, projection, line);
-    }*/
-
-    // Projected segments
-    Segment projection = polygons[0].project(line);
-
-    std::cout << projection << std::endl;
-
-    render_draw_segment(renderer, projection, line);
+    }
 
 
 
@@ -438,6 +454,12 @@ void cleanup(SDL_Window * window) {
 
 
 
+void update() {
+    if (selected_shape != nullptr) {
+        selected_shape->position = screen_to_world(get_mouse_pos() + Vec2D(selection_offset[0], selection_offset[1]));
+    }
+}
+
 
 
 
@@ -457,13 +479,13 @@ int main(int argc, char *argv[]) {
                             {1,  1},
                            {1,  -1},
                            {-1, -1},
-                           {-1, 1}}, {3, 0}),
+                           {-1, 1}}, {5, 5}),
 
             ConvexPolygon({{1,   1},
                            {1.5, 0},
                            {1,   -1},
                            {-1,  -1},
-                           {-1,  1}}, {5, 3}),
+                           {-1,  1}}, {-10, 10}),
 
             // Concave polygon; adding it will lead to a crash at startup
             /*ConvexPolygon({{1,  1},
@@ -485,7 +507,7 @@ int main(int argc, char *argv[]) {
             // events treated by ImGui are discarded.
             ImGui_ImplSDL2_ProcessEvent(&event);
             if (!io.WantCaptureMouse) {
-                process_event(event);
+                process_event(event, polys);
             }
 
             // Exit event
@@ -494,6 +516,8 @@ int main(int argc, char *argv[]) {
             }
         }
         unique_input_process();
+
+        update();
 
         // Update screen
         render(window, polys);
