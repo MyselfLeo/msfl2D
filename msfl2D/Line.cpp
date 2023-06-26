@@ -61,4 +61,8 @@ namespace Msfl2D {
     Vec2D Line::get_origin() const {
         return p1;
     }
+
+    Vec2D Line::get_coo_grad(double g) const {
+        return get_origin() + get_vec() * g;
+    }
 } // Msfl2D

@@ -9,11 +9,12 @@
 
 #include <SDL2/SDL.h>
 
-#include "msfl2D/Vec2D.hpp"
+#include "Vec2D.hpp"
 #include "imgui.h"
 #include "imgui_impl_sdl2.h"
 #include "imgui_impl_sdlrenderer2.h"
 #include "ConvexPolygon.hpp"
+#include "Segment.hpp"
 
 using namespace Msfl2D;
 
@@ -37,6 +38,9 @@ const Uint8 SEGMENT_COLOR[4] = {255, 0, 0, 255};
 // UI related values
 ConvexPolygon* hovered_shape = nullptr;
 ConvexPolygon* selected_shape = nullptr;
+
+// DEBUG
+int PROJECTED_POINT[2] = {0, 0};
 
 /**
  * Print the last SDL error to the error output and exit the program with EXIT_FAILURE as its exit code.
@@ -216,8 +220,26 @@ void render_draw_segment(SDL_Renderer * renderer, const Segment& segment, const 
 
 
 
-void render_draw_point(SDL_Renderer * renderer, const Vec2D& point) {
+void render_draw_point(SDL_Renderer * renderer, const Vec2D& point, int size) {
+    if (size % 2 == 0) {size += 1;}
 
+    int e = SDL_SetRenderDrawColor(
+        renderer,
+        SEGMENT_COLOR[0],
+        SEGMENT_COLOR[1],
+        SEGMENT_COLOR[2],
+        SEGMENT_COLOR[3]);
+    if (e < 0) sdl_failure();
+
+
+    Vec2D screen_coo = world_to_screen(point);
+
+    SDL_Rect r;
+    r.x = screen_coo.x - ((size-1)/2);
+    r.y = screen_coo.y - ((size-1)/2);
+    r.w = size;
+    r.h = size;
+    SDL_RenderFillRect(renderer, &r);
 }
 
 
@@ -294,6 +316,14 @@ SDL_Window * init_renderer() {
 
 
 
+void unique_input_process() {
+    const Uint8* keys_state = SDL_GetKeyboardState(nullptr);
+
+    if (keys_state[SDL_SCANCODE_UP]) {PROJECTED_POINT[1] += 1;}
+    if (keys_state[SDL_SCANCODE_DOWN]) {PROJECTED_POINT[1] -= 1;}
+    if (keys_state[SDL_SCANCODE_RIGHT]) {PROJECTED_POINT[0] += 1;}
+    if (keys_state[SDL_SCANCODE_LEFT]) {PROJECTED_POINT[0] -= 1;}
+}
 
 
 void process_event(SDL_Event& event) {
@@ -350,8 +380,18 @@ void render(SDL_Window * window, std::vector<ConvexPolygon>& polygons) {
     double t = ImGui::GetTime();
     //Vec2D dir_vec = {cos(t), sin(t)};
     Vec2D dir_vec = {1, 1};
-    Line line = Line({3, 2}, dir_vec);
+    Line line = Line::from_director_vector({3, 2}, dir_vec);
     render_draw_line(renderer, line);
+
+    render_draw_point(renderer, line.get_origin(), 6);
+    render_draw_point(renderer, line.get_coo_grad(1), 4);
+
+    render_draw_point(renderer, Vec2D(PROJECTED_POINT[0], PROJECTED_POINT[1]), 5);
+
+    Vec2D proj = line.get_coo_grad(Vec2D(PROJECTED_POINT[0], PROJECTED_POINT[1]).project(line));
+
+    render_draw_point(renderer, proj, 5);
+
 
     /*// Projected segments
     for (auto& p: polygons) {
@@ -361,6 +401,9 @@ void render(SDL_Window * window, std::vector<ConvexPolygon>& polygons) {
 
     // Projected segments
     Segment projection = polygons[0].project(line);
+
+    std::cout << projection << std::endl;
+
     render_draw_segment(renderer, projection, line);
 
 
@@ -450,6 +493,7 @@ int main(int argc, char *argv[]) {
                 stop = true;
             }
         }
+        unique_input_process();
 
         // Update screen
         render(window, polys);

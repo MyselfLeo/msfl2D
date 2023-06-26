@@ -18,8 +18,11 @@ enum LineSide {
 namespace Msfl2D {
 
     /**
-     * An infinite line in a 2D space. It is represented by 2 points. Note that when projecting geometry onto a line,
-     * the origin of the line (= the local zero) will be considered on the first point.
+     * An infinite line in a 2D space. It is represented by 2 points.
+     * A line also has a graduation along itself. The origin of this graduation is the first point given when
+     * constructing the object. The graduation has the same "dimension" has the global space; the point at the graduation
+     * 1 is 1 unit far from the origin. The direction of the graduation is the same as the line (i.e direction of the
+     * director vector).
      */
     class Line {
     public:
@@ -74,14 +77,24 @@ namespace Msfl2D {
         double get_slope() const;
 
         /**
-         * Return the y value for x = 0. This is the 'b' in the equation y = ax + b
+         * Return the y value for x = 0. This is the 'b' in the equation y = ax + b.
+         * Don't confuse this function with get_origin(), which return the coordinates of the point on the line
+         * where the graduation along the line is starting.
          */
         double get_zero() const;
 
         /**
-         * Return the coordinates of the line's origin in the global space.
+         * Return the coordinates of the line's origin in the global space. This is the origin of the graduation
+         * along the line. Do not confuse this function with get_zero(), which return the y value of the line for x = 0.
          */
         Vec2D get_origin() const;
+
+        /**
+         * Return the coordinates of the point on the line at the given graduation.
+         * @param g the graduation, i.e the signed distance from the origin.
+         * @return the point of the line at the given graduation.
+         */
+        Vec2D get_coo_grad(double g) const;
 
     private:
         // A line is represented by 2 different points.
