@@ -65,4 +65,9 @@ namespace Msfl2D {
     Vec2D Line::get_coo_grad(double g) const {
         return get_origin() + get_vec() * g;
     }
+
+    std::ostream &operator<<(std::ostream &os, const Line &l) {
+        os << l.p1 << " -> " << l.p2;
+        return os;
+    }
 } // Msfl2D

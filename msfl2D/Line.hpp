@@ -96,6 +96,9 @@ namespace Msfl2D {
          */
         Vec2D get_coo_grad(double g) const;
 
+        // std::cout operators
+        friend std::ostream& operator<<(std::ostream& os, const Line& l);
+
     private:
         // A line is represented by 2 different points.
         Vec2D p1;

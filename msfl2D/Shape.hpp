@@ -35,8 +35,7 @@ namespace Msfl2D {
          * @param p the point to check
          * @return true if inside, false if outside
          */
-         virtual bool is_point_inside(const Vec2D& p) const = 0;
-
+        virtual bool is_point_inside(const Vec2D& p) const = 0;
     private:
     };
 

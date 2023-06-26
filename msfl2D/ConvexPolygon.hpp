@@ -18,8 +18,6 @@ namespace Msfl2D {
      */
     class ConvexPolygon: public Shape {
     public:
-        std::vector<Vec2D> vertices;
-
         /**
          * Construct a ConvexPolygon with a list of vertices relative to a given point (the zero point).
          * Most of the time, the center of the resulting ConvexPolygon will NOT be the given zero. This is because
@@ -49,7 +47,7 @@ namespace Msfl2D {
 
 
     private:
-        //std::vector<Vec2D> vertices;
+        std::vector<Vec2D> vertices;
 
         /**
          * Returns the average position of the Vec2Ds.
