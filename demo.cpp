@@ -503,12 +503,7 @@ int main(int argc, char *argv[]) {
         // Process events
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
-            // ImGui has priority over the rest of the program on the events.
-            // events treated by ImGui are discarded.
-            ImGui_ImplSDL2_ProcessEvent(&event);
-            if (!io.WantCaptureMouse) {
-                process_event(event, polys);
-            }
+
 
             // Exit event
             if (event.type == SDL_QUIT) {

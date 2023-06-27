@@ -48,12 +48,18 @@ namespace Msfl2Demo {
          * The ImGui elements are updated here.
          */
         void render();
+
+        /**
+         * Process the given SDL event
+         */
+        void process(const SDL_Event* event);
+
     private:
         // Only one world renderer must be created. The creation will fail if one still exists.
         static int NB_CREATED;
 
         // SDL flags
-        const int WINDOW_FLAGS = SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI;
+        const int WINDOW_FLAGS = SDL_WINDOW_ALLOW_HIGHDPI;
         const int RENDERER_FLAGS = SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED;
 
         // ImGui flags

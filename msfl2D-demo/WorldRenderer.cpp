@@ -88,7 +88,21 @@ namespace Msfl2Demo {
 
         renderer = nullptr;
         window = nullptr;
+
     }
+
+
+
+    void WorldRenderer::process(const SDL_Event *event) {
+        // ImGui has priority over the rest of the program on the events.
+        // events treated by ImGui are discarded, so we return early.
+        ImGuiIO &io = ImGui::GetIO();
+        ImGui_ImplSDL2_ProcessEvent(event);
+        if (io.WantCaptureMouse) {return;}
+
+        // Now we can process the event as it was not consumed by ImGui.
+    }
+
 
 
 

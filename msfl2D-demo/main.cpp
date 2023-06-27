@@ -44,11 +44,8 @@ int main(int argc, char *argv[]) {
         // Process I/O events
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
-
-            //todo: WorldRenderer should grab the event here and process it
-
-            // end condition
-            if (event.type == SDL_QUIT) {stop = true;}
+            world_renderer.process(&event);
+            if (event.type == SDL_QUIT) {stop = true;} // end condition
         }
 
         world_renderer.render();
