@@ -25,7 +25,7 @@ namespace Msfl2Demo {
     }
 
     WorldRenderer::~WorldRenderer() {
-        reset();
+        if (renderer != nullptr || window != nullptr) {reset();}
         NB_CREATED -= 1;
     }
 
@@ -85,6 +85,9 @@ namespace Msfl2Demo {
         // Should not be a problem if renderer or window is nullptr
         SDL_DestroyRenderer(renderer);
         SDL_DestroyWindow(window);
+
+        renderer = nullptr;
+        window = nullptr;
     }
 
 
@@ -105,7 +108,7 @@ namespace Msfl2Demo {
         ImGui::NewFrame();
 
 
-        ImGui::Begin("hello");
+        ImGui::Begin("hello", nullptr, IMGUI_WINDOW_FLAGS);
         ImGui::Text("hello");
         ImGui::End();
 

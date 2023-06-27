@@ -56,6 +56,9 @@ namespace Msfl2Demo {
         const int WINDOW_FLAGS = SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI;
         const int RENDERER_FLAGS = SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED;
 
+        // ImGui flags
+        const int IMGUI_WINDOW_FLAGS = ImGuiWindowFlags_AlwaysAutoResize;
+
         // Default color for rendering
         const Color4 BACKGROUND_COLOR = {0, 0, 0};
         const Color4 BACKGROUND_INFO_COLOR = {50, 50, 50};

@@ -1,3 +1,5 @@
+set(CMAKE_MODULE_PATH "P:/lib")
+
 add_library(
         imgui
         STATIC
