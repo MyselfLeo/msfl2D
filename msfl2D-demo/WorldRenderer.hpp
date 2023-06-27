@@ -12,6 +12,8 @@
 
 #include "Color4.hpp"
 
+using namespace Msfl2D;
+
 namespace Msfl2Demo {
 
     /**
@@ -19,13 +21,13 @@ namespace Msfl2Demo {
      */
     class WorldRenderer {
     public:
-        std::shared_ptr<Msfl2D::World> world;
+        std::shared_ptr<World> world;
 
         /**
          * Create a new WorldRenderer. The renderer will not be creating a window yet. For that,
          * call init_window().
          */
-        explicit WorldRenderer(std::shared_ptr<Msfl2D::World> world);
+        explicit WorldRenderer(std::shared_ptr<World> world);
 
         /**
          * Destroy SDL and ImGui context by calling reset(), then destroy the object.
@@ -35,7 +37,7 @@ namespace Msfl2Demo {
         /**
          * Open a window for this renderer.
          */
-        void init_window(const Msfl2D::Vec2D& size, const std::string& name);
+        void init_window(const Vec2D& size, const std::string& name);
 
         /**
          * Reset the WorldRenderer. The world is kept but all SDL and ImGui context is cleared.
@@ -54,37 +56,44 @@ namespace Msfl2Demo {
          */
         void process(const SDL_Event* event);
 
+        /**
+         * Check for non-event IO (prolonged key press for example).
+         */
+        void process_io();
+
     private:
         // Only one world renderer must be created. The creation will fail if one still exists.
         static int NB_CREATED;
 
         // SDL flags
-        const int WINDOW_FLAGS = SDL_WINDOW_ALLOW_HIGHDPI;
-        const int RENDERER_FLAGS = SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED;
+        static const int WINDOW_FLAGS = SDL_WINDOW_ALLOW_HIGHDPI;
+        static const int RENDERER_FLAGS = SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED;
 
         // ImGui flags
-        const int IMGUI_WINDOW_FLAGS = ImGuiWindowFlags_AlwaysAutoResize;
+        static const int IMGUI_WINDOW_FLAGS = ImGuiWindowFlags_AlwaysAutoResize;
+
+        static constexpr double CAMERA_SPEED = 0.5;
 
         // Default color for rendering
-        const Color4 BACKGROUND_COLOR = {0, 0, 0};
-        const Color4 BACKGROUND_INFO_COLOR = {50, 50, 50};
-        const Color4 MAIN_COLOR = {255, 255, 255};
-        const Color4 COLOR_RED = {255, 0, 0};
-        const Color4 COLOR_GREEN = {0, 255, 0};
-        const Color4 COLOR_BLUE = {0, 0, 255};
-        const Color4 COLOR_YELLOW = {255, 255, 0};
+        static const Color4 BACKGROUND_COLOR;
+        static const Color4 BACKGROUND_INFO_COLOR;
+        static const Color4 MAIN_COLOR;
+        static const Color4 COLOR_RED;
+        static const Color4 COLOR_GREEN;
+        static const Color4 COLOR_BLUE;
+        static const Color4 COLOR_YELLOW;
 
         SDL_Window * window;
         SDL_Renderer * renderer;
 
         std::string window_name;
-        Msfl2D::Vec2D window_size;
+        Vec2D window_size;
 
         /**
          * World-space of the center of the camera (i.e center of the screen).
          * Changing this value will translate the whole world.
          */
-        Msfl2D::Vec2D camera_pos;
+        Vec2D camera_pos;
 
         /**
          * Size ratio between screen-space and world-space.
@@ -94,14 +103,37 @@ namespace Msfl2Demo {
         double camera_zoom_lvl = 20;
 
         /** Convert coordinates from the world-space to the screen-space */
-        Msfl2D::Vec2D world_to_screen(const Msfl2D::Vec2D& coo) const;
+        Vec2D world_to_screen(const Vec2D& coo) const;
         /** Convert coordinates from the screen-space to the world-space */
-        Msfl2D::Vec2D screen_to_world(const Msfl2D::Vec2D& coo) const;
+        Vec2D screen_to_world(const Vec2D& coo) const;
 
         /**
          * Call SDL_SetRenderDrawColor with the given color.
          */
-        void set_color(Color4 color);
+        void set_color(Color4 color) const;
+        
+        
+        /**
+         * Return the position of the mouse on the screen.
+         */
+        static Vec2D get_mouse_pos() ;
+        
+        
+        // Drawing methods
+        /** Draw background info (axis, etc.) */
+        void draw_background(const Color4& color = BACKGROUND_INFO_COLOR) const;
+        /** Draw a line */
+        void draw_line(const Line& line, const Color4& color = MAIN_COLOR) const;
+        /** Draw a segment of a given line */
+        void draw_segment(const Segment& segment, const Line& line, const Color4& color = COLOR_YELLOW) const;
+        /** Draw a point */
+        void draw_point(const Vec2D& point, const Color4& color = COLOR_BLUE);
+
+
+        /**
+         * Return the world-space position of the top-left and bottom-right corners of the screen.
+         */
+        std::tuple<Vec2D, Vec2D> get_screen_bounds() const;
     };
 
 } // Msfl2Demo

@@ -48,6 +48,8 @@ int main(int argc, char *argv[]) {
             if (event.type == SDL_QUIT) {stop = true;} // end condition
         }
 
+        world_renderer.process_io();
+
         world_renderer.render();
     }
 

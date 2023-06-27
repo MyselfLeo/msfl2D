@@ -9,6 +9,16 @@
 #include <utility>
 
 namespace Msfl2Demo {
+
+    const Color4 WorldRenderer::BACKGROUND_COLOR = {0, 0, 0};
+    const Color4 WorldRenderer::BACKGROUND_INFO_COLOR = {50, 50, 50};
+    const Color4 WorldRenderer::MAIN_COLOR = {255, 255, 255};
+    const Color4 WorldRenderer::COLOR_RED = {255, 0, 0};
+    const Color4 WorldRenderer::COLOR_GREEN = {0, 255, 0};
+    const Color4 WorldRenderer::COLOR_BLUE = {0, 0, 255};
+    const Color4 WorldRenderer::COLOR_YELLOW = {255, 255, 0};
+
+
     int WorldRenderer::NB_CREATED = 0;
 
     WorldRenderer::WorldRenderer(std::shared_ptr<Msfl2D::World> world): world(std::move(world)) {
@@ -22,6 +32,8 @@ namespace Msfl2Demo {
 
         renderer = nullptr;
         window = nullptr;
+
+        camera_pos = Msfl2D::Vec2D(0, 0);
     }
 
     WorldRenderer::~WorldRenderer() {
@@ -101,8 +113,19 @@ namespace Msfl2Demo {
         if (io.WantCaptureMouse) {return;}
 
         // Now we can process the event as it was not consumed by ImGui.
+
     }
 
+
+
+    void WorldRenderer::process_io() {
+        const Uint8* keys_state = SDL_GetKeyboardState(nullptr);
+
+        if (keys_state[SDL_SCANCODE_UP]) {camera_pos.y += CAMERA_SPEED;}
+        if (keys_state[SDL_SCANCODE_DOWN]) {camera_pos.y -= CAMERA_SPEED;}
+        if (keys_state[SDL_SCANCODE_RIGHT]) {camera_pos.x += CAMERA_SPEED;}
+        if (keys_state[SDL_SCANCODE_LEFT]) {camera_pos.x -= CAMERA_SPEED;}
+    }
 
 
 
@@ -122,6 +145,12 @@ namespace Msfl2Demo {
         ImGui::NewFrame();
 
 
+
+        // World drawing
+        draw_background();
+
+
+
         ImGui::Begin("hello", nullptr, IMGUI_WINDOW_FLAGS);
         ImGui::Text("hello");
         ImGui::End();
@@ -134,11 +163,97 @@ namespace Msfl2Demo {
     }
 
 
-    void WorldRenderer::set_color(Color4 color) {
+    void WorldRenderer::set_color(Color4 color) const {
         if (renderer == nullptr) {
             std::cerr << "Called set_color on an uninitialised WorldRenderer" << std::endl;
             exit(EXIT_FAILURE);
         }
         SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+    }
+
+
+
+    Msfl2D::Vec2D WorldRenderer::world_to_screen(const Msfl2D::Vec2D &coo) const {
+        Msfl2D::Vec2D res = coo - camera_pos;
+        res *= camera_zoom_lvl;
+        res.y *= -1;               // screen y is top to bottom while we want bottom to top.
+        res += Msfl2D::Vec2D(window_size.x, window_size.y) / 2;
+        return res;
+    }
+
+    Msfl2D::Vec2D WorldRenderer::screen_to_world(const Msfl2D::Vec2D &coo) const {
+        Msfl2D::Vec2D res = coo - Msfl2D::Vec2D(window_size.x, window_size.y) / 2;
+        res.y *= -1;               // See world_to_screen()
+        res /= camera_zoom_lvl;
+        res += camera_pos;
+        return res;
+    }
+
+
+    Msfl2D::Vec2D WorldRenderer::get_mouse_pos() {
+        int x, y;
+        SDL_GetMouseState(&x, &y);
+        return {x * 1.0, y * 1.0};
+    }
+
+    void WorldRenderer::draw_background(const Color4 &color) const {
+        // Draw the 2 axis
+        draw_line(Line::from_director_vector({0, 0}, {0, 1}), color);
+        draw_line(Line::from_director_vector({0, 0}, {1, 0}), color);
+    }
+
+    void WorldRenderer::draw_line(const Line &line, const Color4 &color) const {
+        set_color(color);
+
+        // End points of the line to draw on the screen
+        Vec2D p1, p2;
+
+        // If the line is vertical, it's easier to draw, so we use a special case for that
+        if (line.is_vertical()) {
+            p1 = world_to_screen({line.find_x(0), 0});
+            p2 = p1;
+            p1.y = 0;
+            p2.y = window_size.y;
+        }
+        else {
+            // This is a bit more touchy:
+            // We compute a screen-space line, then we either clamp its x or y coordinates to the one of the screen
+            // (depending on the slope, so the actually drawn line does not overflow too much from the window)
+            // (idk if it's really useful, but oh well)
+            double slope = line.get_slope() * -1;
+            Vec2D line_p = world_to_screen({0, line.get_zero()});
+
+            // screen bounds
+            std::tuple<Vec2D, Vec2D> sb = get_screen_bounds();
+
+            // clamp on y
+            if (abs(slope) > 1) {
+                // this is wonky, but well then
+                p1 = world_to_screen( {line.find_x(std::get<0>(sb).y), std::get<0>(sb).y});
+                p2 = world_to_screen( {line.find_x(std::get<1>(sb).y), std::get<1>(sb).y});
+            }
+            // clamp on x
+            else {
+                p1 = world_to_screen({std::get<0>(sb).x, line.find_y(std::get<0>(sb).x)});
+                p2 =  world_to_screen({std::get<1>(sb).x, line.find_y(std::get<1>(sb).x)});
+            }
+        }
+
+        //std::cout << p1 << "   " << p2 << std::endl;
+
+        // Draw the line
+        SDL_RenderDrawLine(renderer, p1.x, p1.y, p2.x, p2.y);
+    }
+
+    void WorldRenderer::draw_segment(const Segment &segment, const Line &line, const Color4 &color) const {
+        set_color(color);
+    }
+
+    void WorldRenderer::draw_point(const Vec2D &point, const Color4 &color) {
+        set_color(color);
+    }
+
+    std::tuple<Vec2D, Vec2D> WorldRenderer::get_screen_bounds() const {
+        return {screen_to_world({0, 0}), screen_to_world(window_size - Vec2D(1,1))};
     }
 } // Msfl2Demo
