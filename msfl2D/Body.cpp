@@ -3,7 +3,7 @@
 //
 
 #include "Body.hpp"
-#include "GeometryException.hpp"
+#include "MsflExceptions.hpp"
 
 #include <memory>
 

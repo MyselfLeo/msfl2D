@@ -3,10 +3,13 @@
 //
 
 #include <iostream>
-#include "GeometryException.hpp"
+#include "MsflExceptions.hpp"
 
 namespace Msfl2D {
     GeometryException::GeometryException(char *msg): message(msg) {}
     char * GeometryException::what() const noexcept {return message;}
 
+
+    SimulationException::SimulationException(char *msg): message(msg) {}
+    char *SimulationException::what() const noexcept {return message;}
 } // Msfl2D

@@ -5,7 +5,7 @@
 #include <cmath>
 #include "ConvexPolygon.hpp"
 #include "Line.hpp"
-#include "GeometryException.hpp"
+#include "MsflExceptions.hpp"
 
 namespace Msfl2D {
 

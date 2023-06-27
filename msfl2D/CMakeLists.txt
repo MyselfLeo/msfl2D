@@ -8,5 +8,5 @@ add_library(
         Line.cpp Line.hpp
         ConvexPolygon.cpp ConvexPolygon.hpp
         World.cpp World.hpp
-        GeometryException.cpp GeometryException.hpp
+        MsflExceptions.cpp MsflExceptions.hpp
         Body.cpp Body.hpp)

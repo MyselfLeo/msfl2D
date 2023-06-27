@@ -3,7 +3,7 @@
 //
 
 #include "Line.hpp"
-#include "GeometryException.hpp"
+#include "MsflExceptions.hpp"
 
 namespace Msfl2D {
     Line::Line(const Vec2D &p1, const Vec2D &p2): p1(p1), p2(p2) {
