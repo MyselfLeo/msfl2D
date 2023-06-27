@@ -239,14 +239,24 @@ namespace Msfl2Demo {
             }
         }
 
-        //std::cout << p1 << "   " << p2 << std::endl;
-
         // Draw the line
         SDL_RenderDrawLine(renderer, p1.x, p1.y, p2.x, p2.y);
     }
 
     void WorldRenderer::draw_segment(const Segment &segment, const Line &line, const Color4 &color) const {
         set_color(color);
+
+        std::tuple<Vec2D, Vec2D> points = segment.coordinates(line);
+        // convert world coordinates to screen coordinates
+        Vec2D p1 = world_to_screen(std::get<0>(points));
+        Vec2D p2 = world_to_screen(std::get<1>(points));
+
+        // draw multiple lines to make the line fatter
+        for (int x = -1; x <= 1; x++) {
+            for (int y = -1; y <= 1; y++) {
+                SDL_RenderDrawLine(renderer, p1.x + x, p1.y + y, p2.x + x, p2.y + y);
+            }
+        }
     }
 
     void WorldRenderer::draw_point(const Vec2D &point, const Color4 &color) {
