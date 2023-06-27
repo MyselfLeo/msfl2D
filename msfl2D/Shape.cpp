@@ -5,4 +5,7 @@
 #include "Shape.hpp"
 
 namespace Msfl2D {
+    const Vec2D &Shape::get_position() const {
+        return position;
+    }
 } // Msfl2D

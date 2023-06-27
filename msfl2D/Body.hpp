@@ -12,18 +12,6 @@
 
 namespace Msfl2D {
 
-    typedef unsigned long BodyId;
-
-    /**
-     * Store together shape and position data relative to its body center.
-     */
-    struct ShapeData {
-        std::shared_ptr<Shape> shape;
-        Vec2D position;
-
-        ShapeData(std::shared_ptr<Shape> shape, Vec2D pos);
-    };
-
 
     /**
      * A body is a simulation element with specific parameters (position, speed, mass, etc.).
@@ -48,18 +36,40 @@ namespace Msfl2D {
         /**
          * Add a shape to the body. Return a reference to the body so you can chain those method calls.
          */
-        Body& add_shape(std::unique_ptr<Shape> shape);
+        Body& add_shape(const std::shared_ptr<Shape>& shape);
 
         /**
          * Remove the shape at the given index. Throws GeometryException is the index does not exists.
          */
         void remove_shape(int idx);
 
+        /**
+         * Return a pointer to one of the body's shape.
+         * @param idx the index of the shape to get. Throws GeometryException is the index does not exists.
+         * @return A smart pointer to the Shape.
+         */
+        std::shared_ptr<Shape> get_shape(int idx);
+
+        /**
+         * Update the position of one of the body's shape. Will update the body's "position" to match the
+         * center of each shapes.
+         * For 1-shape bodies, this is equivalent to move(pos).
+         * @param idx the index of the shape to update. Throws GeometryException is the index does not exists.
+         */
+        void move_shape(int idx, Vec2D pos);
+
+        /**
+         * Move the position of the body. Will move each shapes the same way.
+         * For 1-shape bodies, this is equivalent to move_shape(0, pos).
+         */
+        void move(Vec2D pos);
+
+
+
     private:
-        // Shapes are stored together with their relative position to the body center.
         // Like for vertices in ComplexPolygons, the center of a body is the average position of its shapes.
-        // The constructors of the Body takes care of updating the shape positions so that they average to (0, 0).
-        std::vector<ShapeData> shapes;
+        // The constructors of the Body takes care of updating body center.
+        std::vector<std::shared_ptr<Shape>> shapes;
 
         /**
          * Update the center of the body so it is at the average position of each shape.

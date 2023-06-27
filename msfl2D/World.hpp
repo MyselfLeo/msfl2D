@@ -7,6 +7,8 @@
 
 namespace Msfl2D {
 
+    typedef unsigned long BodyId;
+
     /**
      * Instance of a simulation space, containing one or more bodies and with specific parameters.
      * The bodies are identified by a unique ID.

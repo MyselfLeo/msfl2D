@@ -13,15 +13,16 @@ namespace Msfl2D {
      * Base class for the shapes used in the physic engine.
      * Derived shapes must implement the `project` method, which is used for performing SAT
      * (Separating Axis Theorem) collision calculation.
+     *
+     * You cannot updated its position directly; use Body.move_shape() instead.
      */
     class Shape {
     public:
-        Vec2D position;
-
         virtual ~Shape() = 0;
 
-    protected:
+        const Vec2D& get_position() const;
 
+    protected:
         /**
          * Projects the shape onto the line
          * @param line the line to project onto
@@ -36,7 +37,11 @@ namespace Msfl2D {
          * @return true if inside, false if outside
          */
         virtual bool is_point_inside(const Vec2D& p) const = 0;
+
     private:
+        friend class Body;
+
+        Vec2D position;
     };
 
 } // Msfl2D
