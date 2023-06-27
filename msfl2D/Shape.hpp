@@ -23,6 +23,9 @@ namespace Msfl2D {
         const Vec2D& get_position() const;
 
     protected:
+        friend class Body;
+        Vec2D position;
+
         /**
          * Projects the shape onto the line
          * @param line the line to project onto
@@ -37,11 +40,6 @@ namespace Msfl2D {
          * @return true if inside, false if outside
          */
         virtual bool is_point_inside(const Vec2D& p) const = 0;
-
-    private:
-        friend class Body;
-
-        Vec2D position;
     };
 
 } // Msfl2D

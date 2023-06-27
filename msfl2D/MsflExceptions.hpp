@@ -14,9 +14,9 @@ namespace Msfl2D {
      */
     class GeometryException: public std::exception {
     private:
-        char* message;
+        const char* message;
     public:
-        explicit GeometryException(char * msg);
+        explicit GeometryException(const char * msg);
         [[nodiscard]] char* what() const noexcept override;
     };
 
@@ -26,9 +26,9 @@ namespace Msfl2D {
      */
     class SimulationException: public std::exception {
     private:
-        char* message;
+        const char* message;
     public:
-        explicit SimulationException(char * msg);
+        explicit SimulationException(const char * msg);
         [[nodiscard]] char* what() const noexcept override;
     };
 

@@ -6,10 +6,10 @@
 #include "MsflExceptions.hpp"
 
 namespace Msfl2D {
-    GeometryException::GeometryException(char *msg): message(msg) {}
-    char * GeometryException::what() const noexcept {return message;}
+    GeometryException::GeometryException(const char *msg): message(msg) {}
+    char * GeometryException::what() const noexcept {return const_cast<char *>(message);}
 
 
-    SimulationException::SimulationException(char *msg): message(msg) {}
-    char *SimulationException::what() const noexcept {return message;}
+    SimulationException::SimulationException(const char *msg): message(msg) {}
+    char *SimulationException::what() const noexcept {return const_cast<char *>(message);}
 } // Msfl2D
