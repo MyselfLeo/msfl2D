@@ -135,6 +135,10 @@ namespace Msfl2Demo {
         void draw_polygon_filled(const ConvexPolygon& polygon, const Color4& color = MAIN_COLOR);
 
 
+        // ImGui window creation methods
+        void create_camera_window();
+
+
         /**
          * Return the world-space position of the top-left and bottom-right corners of the screen.
          */

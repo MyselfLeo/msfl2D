@@ -180,9 +180,8 @@ namespace Msfl2Demo {
 
 
 
-        ImGui::Begin("hello", nullptr, IMGUI_WINDOW_FLAGS);
-        ImGui::Text("hello");
-        ImGui::End();
+        // Window drawing
+        create_camera_window();
 
 
         // frame rendering
@@ -373,5 +372,29 @@ namespace Msfl2Demo {
 
     std::tuple<Vec2D, Vec2D> WorldRenderer::get_screen_bounds() const {
         return {screen_to_world({0, 0}), screen_to_world(window_size - Vec2D(1,1))};
+    }
+
+
+    void WorldRenderer::create_camera_window() {
+        ImGui::Begin("Camera control", nullptr, IMGUI_WINDOW_FLAGS);
+
+        int cam_pos[2] = {static_cast<int>(camera_pos.x), static_cast<int>(camera_pos.y)};
+        ImGui::Text("Camera position");
+        ImGui::SameLine();
+        ImGui::PushItemWidth(75);
+        ImGui::InputInt2("##", cam_pos, ImGuiInputTextFlags_ReadOnly);
+        ImGui::SameLine();
+        if (ImGui::Button("Reset##camera")) {camera_pos = {0, 0};}
+
+
+        ImGui::Text("Zoom");
+        ImGui::SameLine();
+        ImGui::PushItemWidth(152);
+        ImGui::InputDouble("##", &camera_zoom_lvl, 0.0, 0.0, "%.2f", ImGuiInputTextFlags_ReadOnly);
+        ImGui::SameLine();
+        if (ImGui::Button("Reset##zoom")) {camera_zoom_lvl = 20;}
+
+
+        ImGui::End();
     }
 } // Msfl2Demo
