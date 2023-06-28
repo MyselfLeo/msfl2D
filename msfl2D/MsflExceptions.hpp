@@ -17,7 +17,7 @@ namespace Msfl2D {
         const char* message;
     public:
         explicit GeometryException(const char * msg);
-        [[nodiscard]] char* what() const noexcept override;
+        [[nodiscard]] const char* what() const noexcept override;
     };
 
 
@@ -29,7 +29,7 @@ namespace Msfl2D {
         const char* message;
     public:
         explicit SimulationException(const char * msg);
-        [[nodiscard]] char* what() const noexcept override;
+        [[nodiscard]] const char* what() const noexcept override;
     };
 
 } // Msfl2D

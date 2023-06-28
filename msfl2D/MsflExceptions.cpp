@@ -7,9 +7,9 @@
 
 namespace Msfl2D {
     GeometryException::GeometryException(const char *msg): message(msg) {}
-    char * GeometryException::what() const noexcept {return const_cast<char *>(message);}
+    const char * GeometryException::what() const noexcept {return message;}
 
 
     SimulationException::SimulationException(const char *msg): message(msg) {}
-    char *SimulationException::what() const noexcept {return const_cast<char *>(message);}
+    const char *SimulationException::what() const noexcept {return message;}
 } // Msfl2D

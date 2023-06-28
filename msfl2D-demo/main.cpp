@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
 
     // Create a square using ConvexPolygon's regular polygon constructor
     std::shared_ptr<Shape> square_shape;
-    square_shape.reset(new ConvexPolygon(4, 1, {0, 0}));
+    square_shape.reset(new ConvexPolygon(6, 1, {3, 5}));
 
     std::shared_ptr<Body> square_body = std::make_shared<Body>(Body());
     square_body->add_shape(square_shape);

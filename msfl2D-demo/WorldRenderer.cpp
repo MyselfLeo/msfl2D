@@ -121,13 +121,16 @@ namespace Msfl2Demo {
     void WorldRenderer::process_io() {
         const Uint8* keys_state = SDL_GetKeyboardState(nullptr);
 
-        if (keys_state[SDL_SCANCODE_UP]) {camera_pos.y += CAMERA_SPEED;}
-        if (keys_state[SDL_SCANCODE_DOWN]) {camera_pos.y -= CAMERA_SPEED;}
-        if (keys_state[SDL_SCANCODE_RIGHT]) {camera_pos.x += CAMERA_SPEED;}
-        if (keys_state[SDL_SCANCODE_LEFT]) {camera_pos.x -= CAMERA_SPEED;}
+        double rel_camera_speed = 10 * CAMERA_SPEED / camera_zoom_lvl;
+        if (keys_state[SDL_SCANCODE_UP]) {camera_pos.y += rel_camera_speed;}
+        if (keys_state[SDL_SCANCODE_DOWN]) {camera_pos.y -= rel_camera_speed;}
+        if (keys_state[SDL_SCANCODE_RIGHT]) {camera_pos.x += rel_camera_speed;}
+        if (keys_state[SDL_SCANCODE_LEFT]) {camera_pos.x -= rel_camera_speed;}
 
-        if (keys_state[SDL_SCANCODE_PAGEUP]) {camera_zoom_lvl += CAMERA_SPEED;}
-        if (keys_state[SDL_SCANCODE_PAGEDOWN]) {camera_zoom_lvl -= CAMERA_SPEED;}
+        if (keys_state[SDL_SCANCODE_PAGEUP]) {camera_zoom_lvl *= 1.02;}
+        if (keys_state[SDL_SCANCODE_PAGEDOWN]) {camera_zoom_lvl *= 0.98;}
+
+        if (camera_zoom_lvl < 1) {camera_zoom_lvl = 1;}
     }
 
 

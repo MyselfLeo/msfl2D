@@ -56,7 +56,7 @@ namespace Msfl2D {
         for (int i=0; i<vertex_nb; i++) {
             double rad = i * -2 * M_PI / vertex_nb;
             Vec2D dir_vec = {cos(rad), sin(rad)};
-            this->vertices.push_back(center + dir_vec * circumradius);
+            this->vertices.push_back(dir_vec * circumradius);
         }
     }
 
