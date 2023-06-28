@@ -6,6 +6,9 @@
 #include "MsflExceptions.hpp"
 
 #include <random>
+#include <climits>
+
+
 
 namespace Msfl2D {
     World::World() {
