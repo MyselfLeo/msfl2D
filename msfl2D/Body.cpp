@@ -38,6 +38,10 @@ namespace Msfl2D {
         return shapes[idx];
     }
 
+    const std::vector<std::shared_ptr<Shape>> &Body::get_shapes() const {
+        return shapes;
+    }
+
     void Body::move_shape(int idx, Vec2D pos) {
         if (idx > shapes.size() - 1) {throw GeometryException("Tried to update an inexistant shape");}
         shapes[idx]->position = pos;
@@ -55,8 +59,6 @@ namespace Msfl2D {
 
         position = pos;
     }
-
-
 
 
 } // Mslf2D

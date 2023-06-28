@@ -125,6 +125,9 @@ namespace Msfl2Demo {
         if (keys_state[SDL_SCANCODE_DOWN]) {camera_pos.y -= CAMERA_SPEED;}
         if (keys_state[SDL_SCANCODE_RIGHT]) {camera_pos.x += CAMERA_SPEED;}
         if (keys_state[SDL_SCANCODE_LEFT]) {camera_pos.x -= CAMERA_SPEED;}
+
+        if (keys_state[SDL_SCANCODE_PAGEUP]) {camera_zoom_lvl += CAMERA_SPEED;}
+        if (keys_state[SDL_SCANCODE_PAGEDOWN]) {camera_zoom_lvl -= CAMERA_SPEED;}
     }
 
 
@@ -148,6 +151,29 @@ namespace Msfl2Demo {
 
         // World drawing
         draw_background();
+
+        for (auto& b: world->get_bodies()) {
+            for (const auto& s: b.second->get_shapes()) {
+                // Filled render
+                if (s->is_point_inside(screen_to_world(get_mouse_pos()))) {
+                    // Choose the correct drawing method depending on the type of the shape
+                    auto as_convex = std::dynamic_pointer_cast<ConvexPolygon>(s);
+                    if (as_convex != nullptr) {draw_polygon_filled(*as_convex); continue;}
+                }
+
+                // Outline render
+                else {
+                    // Choose the correct drawing method depending on the type of the shape
+                    auto as_convex = std::dynamic_pointer_cast<ConvexPolygon>(s);
+                    if (as_convex != nullptr) {draw_polygon_outline(*as_convex); continue;}
+                }
+
+                // Unknown type so exit program
+                // (on drawing success, the loop should have continued by now)
+                std::cerr << "World contains an unknown/undrawable shape type" << std::endl;
+                exit(EXIT_FAILURE);
+            }
+        }
 
 
 
@@ -200,6 +226,12 @@ namespace Msfl2Demo {
         // Draw the 2 axis
         draw_line(Line::from_director_vector({0, 0}, {0, 1}), color);
         draw_line(Line::from_director_vector({0, 0}, {1, 0}), color);
+
+        // Draw points some points along the axis to get a grasp of the size
+        for (int i=1; i<4; i++) {
+            draw_point({0, static_cast<double>(i)}, 3, color);
+            draw_point({static_cast<double>(i), 0}, 3, color);
+        }
     }
 
     void WorldRenderer::draw_line(const Line &line, const Color4 &color) const {
@@ -259,9 +291,82 @@ namespace Msfl2Demo {
         }
     }
 
-    void WorldRenderer::draw_point(const Vec2D &point, const Color4 &color) {
+    void WorldRenderer::draw_point(const Vec2D &point, int size, const Color4 &color) const {
         set_color(color);
+
+        // odd size required to have symmetrical point
+        if (size % 2 == 0) {size += 1;}
+
+        Vec2D screen_coo = world_to_screen(point);
+
+        SDL_Rect r = {
+                static_cast<int>(screen_coo.x - ((size-1)/2)),
+                static_cast<int>(screen_coo.y - ((size-1)/2)),
+                size,
+                size
+        };
+
+        SDL_RenderFillRect(renderer, &r);
     }
+
+    void WorldRenderer::draw_polygon_outline(const ConvexPolygon &p, const Color4 &color) {
+        set_color(color);
+
+        for (int i=0; i<p.nb_vertices(); i++) {
+            Vec2D p1 = world_to_screen(p.get_const_vertex(i) + p.get_position());
+            Vec2D p2 = world_to_screen(p.get_const_vertex((i+1) % p.nb_vertices()) +  p.get_position());
+
+            SDL_RenderDrawLine(renderer, p1.x, p1.y, p2.x, p2.y);
+        }
+    }
+
+
+    void WorldRenderer::draw_polygon_filled(const ConvexPolygon &p, const Color4 &color) {
+        // This function uses SDL_RenderGeometry to draw the filled polygon.
+
+        set_color(color);
+
+        Vec2D p_center = world_to_screen(p.get_position());
+        SDL_Vertex center_vertex = {
+                static_cast<float>(p_center.x),
+                static_cast<float>(p_center.y),
+                (SDL_Color) color,
+                {1, 1}
+
+        };
+
+        // Convert from Msfl data to SDL data
+        // probably not the most efficient mesh, as for each vertex we created a triangle
+        // with the vertex, the center and the next vertex
+        SDL_Vertex sdl_vertices[p.nb_vertices()*3];
+
+        for (int i=0; i<p.nb_vertices(); i++) {
+            Vec2D current_v = world_to_screen(p.get_const_vertex(i) + p.get_position());
+            Vec2D next_v = world_to_screen(p.get_const_vertex((i+1) % p.nb_vertices()) + p.get_position());
+
+            sdl_vertices[i*3] = {
+                    static_cast<float>(current_v.x),
+                    static_cast<float>(current_v.y),
+                    (SDL_Color) color,
+                    {1, 1}
+            };
+
+            sdl_vertices[i*3 + 1] = center_vertex;
+
+            sdl_vertices[i*3 + 2] = {
+                    static_cast<float>(next_v.x),
+                    static_cast<float>(next_v.y),
+                    (SDL_Color) color,
+                    {1, 1}
+            };
+        }
+
+        // Draw the polygon
+        SDL_RenderGeometry(renderer, nullptr, sdl_vertices, p.nb_vertices()*3, nullptr, 0);
+
+    }
+
+
 
     std::tuple<Vec2D, Vec2D> WorldRenderer::get_screen_bounds() const {
         return {screen_to_world({0, 0}), screen_to_world(window_size - Vec2D(1,1))};

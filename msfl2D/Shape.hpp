@@ -18,20 +18,9 @@ namespace Msfl2D {
      */
     class Shape {
     public:
-        virtual ~Shape() = 0;
+        virtual ~Shape() = default;
 
         const Vec2D& get_position() const;
-
-    protected:
-        friend class Body;
-        Vec2D position;
-
-        /**
-         * Projects the shape onto the line
-         * @param line the line to project onto
-         * @return the segment formed by the projection.
-         */
-        virtual Segment project(const Line& line) const = 0;
 
         /**
          * Check if the given point is inside or outside the shape. This function should return true if the
@@ -40,6 +29,17 @@ namespace Msfl2D {
          * @return true if inside, false if outside
          */
         virtual bool is_point_inside(const Vec2D& p) const = 0;
+
+        /**
+         * Projects the shape onto the line
+         * @param line the line to project onto
+         * @return the segment formed by the projection.
+         */
+        virtual Segment project(const Line& line) const = 0;
+
+    protected:
+        friend class Body;
+        Vec2D position;
     };
 
 } // Msfl2D

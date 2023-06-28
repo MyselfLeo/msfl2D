@@ -11,6 +11,7 @@
 #include "msfl2D/World.hpp"
 
 #include "Color4.hpp"
+#include "msfl2D/ConvexPolygon.hpp"
 
 using namespace Msfl2D;
 
@@ -127,13 +128,17 @@ namespace Msfl2Demo {
         /** Draw a segment of a given line */
         void draw_segment(const Segment& segment, const Line& line, const Color4& color = COLOR_YELLOW) const;
         /** Draw a point */
-        void draw_point(const Vec2D& point, const Color4& color = COLOR_BLUE);
+        void draw_point(const Vec2D& point, int size = 3, const Color4& color = COLOR_BLUE) const;
+        /** Draw a ConvexPolygon outline */
+        void draw_polygon_outline(const ConvexPolygon& polygon, const Color4& color = MAIN_COLOR);
+        /** Draw a filled ConvexPolygon */
+        void draw_polygon_filled(const ConvexPolygon& polygon, const Color4& color = MAIN_COLOR);
 
 
         /**
          * Return the world-space position of the top-left and bottom-right corners of the screen.
          */
-        std::tuple<Vec2D, Vec2D> get_screen_bounds() const;
+        [[nodiscard]] std::tuple<Vec2D, Vec2D> get_screen_bounds() const;
     };
 
 } // Msfl2Demo

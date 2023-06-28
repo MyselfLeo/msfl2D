@@ -51,6 +51,11 @@ namespace Msfl2D {
         std::shared_ptr<Shape> get_shape(int idx);
 
         /**
+         * Return a const reference to the vector storing the shapes of this body.
+         */
+        const std::vector<std::shared_ptr<Shape>>& get_shapes() const;
+
+        /**
          * Update the position of one of the body's shape. Will update the body's "position" to match the
          * center of each shapes.
          * For 1-shape bodies, this is equivalent to move(pos).

@@ -31,9 +31,17 @@ void init_sdl() {
 
 int main(int argc, char *argv[]) {
     init_sdl();
-    
-    // Empty world; for now
+
+    // Create a square using ConvexPolygon's regular polygon constructor
+    std::shared_ptr<Shape> square_shape;
+    square_shape.reset(new ConvexPolygon(4, 1, {0, 0}));
+
+    std::shared_ptr<Body> square_body = std::make_shared<Body>(Body());
+    square_body->add_shape(square_shape);
+
     std::shared_ptr<World> world = std::make_shared<World>(World());
+    world->add_body(square_body);
+
     Msfl2Demo::WorldRenderer world_renderer = Msfl2Demo::WorldRenderer(world);
 
     world_renderer.init_window({1280, 720}, "Msfl2D Demo");

@@ -47,6 +47,21 @@ namespace Msfl2D {
 
 
 
+    ConvexPolygon::ConvexPolygon(unsigned int vertex_nb, double circumradius, Vec2D center) {
+        if (vertex_nb < 3) {throw GeometryException("Cannot create a ConvexPolygon with less than 3 vertices.");}
+        if (circumradius <= 0) {throw GeometryException("The circumradius of a ConvexPolygon must be > 0");}
+
+        this->position = center;
+
+        for (int i=0; i<vertex_nb; i++) {
+            double rad = i * -2 * M_PI / vertex_nb;
+            Vec2D dir_vec = {cos(rad), sin(rad)};
+            this->vertices.push_back(center + dir_vec * circumradius);
+        }
+    }
+
+
+
 
     Segment ConvexPolygon::project(const Line &line) const {
         double min = (vertices[0] + position).project(line); // add the center of the polygon to get the global position of each vertices
@@ -124,6 +139,11 @@ namespace Msfl2D {
     }
 
     Vec2D &ConvexPolygon::get_vertex(int idx) {
+        if (idx > vertices.size() - 1) {throw GeometryException("Tried to access an inexistant vertex");}
+        return vertices[idx];
+    }
+
+    const Vec2D &ConvexPolygon::get_const_vertex(int idx) const {
         if (idx > vertices.size() - 1) {throw GeometryException("Tried to access an inexistant vertex");}
         return vertices[idx];
     }

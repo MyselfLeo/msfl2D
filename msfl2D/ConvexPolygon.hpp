@@ -37,6 +37,12 @@ namespace Msfl2D {
          */
         explicit ConvexPolygon(const std::vector<Vec2D>& vertices);
 
+        /**
+         * Construct a **regular** ConvexPolygon with the given number of vertex, the distance between
+         * the center and the vertices (the circumradius) and the center position;
+         */
+         ConvexPolygon(unsigned int vertex_nb, double circumradius, Vec2D center);
+
         ~ConvexPolygon() override = default;
 
         Segment project(const Line &line) const override;
@@ -50,6 +56,14 @@ namespace Msfl2D {
          * @return a reference to the vertex
          */
         Vec2D& get_vertex(int idx);
+
+        /**
+         * Return a const reference to the polygon's vertex at the given index.
+         * If the index is too great, this method throws a GeometryException.
+         * @param idx index of the vertex to get
+         * @return a reference to the vertex
+         */
+        const Vec2D& get_const_vertex(int idx) const;
 
         /**
          * Return the number of vertices of this polygon.
