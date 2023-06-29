@@ -58,6 +58,12 @@ namespace Msfl2D {
         Vec2D& get_vertex(int idx);
 
         /**
+         * Return the global position of the given vertex, i.e with the shape's rotation and position taken into account.
+         * If the index is too great, this method throws a GeometryException.
+         */
+        Vec2D get_global_vertex(int idx) const;
+
+        /**
          * Return a const reference to the polygon's vertex at the given index.
          * If the index is too great, this method throws a GeometryException.
          * @param idx index of the vertex to get

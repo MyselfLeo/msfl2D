@@ -10,6 +10,8 @@
 namespace Msfl2D {
 
     ConvexPolygon::ConvexPolygon(const std::vector<Vec2D> &vertices, Vec2D zero) {
+        this->rotation = 0;
+
         // Add the given vertices to the shape, adding the zero coordinates to it (make it absolute).
         // At that point, the vertices coordinates are absolute; we'll make them relative to the center later
         // (we first need to compute it)
@@ -64,13 +66,13 @@ namespace Msfl2D {
 
 
     Segment ConvexPolygon::project(const Line &line) const {
-        double min = (vertices[0] + position).project(line); // add the center of the polygon to get the global position of each vertices
+        double min = (get_global_vertex(0)).project(line); // add the center of the polygon to get the global position of each vertices
         double max = min;
 
         // We project each vertex of the polygon. We keep the minimal and maximal point (the one closest to the line's
         // zero and the farest one)
-        for (auto& v: vertices) {
-            double proj = (v + position).project(line);
+        for (int i=0; i<nb_vertices(); i++) {
+            double proj = get_global_vertex(i).project(line);
             if (proj < min) {min = proj;}
             if (proj > max) {max = proj;}
         }
@@ -91,16 +93,16 @@ namespace Msfl2D {
     bool ConvexPolygon::is_point_inside(const Vec2D &p) const {
         // We check that the point is at the same side for each lines of the polygon.
         // Compute line for vertex 0 to vertex 1, so we have the side that should be the same for every other lines.
-        Vec2D p1 = vertices[0] + position;
-        Vec2D p2 = vertices[1] + position;
+        Vec2D p1 = get_global_vertex(0);
+        Vec2D p2 = get_global_vertex(1);
 
         LineSide expected_side = Line::side(p1, p2, p);
 
         // Now, we check that the point is at the same side for every other lines.
         for (int i=1; i<vertices.size(); i++) {
             // Compute points of the line
-            p1 = vertices[i] + position;
-            p2 = vertices[(i+1) % vertices.size()] + position;
+            p1 = get_global_vertex(i);
+            p2 = get_global_vertex((i+1) % vertices.size());
             LineSide side = Line::side(p1, p2, p);
             // Only exit if the point is outside of the polygon.
             // The Shape class expects that "is_point_inside" returns true if the point is on the shape.
@@ -141,6 +143,13 @@ namespace Msfl2D {
     Vec2D &ConvexPolygon::get_vertex(int idx) {
         if (idx > vertices.size() - 1) {throw GeometryException("Tried to access an inexistant vertex");}
         return vertices[idx];
+    }
+
+    Vec2D ConvexPolygon::get_global_vertex(int idx) const {
+        if (idx > vertices.size() - 1) {throw GeometryException("Tried to access an inexistant vertex");}
+        Vec2D res = vertices[idx].rotate(rotation); // apply rotation
+        return res + position;                            // apply position
+
     }
 
     const Vec2D &ConvexPolygon::get_const_vertex(int idx) const {

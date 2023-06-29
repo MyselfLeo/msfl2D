@@ -315,8 +315,8 @@ namespace Msfl2Demo {
         set_color(color);
 
         for (int i=0; i<p.nb_vertices(); i++) {
-            Vec2D p1 = world_to_screen(p.get_const_vertex(i) + p.get_position());
-            Vec2D p2 = world_to_screen(p.get_const_vertex((i+1) % p.nb_vertices()) +  p.get_position());
+            Vec2D p1 = world_to_screen(p.get_global_vertex(i));
+            Vec2D p2 = world_to_screen(p.get_global_vertex((i+1) % p.nb_vertices()));
 
             SDL_RenderDrawLine(renderer, p1.x, p1.y, p2.x, p2.y);
         }
@@ -343,8 +343,8 @@ namespace Msfl2Demo {
         SDL_Vertex sdl_vertices[p.nb_vertices()*3];
 
         for (int i=0; i<p.nb_vertices(); i++) {
-            Vec2D current_v = world_to_screen(p.get_const_vertex(i) + p.get_position());
-            Vec2D next_v = world_to_screen(p.get_const_vertex((i+1) % p.nb_vertices()) + p.get_position());
+            Vec2D current_v = world_to_screen(p.get_global_vertex(i));
+            Vec2D next_v = world_to_screen(p.get_global_vertex((i+1) % p.nb_vertices()));
 
             sdl_vertices[i*3] = {
                     static_cast<float>(current_v.x),

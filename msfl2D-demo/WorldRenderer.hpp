@@ -16,10 +16,6 @@
 using namespace Msfl2D;
 
 namespace Msfl2Demo {
-
-    /**
-     * Main class managing the rendering of a world to a window. It also manages I/O.
-     */
     class WorldRenderer {
     public:
         std::shared_ptr<World> world;

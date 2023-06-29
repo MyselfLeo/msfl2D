@@ -64,10 +64,28 @@ namespace Msfl2D {
         void move_shape(int idx, Vec2D pos);
 
         /**
+         * Update the rotation of one of the body's shape.
+         * For 1-shape bodies, this is equivalent to rotate(angle).
+         * @param idx the index of the shape to update. Throws GeometryException is the index does not exists.
+         */
+        void rotate_shape(int idx, double angle);
+
+        /**
          * Move the position of the body. Will move each shapes the same way.
          * For 1-shape bodies, this is equivalent to move_shape(0, pos).
          */
         void move(Vec2D pos);
+
+        /**
+         * Rotate the body around its center.
+         */
+        void rotate(double angle);
+
+        /**
+         * Rotate the body around a specified point (in global coordinates).
+         * Its position will also be modified.
+         */
+        void rotate(double angle, const Vec2D& center);
 
 
 

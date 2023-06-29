@@ -89,6 +89,22 @@ namespace Msfl2D {
         double project(const Line& line) const;
 
 
+        /**
+         * Return the rotated vector by the given angle counterclock-wise.
+         * @param angle the angle of rotation, in radians.
+         * @return The rotated vector.
+         */
+        Vec2D rotate(double angle) const;
+
+        /**
+         * Return the rotated vector around the given point by the given angle counterclock-wise.
+         * @param angle the angle of rotation, in radians.
+         * @param center the center of the rotation
+         * @return The rotated vector.
+         */
+        Vec2D rotate(double angle, const Vec2D& center) const;
+
+
         // Operator overloading for base types
         bool operator==(const Vec2D& other) const;
         bool operator!=(const Vec2D& other) const;

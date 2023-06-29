@@ -14,13 +14,14 @@ namespace Msfl2D {
      * Derived shapes must implement the `project` method, which is used for performing SAT
      * (Separating Axis Theorem) collision calculation.
      *
-     * You cannot updated its position directly; use Body.move_shape() instead.
+     * You cannot updated its position or rotation directly; use Body.move_shape() & Body.rotate_shape() instead.
      */
     class Shape {
     public:
         virtual ~Shape() = default;
 
         const Vec2D& get_position() const;
+        double get_rotation() const;
 
         /**
          * Check if the given point is inside or outside the shape. This function should return true if the
@@ -40,6 +41,7 @@ namespace Msfl2D {
     protected:
         friend class Body;
         Vec2D position;
+        double rotation; // in radians
     };
 
 } // Msfl2D

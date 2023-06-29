@@ -104,6 +104,16 @@ namespace Msfl2D {
         Vec2D point_vec_dir = *this - line.get_origin();
         return Vec2D::dot(point_vec_dir, line_vec_dir) / Vec2D::dot(line_vec_dir, line_vec_dir);
     }
+
+    Vec2D Vec2D::rotate(double angle) const {
+        return {x * cos(angle) - y * sin(angle), x * sin(angle) + y * cos(angle)};
+    }
+
+    Vec2D Vec2D::rotate(double angle, const Vec2D &center) const {
+        Vec2D res = *this - center;
+        res = res.rotate(angle);
+        return res + center;
+    }
 } // Msfl2D
 
 

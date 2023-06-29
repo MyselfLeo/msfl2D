@@ -8,4 +8,6 @@ namespace Msfl2D {
     const Vec2D &Shape::get_position() const {
         return position;
     }
+
+    double Shape::get_rotation() const {return rotation;}
 } // Msfl2D

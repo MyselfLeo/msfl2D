@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
     square_body->add_shape(square_shape);
 
     std::shared_ptr<World> world = std::make_shared<World>(World());
-    world->add_body(square_body);
+    BodyID to_rotate = world->add_body(square_body);
 
     Msfl2Demo::WorldRenderer world_renderer = Msfl2Demo::WorldRenderer(world);
 
@@ -57,6 +57,9 @@ int main(int argc, char *argv[]) {
         }
 
         world_renderer.process_io();
+
+        world->get_body(to_rotate)->rotate(0.01, {0, 0});
+        world->get_body(to_rotate)->rotate(-0.01);
 
         world_renderer.render();
     }

@@ -6,6 +6,7 @@
 #include "MsflExceptions.hpp"
 
 #include <memory>
+#include <cmath>
 
 namespace Msfl2D {
     Body& Body::add_shape(const std::shared_ptr<Shape>& shape) {
@@ -58,6 +59,33 @@ namespace Msfl2D {
         }
 
         position = pos;
+    }
+
+    void Body::rotate_shape(int idx, double angle) {
+        if (idx > shapes.size() - 1) {throw GeometryException("Tried to update an inexistant shape");}
+        shapes[idx]->rotation = angle;
+    }
+
+
+    void Body::rotate(double angle) {
+        rotate(angle, position);
+    }
+
+
+    void Body::rotate(double angle, const Vec2D &center) {
+        for (auto& s: shapes) {
+            s->rotation += angle;                                        // rotate the vertices of the shapes around the shape centers
+
+            // prevent overflow of rotation value
+            if (s->rotation > (M_PI * 2)) {s->rotation -= M_PI * 2;}
+            if (s->rotation < (M_PI * -2)) {s->rotation += M_PI * 2;}
+
+            std::cout << s->rotation << std::endl;
+
+
+            s->position = s->position.rotate(angle, center); // rotate the center of the shapes around the specified point
+        }
+        update_center();
     }
 
 
