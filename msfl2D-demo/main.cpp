@@ -59,7 +59,7 @@ int main(int argc, char *argv[]) {
         world_renderer.process_io();
 
         world->get_body(to_rotate)->rotate(0.01, {0, 0});
-        world->get_body(to_rotate)->rotate(-0.01);
+        world->get_body(to_rotate)->rotate(-0.02);
 
         world_renderer.render();
     }
