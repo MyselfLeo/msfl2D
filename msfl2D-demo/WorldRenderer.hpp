@@ -63,7 +63,7 @@ namespace Msfl2Demo {
         static int NB_CREATED;
 
         // SDL flags
-        static const int WINDOW_FLAGS = SDL_WINDOW_ALLOW_HIGHDPI;
+        static const int WINDOW_FLAGS = SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_OPENGL;
         static const int RENDERER_FLAGS = SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED;
 
         // ImGui flags
