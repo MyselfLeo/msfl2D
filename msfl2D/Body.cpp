@@ -63,6 +63,11 @@ namespace Msfl2D {
 
     void Body::rotate_shape(int idx, double angle) {
         if (idx > shapes.size() - 1) {throw GeometryException("Tried to update an inexistant shape");}
+
+        // prevent overflow of rotation value
+        if (angle > (M_PI * 2)) {angle -= M_PI * 2;}
+        if (angle < (M_PI * -2)) {angle += M_PI * 2;}
+
         shapes[idx]->rotation = angle;
     }
 

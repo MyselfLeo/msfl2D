@@ -32,15 +32,18 @@ void init_sdl() {
 int main(int argc, char *argv[]) {
     init_sdl();
 
-    // Create a square using ConvexPolygon's regular polygon constructor
-    std::shared_ptr<Shape> square_shape;
-    square_shape.reset(new ConvexPolygon(3, 1, {3, 5}));
+    std::shared_ptr<Shape> triangle_1;
+    triangle_1.reset(new ConvexPolygon(3, 1, {5, 7}));
 
-    std::shared_ptr<Body> square_body = std::make_shared<Body>(Body());
-    square_body->add_shape(square_shape);
+    std::shared_ptr<Shape> triangle_2;
+    triangle_2.reset(new ConvexPolygon(3, 1, {-1, -3}));
+
+    std::shared_ptr<Body> body = std::make_shared<Body>(Body());
+    body->add_shape(triangle_1)
+         .add_shape(triangle_2);
 
     std::shared_ptr<World> world = std::make_shared<World>(World());
-    BodyID to_rotate = world->add_body(square_body);
+    BodyID to_rotate = world->add_body(body);
 
     Msfl2Demo::WorldRenderer world_renderer = Msfl2Demo::WorldRenderer(world);
 
@@ -58,8 +61,10 @@ int main(int argc, char *argv[]) {
 
         world_renderer.process_io();
 
-        world->get_body(to_rotate)->rotate(0.01, {0, 0});
-        world->get_body(to_rotate)->rotate(-0.02);
+        body->rotate(0.01, {0, 0});
+        body->rotate(-0.02);
+        body->rotate_shape(1, body->get_shape(1)->get_rotation() + 0.04);
+        body->rotate_shape(0, body->get_shape(0)->get_rotation() - 0.06);
 
         world_renderer.render();
     }

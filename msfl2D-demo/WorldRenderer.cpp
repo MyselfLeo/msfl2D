@@ -15,7 +15,7 @@ namespace Msfl2Demo {
     const Color4 WorldRenderer::MAIN_COLOR = {255, 255, 255};
     const Color4 WorldRenderer::COLOR_RED = {255, 0, 0};
     const Color4 WorldRenderer::COLOR_GREEN = {0, 255, 0};
-    const Color4 WorldRenderer::COLOR_BLUE = {0, 0, 255};
+    const Color4 WorldRenderer::COLOR_BLUE = {3, 123, 252};
     const Color4 WorldRenderer::COLOR_YELLOW = {255, 255, 0};
 
 
@@ -156,32 +156,14 @@ namespace Msfl2Demo {
         draw_background();
 
         for (auto& b: world->get_bodies()) {
-            for (const auto& s: b.second->get_shapes()) {
-                // Filled render
-                if (s->is_point_inside(screen_to_world(get_mouse_pos()))) {
-                    // Choose the correct drawing method depending on the type of the shape
-                    auto as_convex = std::dynamic_pointer_cast<ConvexPolygon>(s);
-                    if (as_convex != nullptr) {draw_polygon_filled(*as_convex); continue;}
-                }
-
-                // Outline render
-                else {
-                    // Choose the correct drawing method depending on the type of the shape
-                    auto as_convex = std::dynamic_pointer_cast<ConvexPolygon>(s);
-                    if (as_convex != nullptr) {draw_polygon_outline(*as_convex); continue;}
-                }
-
-                // Unknown type so exit program
-                // (on drawing success, the loop should have continued by now)
-                std::cerr << "World contains an unknown/undrawable shape type" << std::endl;
-                exit(EXIT_FAILURE);
-            }
+            draw_body(b.second);
         }
 
 
 
         // Window drawing
         create_camera_window();
+        create_debug_tools_window();
 
 
         // frame rendering
@@ -311,7 +293,47 @@ namespace Msfl2Demo {
         SDL_RenderFillRect(renderer, &r);
     }
 
-    void WorldRenderer::draw_polygon_outline(const ConvexPolygon &p, const Color4 &color) {
+
+    void WorldRenderer::draw_body(const std::shared_ptr<Body>& body, const Color4 &color) const {
+        if (debug_centers) { draw_point(body->position, 3, COLOR_GREEN);}
+
+        // Every shape of the body are filled when one is hovered
+        bool hovered = false;
+        Vec2D mouse_pos = screen_to_world(get_mouse_pos());
+        for (auto& s: body->get_shapes()) {
+            if (s->is_point_inside(mouse_pos)) {
+                hovered = true;
+                break;
+            }
+        }
+
+        for (auto& s: body->get_shapes()) {
+            // Choose the correct drawing method based on the shape and if it is filled or not
+            if (hovered) {
+                auto as_convex = std::dynamic_pointer_cast<ConvexPolygon>(s);
+                if (as_convex != nullptr) {
+                    draw_polygon_filled(*as_convex, color);
+                    if (debug_centers) {draw_point(as_convex->get_position());}
+                    continue;
+                }
+            }
+            else {
+                auto as_convex = std::dynamic_pointer_cast<ConvexPolygon>(s);
+                if (as_convex != nullptr) {
+                    draw_polygon_outline(*as_convex, color);
+                    if (debug_centers) {draw_point(as_convex->get_position());}
+                    continue;
+                }
+            }
+            // Unknown type so exit program
+            // (on drawing success, the loop should have continued by now)
+            std::cerr << "World contains an unknown/undrawable shape type" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+    }
+
+
+    void WorldRenderer::draw_polygon_outline(const ConvexPolygon &p, const Color4 &color) const {
         set_color(color);
 
         for (int i=0; i<p.nb_vertices(); i++) {
@@ -323,9 +345,8 @@ namespace Msfl2Demo {
     }
 
 
-    void WorldRenderer::draw_polygon_filled(const ConvexPolygon &p, const Color4 &color) {
+    void WorldRenderer::draw_polygon_filled(const ConvexPolygon &p, const Color4 &color) const {
         // This function uses SDL_RenderGeometry to draw the filled polygon.
-
         set_color(color);
 
         Vec2D p_center = world_to_screen(p.get_position());
@@ -394,6 +415,13 @@ namespace Msfl2Demo {
         ImGui::SameLine();
         if (ImGui::Button("Reset##zoom")) {camera_zoom_lvl = 20;}
 
+
+        ImGui::End();
+    }
+
+    void WorldRenderer::create_debug_tools_window() {
+        ImGui::Begin("Debug tools", nullptr, IMGUI_WINDOW_FLAGS);
+        ImGui::Checkbox("Show shape & body centers", &debug_centers);
 
         ImGui::End();
     }
