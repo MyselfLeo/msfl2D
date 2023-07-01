@@ -2,8 +2,8 @@
 // Created by myselfleo on 27/06/2023.
 //
 
-#ifndef MSFL2D_WORLDRENDERER_HPP
-#define MSFL2D_WORLDRENDERER_HPP
+#ifndef MSFL2D_INTERFACE_HPP
+#define MSFL2D_INTERFACE_HPP
 
 #include <memory>
 
@@ -16,20 +16,20 @@
 using namespace Msfl2D;
 
 namespace Msfl2Demo {
-    class WorldRenderer {
+    class Interface {
     public:
         std::shared_ptr<World> world;
 
         /**
-         * Create a new WorldRenderer. The renderer will not be creating a window yet. For that,
+         * Create a new Interface. The renderer will not be creating a window yet. For that,
          * call init_window().
          */
-        explicit WorldRenderer(std::shared_ptr<World> world);
+        explicit Interface(std::shared_ptr<World> world);
 
         /**
          * Destroy SDL and ImGui context by calling reset(), then destroy the object.
          */
-        ~WorldRenderer();
+        ~Interface();
 
         /**
          * Open a window for this renderer.
@@ -37,7 +37,7 @@ namespace Msfl2Demo {
         void init_window(const Vec2D& size, const std::string& name);
 
         /**
-         * Reset the WorldRenderer. The world is kept but all SDL and ImGui context is cleared.
+         * Reset the Interface. The world is kept but all SDL and ImGui context is cleared.
          * Call this function to clean before calling, for example, SDL_Quit().
          */
         void reset();
@@ -57,6 +57,11 @@ namespace Msfl2Demo {
          * Check for non-event IO (prolonged key press for example).
          */
         void process_io();
+
+        /**
+         * Update the world
+         */
+        void update();
 
 
 
@@ -105,6 +110,10 @@ namespace Msfl2Demo {
         std::string window_name;
         Vec2D window_size;
 
+        // Used to manage grabbing and moving bodies.
+        std::shared_ptr<Body> selected_body;
+        Vec2D selection_pixel_offset = {0, 0};
+
         /**
          * World-space of the center of the camera (i.e center of the screen).
          * Changing this value will translate the whole world.
@@ -141,6 +150,18 @@ namespace Msfl2Demo {
         // ImGui window creation methods
         void create_camera_window();
         void create_debug_tools_window();
+        void create_world_info_window();
+
+
+        // Methods used to update the World.
+        /**
+         * Manage grabbing & dropping bodies.
+         */
+        void update_grabbing();
+
+
+
+        [[nodiscard]] bool is_body_hovered(const std::shared_ptr<Body>& body) const;
 
 
         /**
@@ -151,4 +172,4 @@ namespace Msfl2Demo {
 
 } // Msfl2Demo
 
-#endif //MSFL2D_WORLDRENDERER_HPP
+#endif //MSFL2D_INTERFACE_HPP

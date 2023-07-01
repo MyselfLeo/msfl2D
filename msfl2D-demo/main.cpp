@@ -7,7 +7,7 @@
 
 #include "imgui.h"
 #include "msfl2D/World.hpp"
-#include "WorldRenderer.hpp"
+#include "Interface.hpp"
 
 using namespace Msfl2D;
 
@@ -43,10 +43,11 @@ int main(int argc, char *argv[]) {
          .add_shape(triangle_2);
 
     std::shared_ptr<World> world = std::make_shared<World>(World());
+    world->add_body(body);
 
-    Msfl2Demo::WorldRenderer world_renderer = Msfl2Demo::WorldRenderer(world);
+    Msfl2Demo::Interface interface = Msfl2Demo::Interface(world);
 
-    world_renderer.init_window({1280, 720}, "Msfl2D Demo");
+    interface.init_window({1280, 720}, "Msfl2D Demo");
 
     // Main loop
     bool stop = false;
@@ -54,22 +55,23 @@ int main(int argc, char *argv[]) {
         // Process I/O events
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
-            world_renderer.process(&event);
+            interface.process(&event);
             if (event.type == SDL_QUIT) {stop = true;} // end condition
         }
 
-        world_renderer.process_io();
+        interface.process_io();
+        interface.update();
 
         body->rotate(0.01, {0, 0});
-        body->rotate(-0.01);
+        body->rotate(-0.03);
         body->rotate_shape(1, body->get_shape(1)->get_rotation() + 0.04);
         body->rotate_shape(0, body->get_shape(0)->get_rotation() - 0.06);
 
-        world_renderer.render();
+        interface.render();
     }
 
-    // Most of the cleanup is done by the WorldRenderer via reset()
-    world_renderer.reset();
+    // Most of the cleanup is done by the Interface via reset()
+    interface.reset();
     SDL_Quit();
     return EXIT_SUCCESS;
 }

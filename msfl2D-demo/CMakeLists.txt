@@ -12,7 +12,7 @@ add_executable(
     msfl2D-demo
 
     main.cpp
-        WorldRenderer.cpp WorldRenderer.hpp Color4.cpp Color4.hpp)
+        Interface.cpp Interface.hpp Color4.cpp Color4.hpp)
 
 target_link_libraries(msfl2D-demo msfl2D imgui ${SDL2_STATIC_LIBRARIES})
 

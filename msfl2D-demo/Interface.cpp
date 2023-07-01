@@ -2,7 +2,7 @@
 // Created by myselfleo on 27/06/2023.
 //
 
-#include "WorldRenderer.hpp"
+#include "Interface.hpp"
 #include "imgui_impl_sdl2.h"
 #include "imgui_impl_sdlrenderer2.h"
 
@@ -10,21 +10,21 @@
 
 namespace Msfl2Demo {
 
-    const Color4 WorldRenderer::BACKGROUND_COLOR = {0, 0, 0};
-    const Color4 WorldRenderer::BACKGROUND_INFO_COLOR = {50, 50, 50};
-    const Color4 WorldRenderer::MAIN_COLOR = {255, 255, 255};
-    const Color4 WorldRenderer::COLOR_RED = {255, 0, 0};
-    const Color4 WorldRenderer::COLOR_GREEN = {0, 255, 0};
-    const Color4 WorldRenderer::COLOR_BLUE = {3, 123, 252};
-    const Color4 WorldRenderer::COLOR_YELLOW = {255, 255, 0};
+    const Color4 Interface::BACKGROUND_COLOR = {0, 0, 0};
+    const Color4 Interface::BACKGROUND_INFO_COLOR = {50, 50, 50};
+    const Color4 Interface::MAIN_COLOR = {255, 255, 255};
+    const Color4 Interface::COLOR_RED = {255, 0, 0};
+    const Color4 Interface::COLOR_GREEN = {0, 255, 0};
+    const Color4 Interface::COLOR_BLUE = {3, 123, 252};
+    const Color4 Interface::COLOR_YELLOW = {255, 255, 0};
 
 
-    int WorldRenderer::NB_CREATED = 0;
+    int Interface::NB_CREATED = 0;
 
-    WorldRenderer::WorldRenderer(std::shared_ptr<Msfl2D::World> world): world(std::move(world)) {
-        // Only one WorldRenderer can exist at a time; we check that.
+    Interface::Interface(std::shared_ptr<Msfl2D::World> world): world(std::move(world)) {
+        // Only one Interface can exist at a time; we check that.
         if (NB_CREATED > 0) {
-            std::cerr << "Tried to create a WorldRenderer while one still exists" << std::endl;
+            std::cerr << "Tried to create a Interface while one still exists" << std::endl;
             exit(EXIT_FAILURE);
         }
 
@@ -36,12 +36,12 @@ namespace Msfl2Demo {
         camera_pos = Msfl2D::Vec2D(0, 0);
     }
 
-    WorldRenderer::~WorldRenderer() {
+    Interface::~Interface() {
         if (renderer != nullptr || window != nullptr) {reset();}
         NB_CREATED -= 1;
     }
 
-    void WorldRenderer::init_window(const Msfl2D::Vec2D &size, const std::string &name) {
+    void Interface::init_window(const Msfl2D::Vec2D &size, const std::string &name) {
         if (window != nullptr || renderer != nullptr) {
             std::cerr << "Cannot instantiate 2 window for one renderer" << std::endl;
             exit(EXIT_FAILURE);
@@ -89,7 +89,7 @@ namespace Msfl2Demo {
     }
 
 
-    void WorldRenderer::reset() {
+    void Interface::reset() {
         ImGui_ImplSDLRenderer2_Shutdown();
         ImGui_ImplSDL2_Shutdown();
         ImGui::DestroyContext();
@@ -105,7 +105,7 @@ namespace Msfl2Demo {
 
 
 
-    void WorldRenderer::process(const SDL_Event *event) {
+    void Interface::process(const SDL_Event *event) {
         // ImGui has priority over the rest of the program on the events.
         // events treated by ImGui are discarded, so we return early.
         ImGuiIO &io = ImGui::GetIO();
@@ -113,12 +113,33 @@ namespace Msfl2Demo {
         if (io.WantCaptureMouse) {return;}
 
         // Now we can process the event as it was not consumed by ImGui.
+        switch (event->type) {
+            case SDL_MOUSEBUTTONDOWN: {
+                if (selected_body == nullptr) {
+                    // Find if a body is hovered. If so, grab it.
+                    for (auto& b: world->get_bodies()) {
+                        if (is_body_hovered(b.second)) {
+                            std::cout << "grabbed body " << b.first << std::endl;
+                            selected_body = b.second;
+                            selection_pixel_offset = world_to_screen(b.second->position) - get_mouse_pos();
+                            break;
+                        }
+                    }
+                }
+            } break;
 
+            case SDL_MOUSEBUTTONUP: {
+                if (selected_body != nullptr) {
+                    std::cout << "dropped body" << std::endl;
+                    selected_body = nullptr;
+                }
+            } break;
+        }
     }
 
 
 
-    void WorldRenderer::process_io() {
+    void Interface::process_io() {
         const Uint8* keys_state = SDL_GetKeyboardState(nullptr);
 
         double rel_camera_speed = 10 * CAMERA_SPEED / camera_zoom_lvl;
@@ -135,9 +156,9 @@ namespace Msfl2Demo {
 
 
 
-    void WorldRenderer::render() {
+    void Interface::render() {
         if (renderer == nullptr) {
-            std::cerr << "Called render on an uninitialised WorldRenderer" << std::endl;
+            std::cerr << "Called render on an uninitialised Interface" << std::endl;
             exit(EXIT_FAILURE);
         }
 
@@ -164,6 +185,7 @@ namespace Msfl2Demo {
         // Window drawing
         create_camera_window();
         create_debug_tools_window();
+        create_world_info_window();
 
 
         // frame rendering
@@ -173,9 +195,9 @@ namespace Msfl2Demo {
     }
 
 
-    void WorldRenderer::set_color(Color4 color) const {
+    void Interface::set_color(Color4 color) const {
         if (renderer == nullptr) {
-            std::cerr << "Called set_color on an uninitialised WorldRenderer" << std::endl;
+            std::cerr << "Called set_color on an uninitialised Interface" << std::endl;
             exit(EXIT_FAILURE);
         }
         SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
@@ -183,7 +205,8 @@ namespace Msfl2Demo {
 
 
 
-    Msfl2D::Vec2D WorldRenderer::world_to_screen(const Msfl2D::Vec2D &coo) const {
+
+    Msfl2D::Vec2D Interface::world_to_screen(const Msfl2D::Vec2D &coo) const {
         Msfl2D::Vec2D res = coo - camera_pos;
         res *= camera_zoom_lvl;
         res.y *= -1;               // screen y is top to bottom while we want bottom to top.
@@ -191,7 +214,7 @@ namespace Msfl2Demo {
         return res;
     }
 
-    Msfl2D::Vec2D WorldRenderer::screen_to_world(const Msfl2D::Vec2D &coo) const {
+    Msfl2D::Vec2D Interface::screen_to_world(const Msfl2D::Vec2D &coo) const {
         Msfl2D::Vec2D res = coo - Msfl2D::Vec2D(window_size.x, window_size.y) / 2;
         res.y *= -1;               // See world_to_screen()
         res /= camera_zoom_lvl;
@@ -200,13 +223,13 @@ namespace Msfl2Demo {
     }
 
 
-    Msfl2D::Vec2D WorldRenderer::get_mouse_pos() {
+    Msfl2D::Vec2D Interface::get_mouse_pos() {
         int x, y;
         SDL_GetMouseState(&x, &y);
         return {x * 1.0, y * 1.0};
     }
 
-    void WorldRenderer::draw_background(const Color4 &color) const {
+    void Interface::draw_background(const Color4 &color) const {
         // Draw the 2 axis
         draw_line(Line::from_director_vector({0, 0}, {0, 1}), color);
         draw_line(Line::from_director_vector({0, 0}, {1, 0}), color);
@@ -218,7 +241,7 @@ namespace Msfl2Demo {
         }
     }
 
-    void WorldRenderer::draw_line(const Line &line, const Color4 &color) const {
+    void Interface::draw_line(const Line &line, const Color4 &color) const {
         set_color(color);
 
         // End points of the line to draw on the screen
@@ -259,7 +282,7 @@ namespace Msfl2Demo {
         SDL_RenderDrawLine(renderer, p1.x, p1.y, p2.x, p2.y);
     }
 
-    void WorldRenderer::draw_segment(const Segment &segment, const Line &line, const Color4 &color) const {
+    void Interface::draw_segment(const Segment &segment, const Line &line, const Color4 &color) const {
         set_color(color);
 
         std::tuple<Vec2D, Vec2D> points = segment.coordinates(line);
@@ -275,7 +298,7 @@ namespace Msfl2Demo {
         }
     }
 
-    void WorldRenderer::draw_point(const Vec2D &point, int size, const Color4 &color) const {
+    void Interface::draw_point(const Vec2D &point, int size, const Color4 &color) const {
         set_color(color);
 
         // odd size required to have symmetrical point
@@ -294,21 +317,12 @@ namespace Msfl2Demo {
     }
 
 
-    void WorldRenderer::draw_body(const std::shared_ptr<Body>& body, const Color4 &color) const {
+    void Interface::draw_body(const std::shared_ptr<Body>& body, const Color4 &color) const {
         if (debug_centers) { draw_point(body->position, 3, COLOR_GREEN);}
 
-        // Every shape of the body are filled when one is hovered
-        bool hovered = false;
-        Vec2D mouse_pos = screen_to_world(get_mouse_pos());
+        bool hovered = is_body_hovered(body);
         for (auto& s: body->get_shapes()) {
-            if (s->is_point_inside(mouse_pos)) {
-                hovered = true;
-                break;
-            }
-        }
-
-        for (auto& s: body->get_shapes()) {
-            // Choose the correct drawing method based on the shape and if it is filled or not
+            // Choose the correct drawing method based on the shape and if it is hovered or not
             if (hovered) {
                 auto as_convex = std::dynamic_pointer_cast<ConvexPolygon>(s);
                 if (as_convex != nullptr) {
@@ -333,7 +347,7 @@ namespace Msfl2Demo {
     }
 
 
-    void WorldRenderer::draw_polygon_outline(const ConvexPolygon &p, const Color4 &color) const {
+    void Interface::draw_polygon_outline(const ConvexPolygon &p, const Color4 &color) const {
         set_color(color);
 
         for (int i=0; i<p.nb_vertices(); i++) {
@@ -345,7 +359,7 @@ namespace Msfl2Demo {
     }
 
 
-    void WorldRenderer::draw_polygon_filled(const ConvexPolygon &p, const Color4 &color) const {
+    void Interface::draw_polygon_filled(const ConvexPolygon &p, const Color4 &color) const {
         // This function uses SDL_RenderGeometry to draw the filled polygon.
         set_color(color);
 
@@ -391,12 +405,12 @@ namespace Msfl2Demo {
 
 
 
-    std::tuple<Vec2D, Vec2D> WorldRenderer::get_screen_bounds() const {
+    std::tuple<Vec2D, Vec2D> Interface::get_screen_bounds() const {
         return {screen_to_world({0, 0}), screen_to_world(window_size - Vec2D(1,1))};
     }
 
 
-    void WorldRenderer::create_camera_window() {
+    void Interface::create_camera_window() {
         ImGui::Begin("Camera control", nullptr, IMGUI_WINDOW_FLAGS);
 
         int cam_pos[2] = {static_cast<int>(camera_pos.x), static_cast<int>(camera_pos.y)};
@@ -419,10 +433,46 @@ namespace Msfl2Demo {
         ImGui::End();
     }
 
-    void WorldRenderer::create_debug_tools_window() {
+    void Interface::create_debug_tools_window() {
         ImGui::Begin("Debug tools", nullptr, IMGUI_WINDOW_FLAGS);
         ImGui::Checkbox("Show shape & body centers", &debug_centers);
 
         ImGui::End();
+    }
+
+
+
+
+
+    void Interface::update() {
+        update_grabbing();
+    }
+
+
+
+    void Interface::update_grabbing() {
+        if (selected_body != nullptr) {
+            selected_body->move(screen_to_world(get_mouse_pos() + selection_pixel_offset));
+        }
+    }
+
+    bool Interface::is_body_hovered(const std::shared_ptr<Body>& body) const {
+        bool hovered = false;
+        Vec2D mouse_pos = screen_to_world(get_mouse_pos());
+        for (auto& s: body->get_shapes()) {
+            if (s->is_point_inside(mouse_pos)) {
+                hovered = true;
+                break;
+            }
+        }
+
+        return hovered;
+    }
+
+    void Interface::create_world_info_window() {
+        ImGui::Begin("World informations", nullptr, IMGUI_WINDOW_FLAGS);
+        ImGui::Text("Body count: %d", world->nb_bodies());
+        ImGui::End();
+
     }
 } // Msfl2Demo

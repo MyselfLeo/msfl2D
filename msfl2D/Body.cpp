@@ -85,8 +85,6 @@ namespace Msfl2D {
             if (s->rotation > (M_PI * 2)) {s->rotation -= M_PI * 2;}
             if (s->rotation < (M_PI * -2)) {s->rotation += M_PI * 2;}
 
-            std::cout << s->rotation << std::endl;
-
 
             s->position = s->position.rotate(angle, center); // rotate the center of the shapes around the specified point
         }
