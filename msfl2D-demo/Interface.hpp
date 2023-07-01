@@ -20,6 +20,16 @@ namespace Msfl2Demo {
     public:
         std::shared_ptr<World> world;
 
+        // Default color for rendering
+        static const Color4 BACKGROUND_COLOR;
+        static const Color4 BACKGROUND_INFO_COLOR;
+        static const Color4 SHAPE_OUTLINE_COLOR;
+        static const Color4 SHAPE_AREA_COLOR;
+        static const Color4 COLOR_RED;
+        static const Color4 COLOR_GREEN;
+        static const Color4 COLOR_BLUE;
+        static const Color4 COLOR_YELLOW;
+
         /**
          * Create a new Interface. The renderer will not be creating a window yet. For that,
          * call init_window().
@@ -45,8 +55,16 @@ namespace Msfl2Demo {
         /**
          * Render a new frame to the screen, cleaning the last one in the process.
          * The ImGui elements are updated here.
+         * @param update Whether or not to update the screen at the end of this function. Set it to false
+         *   if you want to draw something to the screen after calling this function. Be sure to call "update_screen"
+         *   afterward!
          */
-        void render();
+        void render(bool update = true);
+
+        /**
+         * Update manually the screen. To be used only after a call to render() with update = false.
+         */
+        void update_screen();
 
         /**
          * Process the given SDL event
@@ -94,16 +112,6 @@ namespace Msfl2Demo {
         static const int IMGUI_WINDOW_FLAGS = ImGuiWindowFlags_AlwaysAutoResize;
 
         static constexpr double CAMERA_SPEED = 0.5;
-
-        // Default color for rendering
-        static const Color4 BACKGROUND_COLOR;
-        static const Color4 BACKGROUND_INFO_COLOR;
-        static const Color4 SHAPE_OUTLINE_COLOR;
-        static const Color4 SHAPE_AREA_COLOR;
-        static const Color4 COLOR_RED;
-        static const Color4 COLOR_GREEN;
-        static const Color4 COLOR_BLUE;
-        static const Color4 COLOR_YELLOW;
 
         SDL_Window * window;
         SDL_Renderer * renderer;

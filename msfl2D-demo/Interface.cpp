@@ -158,7 +158,7 @@ namespace Msfl2Demo {
 
 
 
-    void Interface::render() {
+    void Interface::render(bool update) {
         if (renderer == nullptr) {
             std::cerr << "Called render on an uninitialised Interface" << std::endl;
             exit(EXIT_FAILURE);
@@ -191,6 +191,10 @@ namespace Msfl2Demo {
 
 
         // frame rendering
+        if (update) {update_screen();}
+    }
+
+    void Interface::update_screen() {
         ImGui::Render();
         ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData());
         SDL_RenderPresent(renderer);
@@ -450,6 +454,8 @@ namespace Msfl2Demo {
 
     void Interface::update() {
         update_grabbing();
+
+
     }
 
 

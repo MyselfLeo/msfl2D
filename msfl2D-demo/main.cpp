@@ -8,6 +8,7 @@
 #include "imgui.h"
 #include "msfl2D/World.hpp"
 #include "Interface.hpp"
+#include "msfl2D/CollisionDetector.hpp"
 
 using namespace Msfl2D;
 
@@ -32,10 +33,10 @@ void init_sdl() {
 int main(int argc, char *argv[]) {
     init_sdl();
 
-    std::shared_ptr<Shape> shape_1;
+    std::shared_ptr<ConvexPolygon> shape_1;
     shape_1.reset(new ConvexPolygon(3, 1, {5, 7}));
 
-    std::shared_ptr<Shape> shape_2;
+    std::shared_ptr<ConvexPolygon> shape_2;
     shape_2.reset(new ConvexPolygon(5, 2, {-1, -3}));
 
     std::shared_ptr<Body> body_1 = std::make_shared<Body>(Body());
@@ -65,7 +66,15 @@ int main(int argc, char *argv[]) {
         interface.process_io();
         interface.update();
 
-        interface.render();
+        interface.render(false);
+
+        SATResult result = CollisionDetector::sat(shape_1, shape_2);
+        if (result.collide) {
+            Line line = Line::from_director_vector({0, 0}, result.minimum_penetration_vector);
+            interface.draw_line(line, Msfl2Demo::Interface::COLOR_YELLOW);
+        }
+
+        interface.update_screen();
     }
 
     // Most of the cleanup is done by the Interface via reset()

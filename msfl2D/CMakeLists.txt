@@ -9,4 +9,4 @@ add_library(
         ConvexPolygon.cpp ConvexPolygon.hpp
         World.cpp World.hpp
         MsflExceptions.cpp MsflExceptions.hpp
-        Body.cpp Body.hpp)
+        Body.cpp Body.hpp CollisionDetector.cpp CollisionDetector.hpp)

@@ -48,6 +48,12 @@ namespace Msfl2D {
         std::tuple<Vec2D, Vec2D> coordinates(const Line& line) const;
 
 
+        /**
+         * Return the length of the segment
+         */
+        double length() const;
+
+
         // Allow printing the segment data to the command-line
         friend std::ostream& operator<<(std::ostream& os, const Segment& seg);
     };

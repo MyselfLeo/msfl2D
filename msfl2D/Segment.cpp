@@ -59,4 +59,8 @@ namespace Msfl2D {
         os << "[" << seg.min << ", " << seg.max << "]";
         return os;
     }
+
+    double Segment::length() const {
+        return max - min;
+    }
 }
