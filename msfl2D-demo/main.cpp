@@ -32,18 +32,21 @@ void init_sdl() {
 int main(int argc, char *argv[]) {
     init_sdl();
 
-    std::shared_ptr<Shape> triangle_1;
-    triangle_1.reset(new ConvexPolygon(3, 1, {5, 7}));
+    std::shared_ptr<Shape> shape_1;
+    shape_1.reset(new ConvexPolygon(3, 1, {5, 7}));
 
-    std::shared_ptr<Shape> triangle_2;
-    triangle_2.reset(new ConvexPolygon(3, 1, {-1, -3}));
+    std::shared_ptr<Shape> shape_2;
+    shape_2.reset(new ConvexPolygon(5, 2, {-1, -3}));
 
-    std::shared_ptr<Body> body = std::make_shared<Body>(Body());
-    body->add_shape(triangle_1)
-         .add_shape(triangle_2);
+    std::shared_ptr<Body> body_1 = std::make_shared<Body>(Body());
+    body_1->add_shape(shape_1);
+
+    std::shared_ptr<Body> body_2 = std::make_shared<Body>(Body());
+    body_2->add_shape(shape_2);
 
     std::shared_ptr<World> world = std::make_shared<World>(World());
-    world->add_body(body);
+    world->add_body(body_1);
+    world->add_body(body_2);
 
     Msfl2Demo::Interface interface = Msfl2Demo::Interface(world);
 
@@ -61,11 +64,6 @@ int main(int argc, char *argv[]) {
 
         interface.process_io();
         interface.update();
-
-        body->rotate(0.01, {0, 0});
-        body->rotate(-0.03);
-        body->rotate_shape(1, body->get_shape(1)->get_rotation() + 0.04);
-        body->rotate_shape(0, body->get_shape(0)->get_rotation() - 0.06);
 
         interface.render();
     }

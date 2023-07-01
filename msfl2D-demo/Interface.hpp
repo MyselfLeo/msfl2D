@@ -67,19 +67,19 @@ namespace Msfl2Demo {
 
 
         // Drawing methods
-        void draw_body(const std::shared_ptr<Body>& body, const Color4& color = MAIN_COLOR) const;
+        void draw_body(const std::shared_ptr<Body>& body) const;
         /** Draw background info (axis, etc.) */
         void draw_background(const Color4& color = BACKGROUND_INFO_COLOR) const;
         /** Draw a line */
-        void draw_line(const Line& line, const Color4& color = MAIN_COLOR) const;
+        void draw_line(const Line& line, const Color4& color = SHAPE_OUTLINE_COLOR) const;
         /** Draw a segment of a given line */
         void draw_segment(const Segment& segment, const Line& line, const Color4& color = COLOR_YELLOW) const;
         /** Draw a point */
         void draw_point(const Vec2D& point, int size = 3, const Color4& color = COLOR_BLUE) const;
         /** Draw a ConvexPolygon outline */
-        void draw_polygon_outline(const ConvexPolygon& polygon, const Color4& color = MAIN_COLOR) const;
+        void draw_polygon_outline(const ConvexPolygon& polygon, const Color4& color = SHAPE_OUTLINE_COLOR) const;
         /** Draw a filled ConvexPolygon */
-        void draw_polygon_filled(const ConvexPolygon& polygon, const Color4& color = MAIN_COLOR) const;
+        void draw_polygon_filled(const ConvexPolygon& polygon, const Color4& color = SHAPE_AREA_COLOR) const;
 
 
     private:
@@ -98,7 +98,8 @@ namespace Msfl2Demo {
         // Default color for rendering
         static const Color4 BACKGROUND_COLOR;
         static const Color4 BACKGROUND_INFO_COLOR;
-        static const Color4 MAIN_COLOR;
+        static const Color4 SHAPE_OUTLINE_COLOR;
+        static const Color4 SHAPE_AREA_COLOR;
         static const Color4 COLOR_RED;
         static const Color4 COLOR_GREEN;
         static const Color4 COLOR_BLUE;

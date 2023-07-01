@@ -12,7 +12,8 @@ namespace Msfl2Demo {
 
     const Color4 Interface::BACKGROUND_COLOR = {0, 0, 0};
     const Color4 Interface::BACKGROUND_INFO_COLOR = {50, 50, 50};
-    const Color4 Interface::MAIN_COLOR = {255, 255, 255};
+    const Color4 Interface::SHAPE_OUTLINE_COLOR = {255, 255, 255};
+    const Color4 Interface::SHAPE_AREA_COLOR = {255, 255, 255, 155};
     const Color4 Interface::COLOR_RED = {255, 0, 0};
     const Color4 Interface::COLOR_GREEN = {0, 255, 0};
     const Color4 Interface::COLOR_BLUE = {3, 123, 252};
@@ -78,6 +79,7 @@ namespace Msfl2Demo {
             std::cerr << "SDL Error: " << SDL_GetError() << std::endl;
             exit(EXIT_FAILURE);
         }
+        SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
         // Initialise ImGui and the SDL_Renderer backend
         IMGUI_CHECKVERSION();
@@ -317,7 +319,7 @@ namespace Msfl2Demo {
     }
 
 
-    void Interface::draw_body(const std::shared_ptr<Body>& body, const Color4 &color) const {
+    void Interface::draw_body(const std::shared_ptr<Body>& body) const {
         if (debug_centers) { draw_point(body->position, 3, COLOR_GREEN);}
 
         bool hovered = is_body_hovered(body);
@@ -326,7 +328,7 @@ namespace Msfl2Demo {
             if (hovered) {
                 auto as_convex = std::dynamic_pointer_cast<ConvexPolygon>(s);
                 if (as_convex != nullptr) {
-                    draw_polygon_filled(*as_convex, color);
+                    draw_polygon_filled(*as_convex);
                     if (debug_centers) {draw_point(as_convex->get_position());}
                     continue;
                 }
@@ -334,7 +336,7 @@ namespace Msfl2Demo {
             else {
                 auto as_convex = std::dynamic_pointer_cast<ConvexPolygon>(s);
                 if (as_convex != nullptr) {
-                    draw_polygon_outline(*as_convex, color);
+                    draw_polygon_outline(*as_convex);
                     if (debug_centers) {draw_point(as_convex->get_position());}
                     continue;
                 }
@@ -360,6 +362,8 @@ namespace Msfl2Demo {
 
 
     void Interface::draw_polygon_filled(const ConvexPolygon &p, const Color4 &color) const {
+        draw_polygon_outline(p);
+
         // This function uses SDL_RenderGeometry to draw the filled polygon.
         set_color(color);
 
