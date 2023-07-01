@@ -43,7 +43,6 @@ int main(int argc, char *argv[]) {
          .add_shape(triangle_2);
 
     std::shared_ptr<World> world = std::make_shared<World>(World());
-    BodyID to_rotate = world->add_body(body);
 
     Msfl2Demo::WorldRenderer world_renderer = Msfl2Demo::WorldRenderer(world);
 
@@ -62,7 +61,7 @@ int main(int argc, char *argv[]) {
         world_renderer.process_io();
 
         body->rotate(0.01, {0, 0});
-        body->rotate(-0.02);
+        body->rotate(-0.01);
         body->rotate_shape(1, body->get_shape(1)->get_rotation() + 0.04);
         body->rotate_shape(0, body->get_shape(0)->get_rotation() - 0.06);
 
