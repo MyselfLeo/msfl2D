@@ -96,6 +96,12 @@ namespace Msfl2D {
          */
         Vec2D get_coo_grad(double g) const;
 
+        /**
+         * Return the intersection point between two lines.
+         * Throw GeometryException if the two lines are collinear.
+         */
+        static Vec2D intersection(const Line& l1, const Line& l2);
+
         // std::cout operators
         friend std::ostream& operator<<(std::ostream& os, const Line& l);
 

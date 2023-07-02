@@ -2,6 +2,7 @@
 // Created by myselfleo on 14/06/23.
 //
 
+#include <cmath>
 #include "Line.hpp"
 #include "MsflExceptions.hpp"
 
@@ -69,5 +70,19 @@ namespace Msfl2D {
     std::ostream &operator<<(std::ostream &os, const Line &l) {
         os << l.p1 << " -> " << l.p2;
         return os;
+    }
+
+    Vec2D Line::intersection(const Line &l1, const Line &l2) {
+        Vec2D vec_1 = l1.get_vec();
+        Vec2D vec_2 = l2.get_vec();
+        Vec2D p1 = l1.get_origin();
+        Vec2D p2 = l2.get_origin();
+
+        // collinear lines never intersect
+        if (Vec2D::collinear(vec_1, vec_2)) {throw GeometryException("Collinear lines cannot intersect.");}
+
+        // from https://www.av8n.com/physics/points-lines.htm#sec-derivation
+        Vec2D n2 = vec_2.rotate(M_PI/2);
+        return p1 + vec_1 * Vec2D::dot((p2 - p1), n2) / (Vec2D::dot(n2, vec_1));
     }
 } // Msfl2D

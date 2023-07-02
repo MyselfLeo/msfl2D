@@ -11,6 +11,7 @@
 #include "msfl2D/CollisionDetector.hpp"
 
 using namespace Msfl2D;
+using namespace Msfl2Demo;
 
 /**
  * Print the last SDL error to the error output and exit the program with EXIT_FAILURE as its exit code.
@@ -49,7 +50,7 @@ int main(int argc, char *argv[]) {
     world->add_body(body_1);
     world->add_body(body_2);
 
-    Msfl2Demo::Interface interface = Msfl2Demo::Interface(world);
+    Interface interface = Interface(world);
 
     interface.init_window({1280, 720}, "Msfl2D Demo");
 
@@ -71,8 +72,21 @@ int main(int argc, char *argv[]) {
         SATResult result = CollisionDetector::sat(shape_1, shape_2);
         if (result.collide) {
             Line line = Line::from_director_vector({0, 0}, result.minimum_penetration_vector);
-            interface.draw_line(line, Msfl2Demo::Interface::COLOR_YELLOW);
+            interface.draw_line(line, Interface::COLOR_YELLOW);
         }
+
+        /**
+        Vec2D dir_vec_1 = {0, 1};
+        Vec2D dir_vec_2 = {cos(ImGui::GetTime()), sin(ImGui::GetTime())};
+
+        Line line1 = Line::from_director_vector({0, 1}, dir_vec_1);
+        Line line2 = Line::from_director_vector({3, 2}, dir_vec_2);
+        interface.draw_line(line1, Interface::COLOR_GREEN);
+        interface.draw_line(line2, Interface::COLOR_GREEN);
+
+        if (!Vec2D::collinear(dir_vec_1, dir_vec_2))
+        interface.draw_point(Line::intersection(line1, line2), 10, Interface::COLOR_YELLOW);
+        */
 
         interface.update_screen();
     }

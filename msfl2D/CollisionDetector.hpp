@@ -16,11 +16,14 @@ namespace Msfl2D {
      * @param collide Whether or not the tested shapes collide or not. If `false`, the next values must be ignored.
      * @param minimum_penetration_vector The vector (from shape1 to shape2) where the penetration is minimal
      * @param depth the penetration distance between the 2 shapes, along the minimum_penetration_vector
+     * @param collision_point the global position where the collision force should be applied. It's either the only
+     * penetrating point of the penetrating shape, or the average of the multiple penetrating points.
      */
     struct SATResult {
         bool collide;
         Vec2D minimum_penetration_vector;
         double depth;
+        Vec2D collision_point;
 
         SATResult(bool collide, Vec2D pen_vec, double depth);
 

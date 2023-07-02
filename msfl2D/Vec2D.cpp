@@ -114,6 +114,10 @@ namespace Msfl2D {
         res = res.rotate(angle);
         return res + center;
     }
+
+    bool Vec2D::collinear(const Vec2D &v1, const Vec2D &v2) {
+        return cross(v1, v2) == 0;
+    }
 } // Msfl2D
 
 

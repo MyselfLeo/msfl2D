@@ -104,6 +104,9 @@ namespace Msfl2D {
          */
         Vec2D rotate(double angle, const Vec2D& center) const;
 
+        /** Return whether the 2 Vec2D are collinear or not. */
+        static bool collinear(const Vec2D& v1, const Vec2D& v2);
+
 
         // Operator overloading for base types
         bool operator==(const Vec2D& other) const;
