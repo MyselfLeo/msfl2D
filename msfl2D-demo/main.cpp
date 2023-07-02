@@ -34,21 +34,31 @@ void init_sdl() {
 int main(int argc, char *argv[]) {
     init_sdl();
 
-    std::shared_ptr<ConvexPolygon> shape_1;
-    shape_1.reset(new ConvexPolygon(3, 1, {5, 7}));
-
-    std::shared_ptr<ConvexPolygon> shape_2;
-    shape_2.reset(new ConvexPolygon(5, 2, {-1, -3}));
-
+    std::shared_ptr<ConvexPolygon> shape_1 = std::make_shared<ConvexPolygon>(ConvexPolygon(3, 1, {5, 7}));
     std::shared_ptr<Body> body_1 = std::make_shared<Body>(Body());
     body_1->add_shape(shape_1);
 
+    std::shared_ptr<ConvexPolygon> shape_2 = std::make_shared<ConvexPolygon>(ConvexPolygon(5, 2, {-1, -3}));
     std::shared_ptr<Body> body_2 = std::make_shared<Body>(Body());
     body_2->add_shape(shape_2);
+
+    std::shared_ptr<ConvexPolygon> shape_3 = std::make_shared<ConvexPolygon>(ConvexPolygon(4, 1, {-3, -5}));
+    std::shared_ptr<Body> body_3 = std::make_shared<Body>(Body());
+    body_3->add_shape(shape_3);
+    body_3->rotate(M_PI / 4);
+
+    std::shared_ptr<ConvexPolygon> shape_4 = std::make_shared<ConvexPolygon>(ConvexPolygon(4, 2, {-3, -10}));
+    std::shared_ptr<Body> body_4 = std::make_shared<Body>(Body());
+    body_4->add_shape(shape_4);
+    body_4->rotate(M_PI / 4);
+
+
 
     std::shared_ptr<World> world = std::make_shared<World>(World());
     world->add_body(body_1);
     world->add_body(body_2);
+    world->add_body(body_3);
+    world->add_body(body_4);
 
     Interface interface = Interface(world);
 
@@ -70,6 +80,12 @@ int main(int argc, char *argv[]) {
         interface.render(false);
 
         SATResult result = CollisionDetector::sat(shape_1, shape_2);
+        if (result.collide) {
+            Line line = Line::from_director_vector({0, 0}, result.minimum_penetration_vector);
+            interface.draw_line(line, Interface::COLOR_GREEN);
+        }
+
+        result = CollisionDetector::sat(shape_3, shape_4);
         if (result.collide) {
             Line line = Line::from_director_vector({0, 0}, result.minimum_penetration_vector);
             interface.draw_line(line, Interface::COLOR_YELLOW);

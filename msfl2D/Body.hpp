@@ -78,6 +78,7 @@ namespace Msfl2D {
 
         /**
          * Rotate the body around its center.
+         * @param angle in radians
          */
         void rotate(double angle);
 

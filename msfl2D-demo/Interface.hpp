@@ -134,7 +134,7 @@ namespace Msfl2Demo {
          * In example, a value of 10 will mean that a distance of 1 unit in the world-space will be
          * 10 pixels wide in the screen-space.
          */
-        double camera_zoom_lvl = 20;
+        double camera_zoom_lvl = 50;
 
 
         // Flags to display specific debug infos
