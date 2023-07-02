@@ -136,6 +136,11 @@ namespace Msfl2Demo {
                     selected_body = nullptr;
                 }
             } break;
+
+            case SDL_MOUSEWHEEL: {
+                camera_zoom_lvl *= pow(1.10, event->wheel.y);
+                if (camera_zoom_lvl < 1) {camera_zoom_lvl = 1;}
+            } break;
         }
     }
 
@@ -145,10 +150,10 @@ namespace Msfl2Demo {
         const Uint8* keys_state = SDL_GetKeyboardState(nullptr);
 
         double rel_camera_speed = 10 * CAMERA_SPEED / camera_zoom_lvl;
-        if (keys_state[SDL_SCANCODE_UP]) {camera_pos.y += rel_camera_speed;}
-        if (keys_state[SDL_SCANCODE_DOWN]) {camera_pos.y -= rel_camera_speed;}
-        if (keys_state[SDL_SCANCODE_RIGHT]) {camera_pos.x += rel_camera_speed;}
-        if (keys_state[SDL_SCANCODE_LEFT]) {camera_pos.x -= rel_camera_speed;}
+        if (keys_state[SDL_SCANCODE_UP] || keys_state[SDL_SCANCODE_W]) {camera_pos.y += rel_camera_speed;}
+        if (keys_state[SDL_SCANCODE_DOWN] || keys_state[SDL_SCANCODE_S]) {camera_pos.y -= rel_camera_speed;}
+        if (keys_state[SDL_SCANCODE_RIGHT] || keys_state[SDL_SCANCODE_D]) {camera_pos.x += rel_camera_speed;}
+        if (keys_state[SDL_SCANCODE_LEFT] || keys_state[SDL_SCANCODE_A]) {camera_pos.x -= rel_camera_speed;}
 
         if (keys_state[SDL_SCANCODE_PAGEUP]) {camera_zoom_lvl *= 1.02;}
         if (keys_state[SDL_SCANCODE_PAGEDOWN]) {camera_zoom_lvl *= 0.98;}

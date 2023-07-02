@@ -111,7 +111,7 @@ namespace Msfl2Demo {
         // ImGui flags
         static const int IMGUI_WINDOW_FLAGS = ImGuiWindowFlags_AlwaysAutoResize;
 
-        static constexpr double CAMERA_SPEED = 0.5;
+        static constexpr double CAMERA_SPEED = 0.75;
 
         SDL_Window * window;
         SDL_Renderer * renderer;
