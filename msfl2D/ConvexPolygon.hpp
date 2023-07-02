@@ -45,7 +45,7 @@ namespace Msfl2D {
 
         ~ConvexPolygon() override = default;
 
-        Segment project(const Line &line) const override;
+        LineSegment project(const Line &line) const override;
 
         bool is_point_inside(const Vec2D& p) const override;
 

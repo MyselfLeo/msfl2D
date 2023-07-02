@@ -5,8 +5,8 @@
 #ifndef MSFL2D_SHAPE_HPP
 #define MSFL2D_SHAPE_HPP
 
-#include "Segment.hpp"
 #include "Line.hpp"
+#include "LineSegment.hpp"
 
 namespace Msfl2D {
     /**
@@ -36,7 +36,7 @@ namespace Msfl2D {
          * @param line the line to project onto
          * @return the segment formed by the projection.
          */
-        virtual Segment project(const Line& line) const = 0;
+        virtual LineSegment project(const Line& line) const = 0;
 
     protected:
         friend class Body;

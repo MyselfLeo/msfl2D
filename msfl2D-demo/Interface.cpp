@@ -293,10 +293,10 @@ namespace Msfl2Demo {
         SDL_RenderDrawLine(renderer, p1.x, p1.y, p2.x, p2.y);
     }
 
-    void Interface::draw_segment(const Segment &segment, const Line &line, const Color4 &color) const {
+    void Interface::draw_segment(const LineSegment& segment, const Color4 &color) const {
         set_color(color);
 
-        std::tuple<Vec2D, Vec2D> points = segment.coordinates(line);
+        std::tuple<Vec2D, Vec2D> points = segment.coordinates();
         // convert world coordinates to screen coordinates
         Vec2D p1 = world_to_screen(std::get<0>(points));
         Vec2D p2 = world_to_screen(std::get<1>(points));

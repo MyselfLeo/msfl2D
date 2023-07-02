@@ -13,7 +13,7 @@
 namespace Msfl2D {
 
     /**
-     * A segment of a line.
+     * A segment of a line. This class is line-agnostic. See LineSegment for a line-aware Segment.
      */
     class Segment {
     public:
@@ -34,18 +34,13 @@ namespace Msfl2D {
 
         /**
          * Check if two segments are intersecting (i.e. they share a portion of the line).
+         * Of course, this function only make sense if both segments are on the same line.
          * @param s1 One of the 2 segments to check
          * @param S2 One of the 2 segments to check
          * @return this portion or an empty Segment (min = 0, max = 0) if not colliding.
          */
         static Segment intersection(const Segment& s1, const Segment& s2);
 
-
-        /**
-         * Return the coordinates of the end points of the segment in the context of the given line.
-         * @param line The line on which the segment lies.
-         */
-        std::tuple<Vec2D, Vec2D> coordinates(const Line& line) const;
 
 
         /**

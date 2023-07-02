@@ -102,6 +102,17 @@ namespace Msfl2D {
          */
         static Vec2D intersection(const Line& l1, const Line& l2);
 
+        /**
+         * Return whether the given point is on the line or not.
+         */
+        bool has(const Vec2D& p) const;
+
+        /**
+         * Return whether the 2 lines are overlapping (i.e they are the same
+         * in geometrical terms, but are represented by different values).
+         */
+        static bool overlap(const Line& l1, const Line& l2);
+
         // std::cout operators
         friend std::ostream& operator<<(std::ostream& os, const Line& l);
 

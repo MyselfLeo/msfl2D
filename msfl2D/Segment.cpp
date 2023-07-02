@@ -44,15 +44,6 @@ namespace Msfl2D {
     }
 
 
-    std::tuple<Vec2D, Vec2D> Segment::coordinates(const Line& line) const {
-        Vec2D origin = line.get_origin();
-        Vec2D dir_vec = line.get_vec();
-        return {
-            origin + dir_vec * min,
-            origin + dir_vec * max
-        };
-    }
-
 
 
     std::ostream &operator<<(std::ostream &os, const Segment& seg) {

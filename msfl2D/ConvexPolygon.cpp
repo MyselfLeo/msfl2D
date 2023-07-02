@@ -65,7 +65,7 @@ namespace Msfl2D {
 
 
 
-    Segment ConvexPolygon::project(const Line &line) const {
+    LineSegment ConvexPolygon::project(const Line &line) const {
         double min = (get_global_vertex(0)).project(line); // add the center of the polygon to get the global position of each vertices
         double max = min;
 
@@ -77,7 +77,7 @@ namespace Msfl2D {
             if (proj > max) {max = proj;}
         }
 
-        return {min, max};
+        return {{min, max}, line};
     }
 
 

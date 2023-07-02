@@ -32,7 +32,7 @@ namespace Msfl2D {
     }
 
     double Line::find_y(double x) const {
-        if (p1.x == p2.x) {throw GeometryException("Infinite number of solutions for y = ? in a vertical line.");}
+        if (is_vertical()) {throw GeometryException("Infinite number of solutions for y = ? in a vertical line.");}
         return get_slope() * x + get_zero();
     }
 
@@ -84,5 +84,18 @@ namespace Msfl2D {
         // from https://www.av8n.com/physics/points-lines.htm#sec-derivation
         Vec2D n2 = vec_2.rotate(M_PI/2);
         return p1 + vec_1 * Vec2D::dot((p2 - p1), n2) / (Vec2D::dot(n2, vec_1));
+    }
+
+    bool Line::overlap(const Line &l1, const Line &l2) {
+        // If the 2 lines are not collinear, return false
+        if (!Vec2D::collinear(l1.get_vec(), l2.get_vec())) {return false;}
+
+        // the origin of l2 must be on l1. We could do the inverse too.
+        return l1.has(l2.get_origin());
+    }
+
+    bool Line::has(const Vec2D &p) const {
+        if (is_vertical()) {return find_x(p.y) == p.x;}
+        else {return find_y(p.x) == p.y;}
     }
 } // Msfl2D

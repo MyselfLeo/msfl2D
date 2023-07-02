@@ -90,8 +90,8 @@ namespace Msfl2Demo {
         void draw_background(const Color4& color = BACKGROUND_INFO_COLOR) const;
         /** Draw a line */
         void draw_line(const Line& line, const Color4& color = SHAPE_OUTLINE_COLOR) const;
-        /** Draw a segment of a given line */
-        void draw_segment(const Segment& segment, const Line& line, const Color4& color = COLOR_YELLOW) const;
+        /** Draw a LineSegment */
+        void draw_segment(const LineSegment& segment, const Color4& color = COLOR_YELLOW) const;
         /** Draw a point */
         void draw_point(const Vec2D& point, int size = 3, const Color4& color = COLOR_BLUE) const;
         /** Draw a ConvexPolygon outline */

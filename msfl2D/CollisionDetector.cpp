@@ -37,10 +37,10 @@ namespace Msfl2D {
 
             // Project the shapes onto a line with this orientation (passing through the origin because i said so)
             Line proj_line = Line::from_director_vector({0, 0}, proj_axis);
-            Segment proj_shape_1 = shape1->project(proj_line);
-            Segment proj_shape_2 = shape2->project(proj_line);
+            LineSegment proj_shape_1 = shape1->project(proj_line);
+            LineSegment proj_shape_2 = shape2->project(proj_line);
 
-            Segment penetration = Segment::intersection(proj_shape_1, proj_shape_2);
+            LineSegment penetration = LineSegment::intersection(proj_shape_1, proj_shape_2);
 
             // No intersection => we found a separating axis
             if (penetration.length() == 0) {
@@ -61,10 +61,10 @@ namespace Msfl2D {
 
             // Project the shapes onto a line with this orientation (passing through the origin because i said so)
             Line proj_line = Line::from_director_vector({0, 0}, proj_axis);
-            Segment proj_shape_1 = shape1->project(proj_line);
-            Segment proj_shape_2 = shape2->project(proj_line);
+            LineSegment proj_shape_1 = shape1->project(proj_line);
+            LineSegment proj_shape_2 = shape2->project(proj_line);
 
-            Segment penetration = Segment::intersection(proj_shape_1, proj_shape_2);
+            LineSegment penetration = LineSegment::intersection(proj_shape_1, proj_shape_2);
 
             // No intersection => we found a separating axis
             if (penetration.length() == 0) {
