@@ -10,6 +10,9 @@
 
 namespace Msfl2D {
 
+
+    const int MAX_COLLISION_POINTS = 10;
+
     /**
      * Results of an SAT (Separated Axis Theorem) collision test.
      * @param collide Whether or not the tested shapes collide or not. If `false`, the following values must be ignored.
@@ -25,9 +28,10 @@ namespace Msfl2D {
         Vec2D minimum_penetration_vector;
         double depth;
         int nb_collision_points;
-        Vec2D collision_point[2];
+        Vec2D collision_point[MAX_COLLISION_POINTS];
+        LineSegment reference_side;
 
-        SATResult(bool collide, Vec2D pen_vec, double depth, int nb_col_points, Vec2D col_points[2]);
+        SATResult(bool collide, Vec2D pen_vec, double depth, int nb_col_points, Vec2D col_points[2], LineSegment ref_side);
 
         /** Return a "no collision" SATResult */
         static SATResult no_collision();

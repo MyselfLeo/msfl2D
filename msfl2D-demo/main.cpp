@@ -87,6 +87,20 @@ int main(int argc, char *argv[]) {
             for (int i=0; i<result.nb_collision_points; i++) {
                 interface.draw_point(result.collision_point[i], 3, Interface::COLOR_RED);
             }
+
+            interface.draw_segment(result.reference_side);
+
+            std::tuple<Vec2D, Vec2D> end_points = result.reference_side.coordinates();
+            std::cout << std::get<0>(end_points) << "  " << std::get<1>(end_points) << std::endl;
+            interface.draw_line(Line::from_director_vector(
+                    std::get<0>(end_points),
+                    result.minimum_penetration_vector
+                    ));
+
+            interface.draw_line(Line::from_director_vector(
+                    std::get<1>(end_points),
+                    result.minimum_penetration_vector
+                    ));
         }
 
         result = CollisionDetector::sat(shape_3, shape_4);
@@ -97,7 +111,22 @@ int main(int argc, char *argv[]) {
             for (int i=0; i<result.nb_collision_points; i++) {
                 interface.draw_point(result.collision_point[i], 3, Interface::COLOR_RED);
             }
+
+            interface.draw_segment(result.reference_side);
+
+            std::tuple<Vec2D, Vec2D> end_points = result.reference_side.coordinates();
+            std::cout << std::get<0>(end_points) << "  " << std::get<1>(end_points) << std::endl;
+            interface.draw_line(Line::from_director_vector(
+                    std::get<0>(end_points),
+                    result.minimum_penetration_vector
+                    ));
+
+            interface.draw_line(Line::from_director_vector(
+                    std::get<1>(end_points),
+                    result.minimum_penetration_vector
+                    ));
         }
+
 
         /**
         Vec2D dir_vec_1 = {0, 1};

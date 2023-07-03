@@ -98,4 +98,19 @@ namespace Msfl2D {
         if (is_vertical()) {return find_x(p.y) == p.x;}
         else {return find_y(p.x) == p.y;}
     }
+
+    double Line::get_grad_coo(const Vec2D &p) const {
+        // we need to find n such as v1 = v2.n
+        // where v2 is the dir vec of the line (normalised, so its length is 1 graduation)
+        // & v1 is the vector from the line origin to the given point.
+        Vec2D v1 = p - get_origin();
+        Vec2D v2 = get_vec();
+
+        // If ratio_x != ratio_y, the given point is not on the line.
+        double ratio_x = v1.x / v2.x;
+        double ratio_y = v1.y / v2.y;
+
+        if (ratio_x != ratio_y) {throw GeometryException("The point given to get_grad_coo() is not on the line.");}
+        return ratio_x;
+    }
 } // Msfl2D

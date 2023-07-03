@@ -8,17 +8,19 @@
 namespace Msfl2D {
 
     SATResult SATResult::no_collision() {
-        return {false, Msfl2D::Vec2D(), 0, 0, nullptr}; // pen_vec and depth values are not important
+        return {false, Msfl2D::Vec2D(), 0, 0, nullptr, {}}; // pen_vec and depth values are not important
     }
 
-    SATResult::SATResult(bool collide, Vec2D pen_vec, double depth, int nb_col_points, Vec2D col_points[2]):
+    SATResult::SATResult(bool collide, Vec2D pen_vec, double depth, int nb_col_points, Vec2D col_points[MAX_COLLISION_POINTS], LineSegment ref_side):
         collide(collide),
         minimum_penetration_vector(pen_vec),
         depth(depth),
-        nb_collision_points(nb_col_points) {
+        nb_collision_points(nb_col_points),
+        reference_side(ref_side) {
         if (col_points != nullptr) {
-            collision_point[0] = col_points[0];
-            col_points[1] = col_points[1];
+            for (int i=0; i<MAX_COLLISION_POINTS; i++) {
+                collision_point[i] = col_points[i];
+            }
         }
     }
 
@@ -144,17 +146,21 @@ namespace Msfl2D {
         //    - The ones that are INSIDE the reference shape.
 
         int nb_points = 0;
-        Vec2D col_points[2];
+        Vec2D col_points[MAX_COLLISION_POINTS];
 
         for (auto& p: points) {
-            if (nb_points == 2) {break;}
+            if (nb_points == MAX_COLLISION_POINTS) {break;}
             //if (p.distance(reference_side.line) != depth) {continue;}
 
+            /*
             if (reference_polygon->is_point_inside(p)) {
                 col_points[nb_points] = p;
                 nb_points += 1;
-            }
+            }*/
+            col_points[nb_points] = p;
+            nb_points += 1;
         }
+
 
 
         // 4. Now, we have everything for the SATResult
@@ -164,7 +170,8 @@ namespace Msfl2D {
                 minimum_penetration_vector,
                 depth,
                 nb_points,
-                col_points
+                col_points,
+                reference_side
                 };
     }
 } // Msfl2D

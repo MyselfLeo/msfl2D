@@ -38,7 +38,7 @@ namespace Msfl2D {
         catch (GeometryException& e) {throw GeometryException("No intersection between the line & the segment.");}
 
         // check that the intersection point is inside the segment (and not outside)
-        double dist = (line_intersection - line.get_origin()).norm();
+        double dist = l.get_grad_coo(line_intersection);
         if (dist >= segment.min && dist <= segment.max) {
             return line_intersection;
         }

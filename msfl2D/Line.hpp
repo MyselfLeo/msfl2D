@@ -94,10 +94,19 @@ namespace Msfl2D {
 
         /**
          * Return the coordinates of the point on the line at the given graduation.
+         * The inverse of this function is get_grad_coo()
          * @param g the graduation, i.e the signed distance from the origin.
          * @return the point of the line at the given graduation.
          */
         Vec2D get_coo_grad(double g) const;
+
+        /**
+         * Return the graduation along the line of the given point. Throw GeometryException if the point is not on the line.
+         * The inverse of this function is get_coo_grad()
+         * @param p The point to get the graduation, i.e the signed distance from the line origin.
+         * @return the signed distance, or "graduation", of the point along the line
+         */
+        double get_grad_coo(const Vec2D& p) const;
 
         /**
          * Return the intersection point between two lines.
