@@ -83,12 +83,20 @@ int main(int argc, char *argv[]) {
         if (result.collide) {
             Line line = Line::from_director_vector({0, 0}, result.minimum_penetration_vector);
             interface.draw_line(line, Interface::COLOR_GREEN);
+
+            for (int i=0; i<result.nb_collision_points; i++) {
+                interface.draw_point(result.collision_point[i], 3, Interface::COLOR_RED);
+            }
         }
 
         result = CollisionDetector::sat(shape_3, shape_4);
         if (result.collide) {
             Line line = Line::from_director_vector({0, 0}, result.minimum_penetration_vector);
             interface.draw_line(line, Interface::COLOR_YELLOW);
+
+            for (int i=0; i<result.nb_collision_points; i++) {
+                interface.draw_point(result.collision_point[i], 3, Interface::COLOR_RED);
+            }
         }
 
         /**

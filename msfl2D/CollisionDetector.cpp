@@ -3,37 +3,53 @@
 //
 
 #include "CollisionDetector.hpp"
+#include "MsflExceptions.hpp"
 
 namespace Msfl2D {
 
+    SATResult SATResult::no_collision() {
+        return {false, Msfl2D::Vec2D(), 0, 0, nullptr}; // pen_vec and depth values are not important
+    }
 
-    SATResult::SATResult(bool collide, Vec2D pen_vec, double depth):
+    SATResult::SATResult(bool collide, Vec2D pen_vec, double depth, int nb_col_points, Vec2D col_points[2]):
         collide(collide),
         minimum_penetration_vector(pen_vec),
-        depth(depth) {}
-
-    SATResult SATResult::no_collision() {
-        return {false, Msfl2D::Vec2D(), 0}; // pen_vec and depth values are not important
+        depth(depth),
+        nb_collision_points(nb_col_points) {
+        if (col_points != nullptr) {
+            collision_point[0] = col_points[0];
+            col_points[1] = col_points[1];
+        }
     }
 
 
     SATResult CollisionDetector::sat(const std::shared_ptr<ConvexPolygon> &shape1, const std::shared_ptr<ConvexPolygon> &shape2) {
-        // source: https://www.sevenson.com.au/programming/sat/
 
-        // For each side of each shape, we take its perpendicular axis and we project the 2 shapes on it.
-        // If we find an axis where the projections don't touch, we found a separating axis and the shapes are not
-        // colliding.
-        // We keep track of the axis and penetration value we found to return the minimum_penetration_vector and the
-        // penetration depth.
-        Vec2D minimum_penetration_vector {0, 0};
-        double depth = -1; // initialisation value, will be changed
+        // 1. We find the reference side. This is the side of a ConvexPolygon for which the penetration value is the least.
+        //    This is the vector of minimal penetration.
+        //    We also conserve the penetration depth for that penetration vector; it will be used later to find the collision points.
+        //    Finally, this step also allow to find if there is no collision: if we find a axis for which the penetration is 0, then
+        //    this axis is a separating axis and the shapes do not collide. (we return early from that)
 
-        // Iterate over the sides of shape1 first, then shape2 if needed.
+        Vec2D minimum_penetration_vector {0, 0};         // initialisation value, will be changed
+        double depth = -1;                                      // initialisation value, will be changed
+        LineSegment reference_side;
+        std::shared_ptr<ConvexPolygon> reference_polygon;       // Polygon owning the reference side
+        std::shared_ptr<ConvexPolygon> incident_polygon;        // Polygon "entering" the reference polygon
+
+
+
+        // The axis of minimal penetration will the normal of one of the shapes sides. So, we iterate of the sides of each shape.
         int i;
         for (i=0; i<shape1->nb_vertices(); i++) {
-            // Get the projection axis
-            Vec2D side = shape1->get_global_vertex((i+1) % shape1->nb_vertices()) - shape1->get_global_vertex(i);
-            Vec2D proj_axis = {side.y, -side.x};
+            // Get the side we're checking
+            LineSegment tested_side = LineSegment(
+                    shape1->get_global_vertex(i),
+                    shape1->get_global_vertex((i+1) % shape1->nb_vertices())
+                    );
+
+            Vec2D side_vec = tested_side.get_vec();
+            Vec2D proj_axis = {side_vec.y, -side_vec.x}; // normal of the side
 
             // Project the shapes onto a line with this orientation (passing through the origin because i said so)
             Line proj_line = Line::from_director_vector({0, 0}, proj_axis);
@@ -51,13 +67,20 @@ namespace Msfl2D {
             if (depth == -1 || penetration.length() < depth) {
                 depth = penetration.length();
                 minimum_penetration_vector = proj_axis;
+                reference_side = tested_side;
+                reference_polygon = shape1;
+                incident_polygon = shape2;
             }
         }
-
         for (i=0; i<shape2->nb_vertices(); i++) {
-            // Get the projection axis
-            Vec2D side = shape2->get_global_vertex((i+1) % shape2->nb_vertices()) - shape2->get_global_vertex(i);
-            Vec2D proj_axis = {side.y, -side.x};
+            // Get the side we're checking
+            LineSegment tested_side = LineSegment(
+                    shape2->get_global_vertex(i),
+                    shape2->get_global_vertex((i+1) % shape2->nb_vertices())
+                    );
+
+            Vec2D side_vec = tested_side.get_vec();
+            Vec2D proj_axis = {side_vec.y, -side_vec.x}; // normal of the side
 
             // Project the shapes onto a line with this orientation (passing through the origin because i said so)
             Line proj_line = Line::from_director_vector({0, 0}, proj_axis);
@@ -75,10 +98,73 @@ namespace Msfl2D {
             if (depth == -1 || penetration.length() < depth) {
                 depth = penetration.length();
                 minimum_penetration_vector = proj_axis;
+                reference_side = tested_side;
+                reference_polygon = shape2;
+                incident_polygon = shape1;
             }
         }
 
 
-        return {true, minimum_penetration_vector, depth};
+
+        // 2. Now that we have the reference side, we clip the incident_polygon to the reference_side side planes.
+        //    I.e we find the intersections between each side of the incident polygon and the 2 lines normal to the
+        //    reference side crossing with the reference side extremities. This will give us a list of points, to which
+        //    we also include the vertices of the incident side.
+        //    This list of points will contain the collision points. We'll filter them in the next step.
+
+
+        std::vector<Vec2D> points;
+        for (i=0; i<incident_polygon->nb_vertices(); i++) {
+            points.push_back(incident_polygon->get_global_vertex(i));
+        }
+
+        // The 2 normal lines coming from the end points of the reference side.
+        std::tuple<Vec2D, Vec2D> end_points = reference_side.coordinates();
+        Line l1 = Line::from_director_vector(std::get<0>(end_points), minimum_penetration_vector);
+        Line l2 = Line::from_director_vector(std::get<1>(end_points), minimum_penetration_vector);
+
+        // Find the intersections
+        for (i=0; i<incident_polygon->nb_vertices(); i++) {
+            // Get the side we're checking
+            LineSegment tested_side = LineSegment(
+                    incident_polygon->get_global_vertex(i),
+                    incident_polygon->get_global_vertex((i+1) % shape1->nb_vertices())
+                    );
+
+            // Check for intersection with one of the normal lines
+            try {points.push_back(tested_side.intersection(l1));}
+            catch (GeometryException& e) {}
+            try {points.push_back(tested_side.intersection(l2));}
+            catch (GeometryException& e) {}
+        }
+
+
+        // 3. Now, we have a list of potential collision points. We'll only keep:
+        //    - The ones that are exactly depth far from the reference side
+        //    - The ones that are INSIDE the reference shape.
+
+        int nb_points = 0;
+        Vec2D col_points[2];
+
+        for (auto& p: points) {
+            if (nb_points == 2) {break;}
+            //if (p.distance(reference_side.line) != depth) {continue;}
+
+            if (reference_polygon->is_point_inside(p)) {
+                col_points[nb_points] = p;
+                nb_points += 1;
+            }
+        }
+
+
+        // 4. Now, we have everything for the SATResult
+
+        return {
+                true,
+                minimum_penetration_vector,
+                depth,
+                nb_points,
+                col_points
+                };
     }
 } // Msfl2D

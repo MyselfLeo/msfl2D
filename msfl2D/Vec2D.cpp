@@ -118,6 +118,11 @@ namespace Msfl2D {
     bool Vec2D::collinear(const Vec2D &v1, const Vec2D &v2) {
         return cross(v1, v2) == 0;
     }
+
+    double Vec2D::distance(const Line &line) const {
+        Vec2D point = line.get_coo_grad(project(line));
+        return Vec2D::distance(*this, point);
+    }
 } // Msfl2D
 
 

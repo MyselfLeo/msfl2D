@@ -88,6 +88,11 @@ namespace Msfl2D {
          */
         double project(const Line& line) const;
 
+        /**
+         * Return the minimal distance between the point and the line.
+         */
+        double distance(const Line& line) const;
+
 
         /**
          * Return the rotated vector by the given angle counterclock-wise.

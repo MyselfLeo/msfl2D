@@ -18,7 +18,14 @@ namespace Msfl2D {
         Segment segment;
         Line line;
 
+        LineSegment() = default;
+
         LineSegment(Segment segment, Line line);
+
+        /**
+         * Construct a LineSegment from a global-space segment. This will create a line with p1 as its origin.
+         */
+        LineSegment(const Vec2D& p1, const Vec2D& p2);
 
         /**
          * Check if two segments are intersecting (i.e. they share a portion of the line).
@@ -39,6 +46,11 @@ namespace Msfl2D {
          * Return the coordinates of the end points of the segment.
          */
         std::tuple<Vec2D, Vec2D> coordinates() const;
+
+        /**
+         * Return a vector with the same direction and length of the segment.
+         */
+        Vec2D get_vec() const;
 
         /**
          * Return the length of the segment

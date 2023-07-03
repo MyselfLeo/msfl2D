@@ -8,6 +8,13 @@
 namespace Msfl2D {
     LineSegment::LineSegment(Segment segment, Line line): segment(segment), line(line) {}
 
+
+    LineSegment::LineSegment(const Vec2D &p1, const Vec2D &p2) {
+        line = {p1, p2};
+        segment = {0, (p2-p1).norm()};
+    }
+
+
     std::tuple<Vec2D, Vec2D> LineSegment::coordinates() const {
         Vec2D origin = line.get_origin();
         Vec2D dir_vec = line.get_vec();
@@ -38,5 +45,9 @@ namespace Msfl2D {
         else {
             throw GeometryException("No intersection between the line & the segment.");
         }
+    }
+
+    Vec2D LineSegment::get_vec() const {
+        return line.get_vec() * segment.length();
     }
 } // Msfl2D

@@ -26,6 +26,9 @@ namespace Msfl2D {
      */
     class Line {
     public:
+
+        Line() = default;
+
         /**
          * Construct a line using 2 different points on that line.
          * Throw a GeometryException if the given points are equal.
