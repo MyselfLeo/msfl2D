@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <SDL2/SDL.h>
+#include <SDL_ttf.h>
 
 #include "imgui.h"
 #include "msfl2D/World.hpp"
@@ -18,13 +19,15 @@ using namespace Msfl2Demo;
 /** Initialise SDL */
 void init_sdl() {
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0) Interface::sdl_failure();
-
+    if (TTF_Init() != 0) {Interface::sdl_ttf_failure();}
 }
 
 
 
 
 int main(int argc, char *argv[]) {
+    std::cout << argv[0] << std::endl;
+
     init_sdl();
 
     std::shared_ptr<ConvexPolygon> shape_1 = std::make_shared<ConvexPolygon>(ConvexPolygon(3, 1, {5, 7}));

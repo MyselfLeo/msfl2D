@@ -8,6 +8,8 @@
 #include <memory>
 
 #include <SDL2/SDL.h>
+#include <SDL_ttf.h>
+
 #include "msfl2D/World.hpp"
 
 #include "Color4.hpp"
@@ -40,6 +42,11 @@ namespace Msfl2Demo {
          * Print the last SDL error to the error output and exit the program with EXIT_FAILURE as its exit code.
          */
         static void sdl_failure();
+
+        /**
+         * Print the last SDL_ttf error to the error output and exit the program with EXIT_FAILURE as its exit code.
+         */
+        static void sdl_ttf_failure();
 
         /**
          * Destroy SDL and ImGui context by calling reset(), then destroy the object.
@@ -103,6 +110,8 @@ namespace Msfl2Demo {
         void draw_polygon_outline(const ConvexPolygon& polygon, const Color4& color = SHAPE_OUTLINE_COLOR) const;
         /** Draw a filled ConvexPolygon */
         void draw_polygon_filled(const ConvexPolygon& polygon, const Color4& color = SHAPE_AREA_COLOR) const;
+        /** Write a line of text, with the top-left corner of the textzone at the given (world-space) location */
+        void draw_text(const char* text, const Vec2D& pos, const Color4& color = COLOR_YELLOW) const;
 
 
     private:
@@ -120,6 +129,8 @@ namespace Msfl2Demo {
 
         SDL_Window * window;
         SDL_Renderer * renderer;
+
+        TTF_Font * font;
 
         std::string window_name;
         Vec2D window_size;
@@ -144,6 +155,7 @@ namespace Msfl2Demo {
 
         // Flags to display specific debug infos
         bool debug_centers = false;
+        bool debug_bodynames = false;
 
         /** Convert coordinates from the world-space to the screen-space */
         Vec2D world_to_screen(const Vec2D& coo) const;

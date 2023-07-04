@@ -15,6 +15,11 @@ namespace Msfl2Demo {
         exit(EXIT_FAILURE);
     }
 
+    void Interface::sdl_ttf_failure() {
+        std::cerr << "SDL_TTF Error: " << TTF_GetError() << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
 
     const Color4 Interface::BACKGROUND_COLOR = {0, 0, 0};
     const Color4 Interface::BACKGROUND_INFO_COLOR = {50, 50, 50};
@@ -41,6 +46,10 @@ namespace Msfl2Demo {
         window = nullptr;
 
         camera_pos = Msfl2D::Vec2D(0, 0);
+
+        // initialise the font
+        font = TTF_OpenFont("data/ConsolaMono-Book.ttf", 14);
+        if (font == nullptr) {sdl_ttf_failure();}
     }
 
     Interface::~Interface() {
@@ -98,6 +107,8 @@ namespace Msfl2Demo {
 
 
     void Interface::reset() {
+        TTF_CloseFont(font);
+
         ImGui_ImplSDLRenderer2_Shutdown();
         ImGui_ImplSDL2_Shutdown();
         ImGui::DestroyContext();
@@ -343,8 +354,6 @@ namespace Msfl2Demo {
 
 
     void Interface::draw_body(const std::shared_ptr<Body>& body) const {
-        if (debug_centers) { draw_point(body->position, 3, COLOR_GREEN);}
-
         bool hovered = is_body_hovered(body);
         for (auto& s: body->get_shapes()) {
             // Choose the correct drawing method based on the shape and if it is hovered or not
@@ -369,6 +378,9 @@ namespace Msfl2Demo {
             std::cerr << "World contains an unknown/undrawable shape type" << std::endl;
             exit(EXIT_FAILURE);
         }
+
+        if (debug_centers) { draw_point(body->position, 3, COLOR_GREEN);}
+        if (debug_bodynames) { draw_text("Test", body->position, COLOR_GREEN);}
     }
 
 
@@ -433,6 +445,23 @@ namespace Msfl2Demo {
 
 
 
+    void Interface::draw_text(const char *text, const Vec2D &pos, const Color4 &color) const {
+        // Destination rect
+        Vec2D screen_pos = world_to_screen(pos);
+        SDL_Rect dest;
+        dest.x = screen_pos.x;
+        dest.y = screen_pos.y;
+        TTF_SizeText(font, text, &dest.w, &dest.h);
+
+        SDL_Surface * text_surface = TTF_RenderText_Blended(font, text, (SDL_Color) color);
+        if (text_surface == nullptr) {sdl_ttf_failure();}
+        SDL_Texture * text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
+        SDL_RenderCopy(renderer, text_texture, nullptr, &dest);
+    }
+
+
+
+
     std::tuple<Vec2D, Vec2D> Interface::get_screen_bounds() const {
         return {screen_to_world({0, 0}), screen_to_world(window_size - Vec2D(1,1))};
     }
@@ -464,6 +493,7 @@ namespace Msfl2Demo {
     void Interface::create_debug_tools_window() {
         ImGui::Begin("Debug tools", nullptr, IMGUI_WINDOW_FLAGS);
         ImGui::Checkbox("Show shape & body centers", &debug_centers);
+        ImGui::Checkbox("Show body names", &debug_bodynames);
 
         ImGui::End();
     }
