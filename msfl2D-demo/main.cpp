@@ -13,18 +13,11 @@
 using namespace Msfl2D;
 using namespace Msfl2Demo;
 
-/**
- * Print the last SDL error to the error output and exit the program with EXIT_FAILURE as its exit code.
- */
-void sdl_failure() {
-    std::cerr << "SDL Error: " << SDL_GetError() << std::endl;
-    exit(EXIT_FAILURE);
-}
 
 
 /** Initialise SDL */
 void init_sdl() {
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0) sdl_failure();
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0) Interface::sdl_failure();
 
 }
 
@@ -85,57 +78,29 @@ int main(int argc, char *argv[]) {
                 interface.draw_point(result.collision_point[i], 3, Interface::COLOR_RED);
             }
 
-            interface.draw_segment(result.reference_side);
-
-            std::tuple<Vec2D, Vec2D> end_points = result.reference_side.coordinates();
-            std::cout << std::get<0>(end_points) << "  " << std::get<1>(end_points) << std::endl;
-            interface.draw_line(Line::from_director_vector(
-                    std::get<0>(end_points),
-                    result.minimum_penetration_vector
-                    ));
-
-            interface.draw_line(Line::from_director_vector(
-                    std::get<1>(end_points),
-                    result.minimum_penetration_vector
-                    ));
-        }
-
-
-        /*
-        result = CollisionDetector::sat(shape_3, shape_4);
-        if (result.collide) {
-            for (int i=0; i<result.nb_collision_points; i++) {
-                interface.draw_point(result.collision_point[i], 3, Interface::COLOR_RED);
+            for (auto& s: result.collision_sides) {
+                interface.draw_segment(s);
             }
 
             interface.draw_segment(result.reference_side);
-
-            std::tuple<Vec2D, Vec2D> end_points = result.reference_side.coordinates();
-            std::cout << std::get<0>(end_points) << "  " << std::get<1>(end_points) << std::endl;
-            interface.draw_line(Line::from_director_vector(
-                    std::get<0>(end_points),
-                    result.minimum_penetration_vector
-                    ));
-
-            interface.draw_line(Line::from_director_vector(
-                    std::get<1>(end_points),
-                    result.minimum_penetration_vector
-                    ));
-        }*/
+        }
 
 
-        /**
-        Vec2D dir_vec_1 = {0, 1};
-        Vec2D dir_vec_2 = {cos(ImGui::GetTime()), sin(ImGui::GetTime())};
 
-        Line line1 = Line::from_director_vector({0, 1}, dir_vec_1);
-        Line line2 = Line::from_director_vector({3, 2}, dir_vec_2);
-        interface.draw_line(line1, Interface::COLOR_GREEN);
-        interface.draw_line(line2, Interface::COLOR_GREEN);
+        result = CollisionDetector::sat(shape_3, shape_4);
+        if (result.collide) {
+            for (int i = 0; i < result.nb_collision_points; i++) {
+                interface.draw_point(result.collision_point[i], 3, Interface::COLOR_RED);
+            }
 
-        if (!Vec2D::collinear(dir_vec_1, dir_vec_2))
-        interface.draw_point(Line::intersection(line1, line2), 10, Interface::COLOR_YELLOW);
-        */
+            for (auto& s: result.collision_sides) {
+                interface.draw_segment(s);
+            }
+
+            interface.draw_segment(result.reference_side);
+        }
+
+
 
         interface.update_screen();
     }

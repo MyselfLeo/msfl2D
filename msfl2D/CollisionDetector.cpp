@@ -3,20 +3,23 @@
 //
 
 #include "CollisionDetector.hpp"
+
+#include <utility>
 #include "MsflExceptions.hpp"
 
 namespace Msfl2D {
 
     SATResult SATResult::no_collision() {
-        return {false, Msfl2D::Vec2D(), 0, 0, nullptr, {}}; // pen_vec and depth values are not important
+        return {false, Msfl2D::Vec2D(), 0, 0, nullptr, {}, {}}; // pen_vec and depth values are not important
     }
 
-    SATResult::SATResult(bool collide, Vec2D pen_vec, double depth, int nb_col_points, Vec2D col_points[MAX_COLLISION_POINTS], LineSegment ref_side):
+    SATResult::SATResult(bool collide, Vec2D pen_vec, double depth, int nb_col_points, Vec2D col_points[MAX_COLLISION_POINTS], std::vector<LineSegment> col_sides, LineSegment ref_side):
         collide(collide),
         minimum_penetration_vector(pen_vec),
         depth(depth),
         nb_collision_points(nb_col_points),
-        reference_side(ref_side) {
+        reference_side(ref_side),
+        collision_sides(std::move(col_sides)) {
         if (col_points != nullptr) {
             for (int i=0; i<MAX_COLLISION_POINTS; i++) {
                 collision_point[i] = col_points[i];
@@ -116,6 +119,7 @@ namespace Msfl2D {
 
 
         std::vector<Vec2D> points;
+        std::vector<LineSegment> sides;
         for (i=0; i<incident_polygon->nb_vertices(); i++) {
             points.push_back(incident_polygon->get_global_vertex(i));
         }
@@ -130,13 +134,19 @@ namespace Msfl2D {
             // Get the side we're checking
             LineSegment tested_side = LineSegment(
                     incident_polygon->get_global_vertex(i),
-                    incident_polygon->get_global_vertex((i+1) % shape1->nb_vertices())
+                    incident_polygon->get_global_vertex((i+1) % incident_polygon->nb_vertices())
                     );
 
             // Check for intersection with one of the normal lines
-            try {points.push_back(tested_side.intersection(l1));}
+            try {
+                points.push_back(tested_side.intersection(l1));
+                sides.push_back(tested_side);
+            }
             catch (GeometryException& e) {}
-            try {points.push_back(tested_side.intersection(l2));}
+            try {
+                points.push_back(tested_side.intersection(l2));
+                sides.push_back(tested_side);
+            }
             catch (GeometryException& e) {}
         }
 
@@ -148,10 +158,9 @@ namespace Msfl2D {
         int nb_points = 0;
         Vec2D col_points[MAX_COLLISION_POINTS];
 
+
         for (auto& p: points) {
             if (nb_points == MAX_COLLISION_POINTS) {break;}
-            //if (p.distance(reference_side.line) != depth) {continue;}
-
             /*
             if (reference_polygon->is_point_inside(p)) {
                 col_points[nb_points] = p;
@@ -171,6 +180,7 @@ namespace Msfl2D {
                 depth,
                 nb_points,
                 col_points,
+                sides,
                 reference_side
                 };
     }

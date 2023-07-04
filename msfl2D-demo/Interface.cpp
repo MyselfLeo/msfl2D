@@ -10,6 +10,12 @@
 
 namespace Msfl2Demo {
 
+    void Interface::sdl_failure()  {
+        std::cerr << "SDL Error: " << SDL_GetError() << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+
     const Color4 Interface::BACKGROUND_COLOR = {0, 0, 0};
     const Color4 Interface::BACKGROUND_INFO_COLOR = {50, 50, 50};
     const Color4 Interface::SHAPE_OUTLINE_COLOR = {255, 255, 255};
@@ -290,7 +296,8 @@ namespace Msfl2Demo {
         }
 
         // Draw the line
-        SDL_RenderDrawLine(renderer, p1.x, p1.y, p2.x, p2.y);
+        int r = SDL_RenderDrawLine(renderer, p1.x, p1.y, p2.x, p2.y);
+        if (r != 0) {sdl_failure();}
     }
 
     void Interface::draw_segment(const LineSegment& segment, const Color4 &color) const {
@@ -304,9 +311,13 @@ namespace Msfl2Demo {
         // draw multiple lines to make the line fatter
         for (int x = -1; x <= 1; x++) {
             for (int y = -1; y <= 1; y++) {
-                SDL_RenderDrawLine(renderer, p1.x + x, p1.y + y, p2.x + x, p2.y + y);
+                int r = SDL_RenderDrawLine(renderer, p1.x + x, p1.y + y, p2.x + x, p2.y + y);
+                if (r != 0) {sdl_failure();}
             }
         }
+
+        draw_point(std::get<0>(points), 9, COLOR_BLUE);
+        draw_point(std::get<1>(points), 5, COLOR_BLUE);
     }
 
     void Interface::draw_point(const Vec2D &point, int size, const Color4 &color) const {
@@ -318,13 +329,16 @@ namespace Msfl2Demo {
         Vec2D screen_coo = world_to_screen(point);
 
         SDL_Rect r = {
-                static_cast<int>(screen_coo.x - ((size-1)/2)),
-                static_cast<int>(screen_coo.y - ((size-1)/2)),
+                int(screen_coo.x - int((size-1)/2)),
+                int(screen_coo.y - int((size-1)/2)),
                 size,
                 size
         };
 
-        SDL_RenderFillRect(renderer, &r);
+        std::cout << r.x << "   " << r.y << std::endl;
+
+        int e = SDL_RenderFillRect(renderer, &r);
+        if (e != 0) {sdl_failure();}
     }
 
 
@@ -365,7 +379,8 @@ namespace Msfl2Demo {
             Vec2D p1 = world_to_screen(p.get_global_vertex(i));
             Vec2D p2 = world_to_screen(p.get_global_vertex((i+1) % p.nb_vertices()));
 
-            SDL_RenderDrawLine(renderer, p1.x, p1.y, p2.x, p2.y);
+            int r = SDL_RenderDrawLine(renderer, p1.x, p1.y, p2.x, p2.y);
+            if (r != 0) {sdl_failure();}
         }
     }
 
@@ -412,8 +427,8 @@ namespace Msfl2Demo {
         }
 
         // Draw the polygon
-        SDL_RenderGeometry(renderer, nullptr, sdl_vertices, p.nb_vertices()*3, nullptr, 0);
-
+        int r = SDL_RenderGeometry(renderer, nullptr, sdl_vertices, p.nb_vertices()*3, nullptr, 0);
+        if (r != 0) {sdl_failure();}
     }
 
 

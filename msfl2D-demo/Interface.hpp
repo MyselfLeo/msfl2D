@@ -37,6 +37,11 @@ namespace Msfl2Demo {
         explicit Interface(std::shared_ptr<World> world);
 
         /**
+         * Print the last SDL error to the error output and exit the program with EXIT_FAILURE as its exit code.
+         */
+        static void sdl_failure();
+
+        /**
          * Destroy SDL and ImGui context by calling reset(), then destroy the object.
          */
         ~Interface();
