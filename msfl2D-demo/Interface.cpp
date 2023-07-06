@@ -48,7 +48,7 @@ namespace Msfl2Demo {
         camera_pos = Msfl2D::Vec2D(0, 0);
 
         // initialise the font
-        font = TTF_OpenFont("data/ConsolaMono-Book.ttf", 14);
+        font = TTF_OpenFont("data/ConsolaMono-Book.ttf", 12);
         if (font == nullptr) {sdl_ttf_failure();}
     }
 
@@ -138,7 +138,6 @@ namespace Msfl2Demo {
                     // Find if a body is hovered. If so, grab it.
                     for (auto& b: world->get_bodies()) {
                         if (is_body_hovered(b.second)) {
-                            std::cout << "grabbed body " << b.first << std::endl;
                             selected_body = b.second;
                             selection_pixel_offset = world_to_screen(b.second->position) - get_mouse_pos();
                             break;
@@ -149,7 +148,6 @@ namespace Msfl2Demo {
 
             case SDL_MOUSEBUTTONUP: {
                 if (selected_body != nullptr) {
-                    std::cout << "dropped body" << std::endl;
                     selected_body = nullptr;
                 }
             } break;
@@ -201,7 +199,7 @@ namespace Msfl2Demo {
         draw_background();
 
         for (auto& b: world->get_bodies()) {
-            draw_body(b.second);
+            draw_body(b);
         }
 
 
@@ -328,7 +326,9 @@ namespace Msfl2Demo {
         }
 
         draw_point(std::get<0>(points), 9, COLOR_BLUE);
+        draw_text(std::to_string(segment.segment.min).c_str(), std::get<0>(points), COLOR_BLUE);
         draw_point(std::get<1>(points), 5, COLOR_BLUE);
+        draw_text(std::to_string(segment.segment.max).c_str(), std::get<1>(points), COLOR_BLUE);
     }
 
     void Interface::draw_point(const Vec2D &point, int size, const Color4 &color) const {
@@ -346,14 +346,14 @@ namespace Msfl2Demo {
                 size
         };
 
-        std::cout << r.x << "   " << r.y << std::endl;
-
         int e = SDL_RenderFillRect(renderer, &r);
         if (e != 0) {sdl_failure();}
     }
 
 
-    void Interface::draw_body(const std::shared_ptr<Body>& body) const {
+    void Interface::draw_body(const std::pair<BodyID, std::shared_ptr<Msfl2D::Body>>& body_data) const {
+        BodyID body_id = body_data.first;
+        std::shared_ptr<Msfl2D::Body> body = body_data.second;
         bool hovered = is_body_hovered(body);
         for (auto& s: body->get_shapes()) {
             // Choose the correct drawing method based on the shape and if it is hovered or not
@@ -380,7 +380,7 @@ namespace Msfl2Demo {
         }
 
         if (debug_centers) { draw_point(body->position, 3, COLOR_GREEN);}
-        if (debug_bodynames) { draw_text("Test", body->position, COLOR_GREEN);}
+        if (debug_bodyids) { draw_text(std::to_string(body_id).c_str(), body->position, COLOR_GREEN);}
     }
 
 
@@ -493,7 +493,7 @@ namespace Msfl2Demo {
     void Interface::create_debug_tools_window() {
         ImGui::Begin("Debug tools", nullptr, IMGUI_WINDOW_FLAGS);
         ImGui::Checkbox("Show shape & body centers", &debug_centers);
-        ImGui::Checkbox("Show body names", &debug_bodynames);
+        ImGui::Checkbox("Show body IDs", &debug_bodyids);
 
         ImGui::End();
     }

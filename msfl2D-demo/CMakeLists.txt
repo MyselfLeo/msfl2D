@@ -4,7 +4,6 @@ find_package(SDL2 REQUIRED)
 find_package(SDL2_ttf REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})
 
-# ImGui is used by the demo
 add_subdirectory("extern/imgui")
 
 add_executable(
@@ -12,6 +11,10 @@ add_executable(
 
     main.cpp
         Interface.cpp Interface.hpp Color4.cpp Color4.hpp)
+
+
+# Copy data files to the binary directory
+file(COPY data DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 target_link_libraries(msfl2D-demo msfl2D imgui ${SDL2_STATIC_LIBRARIES} SDL2_ttf::SDL2_ttf-static)
 

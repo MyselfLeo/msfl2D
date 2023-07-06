@@ -97,7 +97,8 @@ namespace Msfl2Demo {
 
 
         // Drawing methods
-        void draw_body(const std::shared_ptr<Body>& body) const;
+        /** Draw the given body */
+        void draw_body(const std::pair<BodyID, std::shared_ptr<Msfl2D::Body>>& body_data) const;
         /** Draw background info (axis, etc.) */
         void draw_background(const Color4& color = BACKGROUND_INFO_COLOR) const;
         /** Draw a line */
@@ -155,7 +156,7 @@ namespace Msfl2Demo {
 
         // Flags to display specific debug infos
         bool debug_centers = false;
-        bool debug_bodynames = false;
+        bool debug_bodyids = false;
 
         /** Convert coordinates from the world-space to the screen-space */
         Vec2D world_to_screen(const Vec2D& coo) const;

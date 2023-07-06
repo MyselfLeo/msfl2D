@@ -26,8 +26,6 @@ void init_sdl() {
 
 
 int main(int argc, char *argv[]) {
-    std::cout << argv[0] << std::endl;
-
     init_sdl();
 
     std::shared_ptr<ConvexPolygon> shape_1 = std::make_shared<ConvexPolygon>(ConvexPolygon(3, 1, {5, 7}));
@@ -79,6 +77,9 @@ int main(int argc, char *argv[]) {
         if (result.collide) {
             for (int i=0; i<result.nb_collision_points; i++) {
                 interface.draw_point(result.collision_point[i], 3, Interface::COLOR_RED);
+                std::string text = std::to_string(result.collision_sides[i].line.get_grad_coo(result.collision_point[i]));
+                std::cout << text << std::endl;
+                interface.draw_text(text.c_str(), result.collision_point[i], Interface::COLOR_RED);
             }
 
             for (auto& s: result.collision_sides) {
@@ -94,6 +95,9 @@ int main(int argc, char *argv[]) {
         if (result.collide) {
             for (int i = 0; i < result.nb_collision_points; i++) {
                 interface.draw_point(result.collision_point[i], 3, Interface::COLOR_RED);
+                std::string text = std::to_string(result.collision_sides[i].line.get_grad_coo(result.collision_point[i]));
+                std::cout << text << std::endl;
+                interface.draw_text(text.c_str(), result.collision_point[i], Interface::COLOR_RED);
             }
 
             for (auto& s: result.collision_sides) {
