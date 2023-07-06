@@ -35,7 +35,9 @@ namespace Msfl2D {
     Vec2D LineSegment::intersection(const Line &l) const {
         Vec2D line_intersection;
         try {line_intersection = Line::intersection(line, l);}
-        catch (GeometryException& e) {throw GeometryException("No intersection between the line & the segment.");}
+        catch (GeometryException& e) {
+            throw GeometryException("No intersection between the line & the segment.");
+        }
 
         // check that the intersection point is inside the segment (and not outside)
         double dist = line.get_grad_coo(line_intersection);

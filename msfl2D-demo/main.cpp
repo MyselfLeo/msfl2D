@@ -75,6 +75,11 @@ int main(int argc, char *argv[]) {
 
         SATResult result = CollisionDetector::sat(shape_1, shape_2);
         if (result.collide) {
+
+            auto l1 = Line::from_director_vector(std::get<0>(result.reference_side.coordinates()), result.minimum_penetration_vector);
+            auto l2 = Line::from_director_vector(std::get<1>(result.reference_side.coordinates()), result.minimum_penetration_vector);
+
+
             for (int i=0; i<result.nb_collision_points; i++) {
                 auto point = result.collision_points[i];
                 auto side = result.collision_sides[i];
@@ -84,17 +89,11 @@ int main(int argc, char *argv[]) {
                 interface.draw_line(line);
                 interface.draw_segment(side);
                 interface.draw_point(point, 3, Interface::COLOR_RED);
-                /*auto grad = line.get_grad_coo(point);
-                std::string text = std::to_string(grad);
-                std::cout << text << std::endl;
-                interface.draw_text(text.c_str(), result.collision_points[i], Interface::COLOR_RED);*/
             }
 
-            /*for (auto& s: result.collision_sides) {
-                interface.draw_segment(s);
-            }*/
-
             interface.draw_segment(result.reference_side);
+            interface.draw_line(l1);
+            interface.draw_line(l2);
         }
 
 
