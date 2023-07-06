@@ -328,9 +328,9 @@ namespace Msfl2Demo {
         }
 
         draw_point(std::get<0>(points), 9, COLOR_BLUE);
-        draw_text(std::to_string(segment.segment.min).c_str(), std::get<0>(points), COLOR_BLUE);
+        draw_text(std::to_string(segment.segment.min).c_str(), std::get<0>(points) + segment.line.get_vec() * 0.1, COLOR_BLUE);
         draw_point(std::get<1>(points), 5, COLOR_BLUE);
-        draw_text(std::to_string(segment.segment.max).c_str(), std::get<1>(points), COLOR_BLUE);
+        draw_text(std::to_string(segment.segment.max).c_str(), std::get<1>(points) + segment.line.get_vec() * 0.1, COLOR_BLUE);
 
         draw_point(pline, 5, COLOR_BLUE);
         draw_text("1", pline, COLOR_BLUE);
@@ -462,6 +462,8 @@ namespace Msfl2Demo {
         if (text_surface == nullptr) {sdl_ttf_failure();}
         SDL_Texture * text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
         SDL_RenderCopy(renderer, text_texture, nullptr, &dest);
+        SDL_FreeSurface(text_surface);
+        SDL_DestroyTexture(text_texture);
     }
 
 
@@ -535,6 +537,7 @@ namespace Msfl2Demo {
     }
 
     void Interface::create_world_info_window() {
+        ImGui::SetNextWindowSize({160.0, 0.0});
         ImGui::Begin("World informations", nullptr, IMGUI_WINDOW_FLAGS);
         ImGui::Text("Body count: %d", world->nb_bodies());
         ImGui::End();

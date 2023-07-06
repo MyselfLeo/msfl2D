@@ -123,6 +123,11 @@ namespace Msfl2D {
         Vec2D point = line.get_coo_grad(project(line));
         return Vec2D::distance(*this, point);
     }
+
+    double Vec2D::distance_squared(const Line &line) const {
+        Vec2D point = line.get_coo_grad(project(line));
+        return Vec2D::distance_squared(*this, point);
+    }
 } // Msfl2D
 
 

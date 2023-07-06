@@ -93,6 +93,11 @@ namespace Msfl2D {
          */
         double distance(const Line& line) const;
 
+        /**
+         * Return the square of the minimal distance between the point and the line.
+         */
+        double distance_squared(const Line& line) const;
+
 
         /**
          * Return the rotated vector by the given angle counterclock-wise.

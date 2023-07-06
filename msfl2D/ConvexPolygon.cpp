@@ -34,6 +34,8 @@ namespace Msfl2D {
 
 
     ConvexPolygon::ConvexPolygon(const std::vector<Vec2D> &vertices) {
+        this->rotation = 0;
+
         // Compute the center of the polygon.
         this->position = vec2D_average(vertices);
 
@@ -54,6 +56,7 @@ namespace Msfl2D {
         if (circumradius <= 0) {throw GeometryException("The circumradius of a ConvexPolygon must be > 0");}
 
         this->position = center;
+        this->rotation = 0;
 
         for (int i=0; i<vertex_nb; i++) {
             double rad = i * -2 * M_PI / vertex_nb;

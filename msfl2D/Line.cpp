@@ -106,11 +106,15 @@ namespace Msfl2D {
         Vec2D v1 = p - get_origin();
         Vec2D v2 = get_vec();
 
+        // todo: fix that s
+
         // If ratio_x != ratio_y, the given point is not on the line.
         double ratio_x = v1.x / v2.x;
-        double ratio_y = v1.y / v2.y;
+        /*double ratio_y = v1.y / v2.y;
 
         if (ratio_x != ratio_y) {throw GeometryException("The point given to get_grad_coo() is not on the line.");}
+        return ratio_x;*/
+
         return ratio_x;
     }
 } // Msfl2D

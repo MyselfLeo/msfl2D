@@ -10,16 +10,15 @@
 namespace Msfl2D {
 
     SATResult SATResult::no_collision() {
-        return {false, Msfl2D::Vec2D(), 0, 0, nullptr, {}, {}}; // pen_vec and depth values are not important
+        return {false, Msfl2D::Vec2D(), 0, 0, nullptr, {}}; // pen_vec and depth values are not important
     }
 
-    SATResult::SATResult(bool collide, Vec2D pen_vec, double depth, int nb_col_points, Vec2D col_points[MAX_COLLISION_POINTS], std::vector<LineSegment> col_sides, LineSegment ref_side):
+    SATResult::SATResult(bool collide, Vec2D pen_vec, double depth, int nb_col_points, Vec2D col_points[MAX_COLLISION_POINTS], LineSegment ref_side):
         collide(collide),
         minimum_penetration_vector(pen_vec),
         depth(depth),
         nb_collision_points(nb_col_points),
-        reference_side(ref_side),
-        collision_sides(std::move(col_sides)) {
+        reference_side(ref_side) {
         if (col_points != nullptr) {
             for (int i=0; i<MAX_COLLISION_POINTS; i++) {
                 collision_points[i] = col_points[i];
@@ -120,9 +119,9 @@ namespace Msfl2D {
 
         std::vector<Vec2D> points;
         std::vector<LineSegment> sides;
-        /*for (i=0; i<incident_polygon->nb_vertices(); i++) { // todo: uncomment
+        for (i=0; i<incident_polygon->nb_vertices(); i++) {
             points.push_back(incident_polygon->get_global_vertex(i));
-        }*/
+        }
 
         // The 2 normal lines coming from the end points of the reference side.
         std::tuple<Vec2D, Vec2D> end_points = reference_side.coordinates();
@@ -156,18 +155,28 @@ namespace Msfl2D {
         //    - The ones that are INSIDE the reference shape.
 
         int nb_points = 0;
+        double max_distance = 0;
         Vec2D col_points[MAX_COLLISION_POINTS];
 
 
         for (auto& p: points) {
-            if (nb_points == MAX_COLLISION_POINTS) {break;}
-            /*
-            if (reference_polygon->is_point_inside(p)) {
-                col_points[nb_points] = p;
-                nb_points += 1;
-            }*/
-            col_points[nb_points] = p;
-            nb_points += 1;
+            // Only consider points that crossed the reference side.
+            // ConvexPolygons are represented clockwise, meaning that a point to the right of one of its
+            // side "crossed it", if coming from the exterior.
+            if (reference_side.line.side(p) == LineSide::LEFT) {continue;}
+
+            double current_distance = p.distance_squared(reference_side.line);
+
+            // only keep the farest points from the reference side
+            if (nb_points == 0 || current_distance > max_distance) {
+                col_points[0] = p;
+                max_distance = current_distance;
+                nb_points = 1;
+            }
+            else if (current_distance == max_distance && nb_points < 2) {
+                col_points[1] = p;
+                nb_points = 2;
+            }
         }
 
 
@@ -180,7 +189,6 @@ namespace Msfl2D {
                 depth,
                 nb_points,
                 col_points,
-                sides,
                 reference_side
                 };
     }

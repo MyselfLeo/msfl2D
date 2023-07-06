@@ -102,6 +102,7 @@ namespace Msfl2D {
 
         /**
          * Return the graduation along the line of the given point. Throw GeometryException if the point is not on the line.
+         * NOTE: FOR NOW, THIS FUNCTION ASSUMES THAT THE POINT IS ON THE LINE.
          * The inverse of this function is get_coo_grad()
          * @param p The point to get the graduation, i.e the signed distance from the line origin.
          * @return the signed distance, or "graduation", of the point along the line

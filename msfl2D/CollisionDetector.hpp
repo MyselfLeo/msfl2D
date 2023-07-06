@@ -11,7 +11,7 @@
 namespace Msfl2D {
 
 
-    const int MAX_COLLISION_POINTS = 10;
+    const int MAX_COLLISION_POINTS = 2;
 
     /**
      * Results of an SAT (Separated Axis Theorem) collision test.
@@ -29,10 +29,9 @@ namespace Msfl2D {
         double depth;
         int nb_collision_points;
         Vec2D collision_points[MAX_COLLISION_POINTS];
-        std::vector<LineSegment> collision_sides;
         LineSegment reference_side;
 
-        SATResult(bool collide, Vec2D pen_vec, double depth, int nb_col_points, Vec2D col_points[MAX_COLLISION_POINTS], std::vector<LineSegment> col_sides, LineSegment ref_side);
+        SATResult(bool collide, Vec2D pen_vec, double depth, int nb_col_points, Vec2D col_points[MAX_COLLISION_POINTS], LineSegment ref_side);
 
         /** Return a "no collision" SATResult */
         static SATResult no_collision();
