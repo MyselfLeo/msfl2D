@@ -22,7 +22,7 @@ namespace Msfl2D {
         collision_sides(std::move(col_sides)) {
         if (col_points != nullptr) {
             for (int i=0; i<MAX_COLLISION_POINTS; i++) {
-                collision_point[i] = col_points[i];
+                collision_points[i] = col_points[i];
             }
         }
     }
@@ -120,9 +120,9 @@ namespace Msfl2D {
 
         std::vector<Vec2D> points;
         std::vector<LineSegment> sides;
-        for (i=0; i<incident_polygon->nb_vertices(); i++) {
+        /*for (i=0; i<incident_polygon->nb_vertices(); i++) { // todo: uncomment
             points.push_back(incident_polygon->get_global_vertex(i));
-        }
+        }*/
 
         // The 2 normal lines coming from the end points of the reference side.
         std::tuple<Vec2D, Vec2D> end_points = reference_side.coordinates();

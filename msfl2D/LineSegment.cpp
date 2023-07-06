@@ -38,7 +38,7 @@ namespace Msfl2D {
         catch (GeometryException& e) {throw GeometryException("No intersection between the line & the segment.");}
 
         // check that the intersection point is inside the segment (and not outside)
-        double dist = l.get_grad_coo(line_intersection);
+        double dist = line.get_grad_coo(line_intersection);
         if (dist >= segment.min && dist <= segment.max) {
             return line_intersection;
         }
@@ -49,5 +49,21 @@ namespace Msfl2D {
 
     Vec2D LineSegment::get_vec() const {
         return line.get_vec() * segment.length();
+    }
+
+
+    double LineSegment::intersection_grad(const Line &l) const {
+        Vec2D line_intersection;
+        try {line_intersection = Line::intersection(line, l);}
+        catch (GeometryException& e) {throw GeometryException("No intersection between the line & the segment.");}
+
+        // check that the intersection point is inside the segment (and not outside)
+        double dist = l.get_grad_coo(line_intersection);
+        if (dist >= segment.min && dist <= segment.max) {
+            return dist;
+        }
+        else {
+            throw GeometryException("No intersection between the line & the segment.");
+        }
     }
 } // Msfl2D

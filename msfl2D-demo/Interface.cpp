@@ -317,6 +317,8 @@ namespace Msfl2Demo {
         Vec2D p1 = world_to_screen(std::get<0>(points));
         Vec2D p2 = world_to_screen(std::get<1>(points));
 
+        Vec2D pline = segment.line.get_coo_grad(1);
+
         // draw multiple lines to make the line fatter
         for (int x = -1; x <= 1; x++) {
             for (int y = -1; y <= 1; y++) {
@@ -329,6 +331,9 @@ namespace Msfl2Demo {
         draw_text(std::to_string(segment.segment.min).c_str(), std::get<0>(points), COLOR_BLUE);
         draw_point(std::get<1>(points), 5, COLOR_BLUE);
         draw_text(std::to_string(segment.segment.max).c_str(), std::get<1>(points), COLOR_BLUE);
+
+        draw_point(pline, 5, COLOR_BLUE);
+        draw_text("1", pline, COLOR_BLUE);
     }
 
     void Interface::draw_point(const Vec2D &point, int size, const Color4 &color) const {

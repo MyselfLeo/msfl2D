@@ -13,7 +13,7 @@ namespace Msfl2D {
 
 
     Line Line::from_director_vector(const Vec2D &p, const Vec2D &dir_vec) {
-        return Line(p, p + dir_vec);
+        return {p, p + dir_vec};
     }
 
 

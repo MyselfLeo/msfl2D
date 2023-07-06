@@ -76,15 +76,23 @@ int main(int argc, char *argv[]) {
         SATResult result = CollisionDetector::sat(shape_1, shape_2);
         if (result.collide) {
             for (int i=0; i<result.nb_collision_points; i++) {
-                interface.draw_point(result.collision_point[i], 3, Interface::COLOR_RED);
-                std::string text = std::to_string(result.collision_sides[i].line.get_grad_coo(result.collision_point[i]));
+                auto point = result.collision_points[i];
+                auto side = result.collision_sides[i];
+
+                auto line = side.line;
+
+                interface.draw_line(line);
+                interface.draw_segment(side);
+                interface.draw_point(point, 3, Interface::COLOR_RED);
+                /*auto grad = line.get_grad_coo(point);
+                std::string text = std::to_string(grad);
                 std::cout << text << std::endl;
-                interface.draw_text(text.c_str(), result.collision_point[i], Interface::COLOR_RED);
+                interface.draw_text(text.c_str(), result.collision_points[i], Interface::COLOR_RED);*/
             }
 
-            for (auto& s: result.collision_sides) {
+            /*for (auto& s: result.collision_sides) {
                 interface.draw_segment(s);
-            }
+            }*/
 
             interface.draw_segment(result.reference_side);
         }
@@ -94,10 +102,9 @@ int main(int argc, char *argv[]) {
         result = CollisionDetector::sat(shape_3, shape_4);
         if (result.collide) {
             for (int i = 0; i < result.nb_collision_points; i++) {
-                interface.draw_point(result.collision_point[i], 3, Interface::COLOR_RED);
-                std::string text = std::to_string(result.collision_sides[i].line.get_grad_coo(result.collision_point[i]));
-                std::cout << text << std::endl;
-                interface.draw_text(text.c_str(), result.collision_point[i], Interface::COLOR_RED);
+                interface.draw_point(result.collision_points[i], 3, Interface::COLOR_RED);
+                std::string text = std::to_string(result.collision_sides[i].line.get_grad_coo(result.collision_points[i]));
+                interface.draw_text(text.c_str(), result.collision_points[i], Interface::COLOR_RED);
             }
 
             for (auto& s: result.collision_sides) {

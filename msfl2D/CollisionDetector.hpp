@@ -28,7 +28,7 @@ namespace Msfl2D {
         Vec2D minimum_penetration_vector;
         double depth;
         int nb_collision_points;
-        Vec2D collision_point[MAX_COLLISION_POINTS];
+        Vec2D collision_points[MAX_COLLISION_POINTS];
         std::vector<LineSegment> collision_sides;
         LineSegment reference_side;
 

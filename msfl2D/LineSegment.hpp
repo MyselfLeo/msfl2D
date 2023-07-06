@@ -43,6 +43,12 @@ namespace Msfl2D {
         Vec2D intersection(const Line& line) const;
 
         /**
+         * Return the position on the line of the intersection point between the segment and a line.
+         * Throw a GeometryException if there is no intersection.
+         */
+        double intersection_grad(const Line& line) const;
+
+        /**
          * Return the coordinates of the end points of the segment.
          */
         std::tuple<Vec2D, Vec2D> coordinates() const;
