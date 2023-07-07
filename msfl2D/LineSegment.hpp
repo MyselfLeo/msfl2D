@@ -56,6 +56,11 @@ namespace Msfl2D {
          * Return the length of the segment
          */
         double length() const;
+
+        /**
+         * Return the point in the middle of the segment.
+         */
+        Vec2D center() const;
     };
 
 } // Msfl2D

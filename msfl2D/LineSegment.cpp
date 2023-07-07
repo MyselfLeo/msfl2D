@@ -52,4 +52,9 @@ namespace Msfl2D {
     Vec2D LineSegment::get_vec() const {
         return line.get_vec() * segment.length();
     }
+
+    Vec2D LineSegment::center() const {
+        std::tuple<Vec2D, Vec2D> coo = coordinates();
+        return (std::get<0>(coo) + std::get<1>(coo)) / 2;
+    }
 } // Msfl2D
