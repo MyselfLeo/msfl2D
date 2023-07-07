@@ -73,8 +73,7 @@ int main(int argc, char *argv[]) {
 
         interface.render(false);
 
-        SATResult result = CollisionDetector::sat(shape_1, shape_2);
-        /*
+       SATResult result = CollisionDetector::sat(shape_1, shape_2);
         if (result.collide) {
 
             auto l1 = Line::from_director_vector(std::get<0>(result.reference_side.coordinates()), result.minimum_penetration_vector);
@@ -82,7 +81,6 @@ int main(int argc, char *argv[]) {
 
 
             interface.draw_segment(result.reference_side);
-            interface.draw_text(std::to_string(result.depth).c_str(), {0, 0});
             interface.draw_line(l1);
             interface.draw_line(l2);
 
@@ -90,7 +88,7 @@ int main(int argc, char *argv[]) {
             for (int i=0; i<result.nb_collision_points; i++) {
                 interface.draw_point(result.collision_points[i], 5, Interface::COLOR_RED);
             }
-        }*/
+        }
 
         result = CollisionDetector::sat(shape_3, shape_4);
         if (result.collide) {

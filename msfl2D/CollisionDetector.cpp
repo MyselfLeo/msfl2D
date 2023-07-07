@@ -161,7 +161,8 @@ namespace Msfl2D {
 
 
         // 3. Now, we have a list of potential collision points. We'll only keep:
-        //    - The ones that "crossed" the reference side (i.e the ones on the RIGHT or directly on the side)
+        //    - The ones that "crossed" the reference side (i.e the ones on the RIGHT or directly on the side
+        //      (and which projection is on the reference side)
         //    - The ones the farest from that side (they are the ones that crossed it first)
 
         int nb_points = 0;
@@ -175,6 +176,9 @@ namespace Msfl2D {
             // side "crossed it", if coming from the exterior.
             if (reference_side.line.side(p) == LineSide::LEFT) {continue;}
 
+            double projection = p.project(reference_side.line);
+            if (projection < reference_side.segment.min || projection > reference_side.segment.max) {continue;}
+
             double current_distance = p.distance_squared(reference_side.line);
 
             // only keep the farest points from the reference side
@@ -187,6 +191,8 @@ namespace Msfl2D {
                 col_points[1] = p;
                 nb_points = 2;
             }
+
+            // change if
         }
 
 

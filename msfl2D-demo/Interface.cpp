@@ -327,13 +327,15 @@ namespace Msfl2Demo {
             }
         }
 
-        draw_point(std::get<0>(points), 9, COLOR_BLUE);
+        /*draw_point(std::get<0>(points), 9, COLOR_BLUE);
         draw_text(std::to_string(segment.segment.min).c_str(), std::get<0>(points) + segment.line.get_vec() * 0.1, COLOR_BLUE);
         draw_point(std::get<1>(points), 5, COLOR_BLUE);
         draw_text(std::to_string(segment.segment.max).c_str(), std::get<1>(points) + segment.line.get_vec() * 0.1, COLOR_BLUE);
 
+
         draw_point(pline, 5, COLOR_BLUE);
         draw_text("1", pline, COLOR_BLUE);
+         */
     }
 
     void Interface::draw_point(const Vec2D &point, int size, const Color4 &color) const {
