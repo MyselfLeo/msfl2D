@@ -27,8 +27,7 @@ namespace Msfl2D {
     }
 
 
-    SATResult CollisionDetector::sat(const std::shared_ptr<ConvexPolygon> &shape1, const std::shared_ptr<ConvexPolygon> &shape2) {
-
+    SATResult CollisionDetector::sat(std::shared_ptr<ConvexPolygon> shape1, std::shared_ptr<ConvexPolygon> shape2) {
         // 1. We find the reference side. This is the side of a ConvexPolygon for which the penetration value is the least.
         //    This is the vector of minimal penetration.
         //    We also conserve the penetration depth for that penetration vector; it will be used later to find the collision points.
@@ -38,12 +37,17 @@ namespace Msfl2D {
         Vec2D minimum_penetration_vector {0, 0};         // initialisation value, will be changed
         double depth = -1;                                      // initialisation value, will be changed
         LineSegment reference_side;
-        double min_dist_from_ref_side = -1;                     // initialisation value, will be changed
+        double min_dist_from_ref_side;
         std::shared_ptr<ConvexPolygon> reference_polygon;       // Polygon owning the reference side
         std::shared_ptr<ConvexPolygon> incident_polygon;        // Polygon "entering" the reference polygon
 
 
 
+        // Lord pray for my soul as I use a goto statement
+        // Seems useful in that case though, we test shape1 against shape2, then we switch shape1 & shape2 and do the same test again
+        bool has_switched = false;
+
+        other_shape_test:
         // The axis of minimal penetration will the normal of one of the shapes sides. So, we iterate of the sides of each shape.
         int i;
         for (i=0; i<shape1->nb_vertices(); i++) {
@@ -68,12 +72,14 @@ namespace Msfl2D {
                 return SATResult::no_collision();
             }
 
+
+
             // We need to compute the minimal distance between the vertices of the potential incident polygon
             // & the potential reference side. This is to prevent a parallel side to the desired side to be considered
             // reference side.
             double min_dist = -1;
-            for (i=0; i<shape2->nb_vertices(); i++) {
-                double dist = shape2->get_vertex(i).distance(tested_side.line);
+            for (int j=0; j<shape2->nb_vertices(); j++) {
+                double dist = shape2->get_global_vertex(j).distance_squared(tested_side.line);
                 if (dist < min_dist || min_dist == -1) {min_dist = dist;}
             }
 
@@ -88,9 +94,8 @@ namespace Msfl2D {
                 min_dist_from_ref_side = min_dist;
             }
 
-
             else if (penetration.length() == depth) {
-                if (min_dist_from_ref_side == -1 || min_dist < min_dist_from_ref_side) {
+                if (min_dist < min_dist_from_ref_side) {
                     depth = penetration.length();
                     minimum_penetration_vector = proj_axis;
                     reference_side = tested_side;
@@ -99,61 +104,18 @@ namespace Msfl2D {
                     min_dist_from_ref_side = min_dist;
                 }
             }
+
+
         }
 
-
-        for (i=0; i<shape2->nb_vertices(); i++) {
-            // Get the side we're checking
-            LineSegment tested_side = LineSegment(
-                    shape2->get_global_vertex(i),
-                    shape2->get_global_vertex((i+1) % shape2->nb_vertices())
-                    );
-
-            Vec2D side_vec = tested_side.get_vec();
-            Vec2D proj_axis = {side_vec.y, -side_vec.x}; // normal of the side
-
-            // Project the shapes onto a line with this orientation (passing through the origin because i said so)
-            Line proj_line = Line::from_director_vector({0, 0}, proj_axis);
-            LineSegment proj_shape_1 = shape1->project(proj_line);
-            LineSegment proj_shape_2 = shape2->project(proj_line);
-
-            LineSegment penetration = LineSegment::intersection(proj_shape_1, proj_shape_2);
-
-            // No intersection => we found a separating axis
-            if (penetration.length() == 0) {
-                return SATResult::no_collision();
-            }
-
-            // We need to compute the minimal distance between the vertices of the potential incident polygon
-            // & the potential reference side. This is to prevent a parallel side to the desired side to be considered
-            // reference side.
-            double min_dist = -1;
-            for (i=0; i<shape1->nb_vertices(); i++) {
-                double dist = shape1->get_vertex(i).distance(tested_side.line);
-                if (dist < min_dist || min_dist == -1) {min_dist = dist;}
-            }
-
-            // Potential reference side
-            if (depth == -1 || penetration.length() < depth) {
-                depth = penetration.length();
-                minimum_penetration_vector = proj_axis;
-                reference_side = tested_side;
-                reference_polygon = shape2;
-                incident_polygon = shape1;
-                min_dist_from_ref_side = min_dist;
-            }
-
-            else if (penetration.length() == depth) {
-                if (min_dist_from_ref_side == -1 || min_dist < min_dist_from_ref_side) {
-                    depth = penetration.length();
-                    minimum_penetration_vector = proj_axis;
-                    reference_side = tested_side;
-                    reference_polygon = shape2;
-                    incident_polygon = shape1;
-                    min_dist_from_ref_side = min_dist;
-                }
-            }
+        if (!has_switched) {
+            has_switched = true;
+            auto tmp = shape1;
+            shape1 = shape2;
+            shape2 = tmp;
+            goto other_shape_test;
         }
+
 
 
 
@@ -169,6 +131,7 @@ namespace Msfl2D {
         for (i=0; i<incident_polygon->nb_vertices(); i++) {
             points.push_back(incident_polygon->get_global_vertex(i));
         }
+
 
         // The 2 normal lines coming from the end points of the reference side.
         std::tuple<Vec2D, Vec2D> end_points = reference_side.coordinates();

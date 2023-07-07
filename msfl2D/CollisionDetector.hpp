@@ -41,7 +41,7 @@ namespace Msfl2D {
         /**
          * Perform a SAT test to compute collision information about two shapes.
          */
-        static SATResult sat(const std::shared_ptr<ConvexPolygon>& shape1, const std::shared_ptr<ConvexPolygon>& shape2);
+        static SATResult sat(std::shared_ptr<ConvexPolygon> shape1, std::shared_ptr<ConvexPolygon> shape2);
     };
 
 } // Msfl2D
