@@ -27,8 +27,9 @@ namespace Msfl2D {
         int nb_collision_points;
         Vec2D collision_points[2];
         LineSegment reference_side;
+        Vec2D nearest_point;
 
-        SATResult(bool collide, Vec2D pen_vec, double depth, int nb_col_points, Vec2D col_points[2], LineSegment ref_side);
+        SATResult(bool collide, Vec2D pen_vec, double depth, int nb_col_points, Vec2D col_points[2], LineSegment ref_side, Vec2D DEBUG);
 
         /** Return a "no collision" SATResult */
         static SATResult no_collision();

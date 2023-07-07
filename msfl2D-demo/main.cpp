@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
     std::shared_ptr<Body> body_1 = std::make_shared<Body>(Body());
     body_1->add_shape(shape_1);
 
-    std::shared_ptr<ConvexPolygon> shape_2 = std::make_shared<ConvexPolygon>(ConvexPolygon(5, 2, {-1, -3}));
+    std::shared_ptr<ConvexPolygon> shape_2 = std::make_shared<ConvexPolygon>(ConvexPolygon(6, 2, {-1, -3}));
     std::shared_ptr<Body> body_2 = std::make_shared<Body>(Body());
     body_2->add_shape(shape_2);
 
@@ -80,6 +80,7 @@ int main(int argc, char *argv[]) {
             auto l2 = Line::from_director_vector(std::get<1>(result.reference_side.coordinates()), result.minimum_penetration_vector);
 
 
+            interface.draw_point(result.nearest_point, 9, Interface::COLOR_YELLOW);
             interface.draw_segment(result.reference_side);
             interface.draw_line(l1);
             interface.draw_line(l2);
@@ -97,6 +98,7 @@ int main(int argc, char *argv[]) {
             auto l2 = Line::from_director_vector(std::get<1>(result.reference_side.coordinates()), result.minimum_penetration_vector);
 
 
+            interface.draw_point(result.nearest_point, 9, Interface::COLOR_YELLOW);
             interface.draw_segment(result.reference_side);
             interface.draw_line(l1);
             interface.draw_line(l2);
