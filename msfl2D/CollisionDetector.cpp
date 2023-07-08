@@ -5,21 +5,24 @@
 #include "CollisionDetector.hpp"
 
 #include <utility>
+#include <cmath>
 #include "MsflExceptions.hpp"
 
 namespace Msfl2D {
 
     SATResult SATResult::no_collision() {
-        return {false, Msfl2D::Vec2D(), 0, 0, nullptr, {}, {}}; // pen_vec and depth values are not important
+        return {false, Msfl2D::Vec2D(), 0, 0, nullptr, {}, {}, nullptr, nullptr}; // pen_vec and depth values are not important
     }
 
-    SATResult::SATResult(bool collide, Vec2D pen_vec, double depth, int nb_col_points, Vec2D col_points[2], LineSegment ref_side, Vec2D DEBUG):
+    SATResult::SATResult(bool collide, Vec2D pen_vec, double depth, int nb_col_points, Vec2D col_points[2], LineSegment ref_side, Vec2D DEBUG, std::shared_ptr<ConvexPolygon> ref, std::shared_ptr<ConvexPolygon> inc):
         collide(collide),
         minimum_penetration_vector(pen_vec),
         depth(depth),
         nb_collision_points(nb_col_points),
         reference_side(ref_side),
-        nearest_point(DEBUG) {
+        nearest_point(DEBUG),
+        reference_shape(std::move(ref)),
+        incident_shape(std::move(inc)) {
         if (col_points != nullptr) {
             for (int i=0; i<2; i++) {
                 collision_points[i] = col_points[i];
@@ -31,7 +34,7 @@ namespace Msfl2D {
     SATResult CollisionDetector::sat(std::shared_ptr<ConvexPolygon> shape1, std::shared_ptr<ConvexPolygon> shape2) {
         // 1. We find the reference side. This is the side of a ConvexPolygon for which the penetration value is the least.
         //    This is the vector of minimal penetration.
-        //    We also conserve the penetration depth for that penetration vector; it will be used later to find the collision points.
+        //    We also conserve the penetration depth for that penetration vector; it will be used later to find the collision potential_collision_points.
         //    Finally, this step also allow to find if there is no collision: if we find a axis for which the penetration is 0, then
         //    this axis is a separating axis and the shapes do not collide. (we return early from that)
 
@@ -50,7 +53,7 @@ namespace Msfl2D {
         bool has_switched = false;
 
         other_shape_test:
-        // The axis of minimal penetration will the normal of one of the shapes sides. So, we iterate of the sides of each shape.
+        // The axis of minimal penetration will the normal of one of the shapes debug_sides. So, we iterate of the debug_sides of each shape.
         int i;
         for (i=0; i<shape1->nb_vertices(); i++) {
             // Get the side we're checking
@@ -91,8 +94,9 @@ namespace Msfl2D {
 
 
             // Potential reference side
-            if (depth == -1 || penetration.length() < depth) {
-                depth = penetration.length();
+            double current_penetration = std::round(penetration.length() * 1e6) / 1e6; // keep 6 digits precision
+            if (depth == -1 || current_penetration < depth) {
+                depth = current_penetration;
                 minimum_penetration_vector = proj_axis;
                 reference_side = tested_side;
                 reference_polygon = shape1;
@@ -101,9 +105,9 @@ namespace Msfl2D {
                 min_dist_point = min_point;
             }
 
-            else if (penetration.length() == depth) {
+            else if (current_penetration == depth) {
                 if (min_dist < min_dist_from_ref_side) {
-                    depth = penetration.length();
+                    depth = current_penetration;
                     minimum_penetration_vector = proj_axis;
                     reference_side = tested_side;
                     reference_polygon = shape1;
@@ -131,17 +135,17 @@ namespace Msfl2D {
         //    I.e we find the intersections between each side of the incident polygon and the 2 lines normal to the
         //    reference side crossing with the reference side extremities. This will give us a list of points, to which
         //    we also include the vertices of the incident side.
-        //    This list of points will contain the collision points. We'll filter them in the next step.
+        //    We'll filter them in the next step.
 
 
-        std::vector<Vec2D> points;
-        std::vector<LineSegment> sides;
+        std::vector<Vec2D> potential_collision_points;
+        std::vector<LineSegment> debug_sides;
         for (i=0; i<incident_polygon->nb_vertices(); i++) {
-            points.push_back(incident_polygon->get_global_vertex(i));
+            potential_collision_points.push_back(incident_polygon->get_global_vertex(i));
         }
 
 
-        // The 2 normal lines coming from the end points of the reference side.
+        // The 2 normal lines coming from the end potential_collision_points of the reference side.
         std::tuple<Vec2D, Vec2D> end_points = reference_side.coordinates();
         Line l1 = Line::from_director_vector(std::get<0>(end_points), minimum_penetration_vector);
         Line l2 = Line::from_director_vector(std::get<1>(end_points), minimum_penetration_vector);
@@ -156,19 +160,19 @@ namespace Msfl2D {
 
             // Check for intersection with one of the normal lines
             try {
-                points.push_back(tested_side.intersection(l1));
-                sides.push_back(tested_side);
+                potential_collision_points.push_back(tested_side.intersection(l1));
+                debug_sides.push_back(tested_side);
             }
             catch (GeometryException& e) {}
             try {
-                points.push_back(tested_side.intersection(l2));
-                sides.push_back(tested_side);
+                potential_collision_points.push_back(tested_side.intersection(l2));
+                debug_sides.push_back(tested_side);
             }
             catch (GeometryException& e) {}
         }
 
 
-        // 3. Now, we have a list of potential collision points. We'll only keep:
+        // 3. Now, we have a list of potential collision potential_collision_points. We'll only keep:
         //    - The ones that "crossed" the reference side (i.e the ones on the RIGHT or directly on the side
         //      (and which projection is on the reference side)
         //    - The ones the farest from that side (they are the ones that crossed it first)
@@ -178,8 +182,8 @@ namespace Msfl2D {
         Vec2D col_points[2];
 
 
-        for (auto& p: points) {
-            // Only consider points that crossed the reference side.
+        for (auto& p: potential_collision_points) {
+            // Only consider potential_collision_points that crossed the reference side.
             // ConvexPolygons are represented clockwise, meaning that a point to the right of one of its
             // side "crossed it", if coming from the exterior.
             if (reference_side.line.side(p) == LineSide::LEFT) {continue;}
@@ -189,7 +193,7 @@ namespace Msfl2D {
 
             double current_distance = p.distance_squared(reference_side.line);
 
-            // only keep the farest points from the reference side
+            // only keep the farest potential_collision_points from the reference side
             if (nb_points == 0 || current_distance > max_distance) {
                 col_points[0] = p;
                 max_distance = current_distance;
@@ -214,7 +218,9 @@ namespace Msfl2D {
                 nb_points,
                 col_points,
                 reference_side,
-                min_dist_point
+                min_dist_point,
+                reference_polygon,
+                incident_polygon
                 };
     }
 } // Msfl2D

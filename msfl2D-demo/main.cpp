@@ -25,6 +25,42 @@ void init_sdl() {
 
 
 
+
+
+
+void debug_print_penetrations(Interface& interface, std::shared_ptr<ConvexPolygon>& shape1, const std::shared_ptr<ConvexPolygon>& shape2, Vec2D min_dist_point) {
+    for (int i=0; i<shape1->nb_vertices(); i++) {
+        // Get the side we're checking
+        LineSegment tested_side = LineSegment(
+                shape1->get_global_vertex(i),
+                shape1->get_global_vertex((i + 1) % shape1->nb_vertices())
+        );
+
+        Vec2D side_vec = tested_side.get_vec();
+        Vec2D proj_axis = {side_vec.y, -side_vec.x}; // normal of the side
+
+        // Project the shapes onto a line with this orientation (passing through the origin because i said so)
+        Line proj_line = Line::from_director_vector({0, 0}, proj_axis);
+        LineSegment proj_shape_1 = shape1->project(proj_line);
+        LineSegment proj_shape_2 = shape2->project(proj_line);
+
+        LineSegment penetration = LineSegment::intersection(proj_shape_1, proj_shape_2);
+
+        interface.draw_text(std::to_string(penetration.length()).c_str(), tested_side.center());
+
+        double distance = min_dist_point.distance_squared(tested_side.line);
+        interface.draw_text(std::to_string(distance).c_str(), tested_side.center() - Vec2D(0, 0.4), Interface::COLOR_RED);
+    }
+}
+
+
+
+
+
+
+
+
+
 int main(int argc, char *argv[]) {
     init_sdl();
 
@@ -89,7 +125,13 @@ int main(int argc, char *argv[]) {
             for (int i=0; i<result.nb_collision_points; i++) {
                 interface.draw_point(result.collision_points[i], 5, Interface::COLOR_RED);
             }
+
+            debug_print_penetrations(interface, result.reference_shape, result.incident_shape, result.nearest_point);
         }
+
+
+
+
 
         result = CollisionDetector::sat(shape_3, shape_4);
         if (result.collide) {
@@ -107,6 +149,8 @@ int main(int argc, char *argv[]) {
             for (int i=0; i<result.nb_collision_points; i++) {
                 interface.draw_point(result.collision_points[i], 5, Interface::COLOR_RED);
             }
+
+            debug_print_penetrations(interface, result.reference_shape, result.incident_shape, result.nearest_point);
         }
 
 
