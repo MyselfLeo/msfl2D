@@ -79,7 +79,7 @@ namespace Msfl2D {
 
     void Body::rotate(double angle, const Vec2D &center) {
         for (auto& s: shapes) {
-            s->rotation += angle;                                        // rotate the vertices of the shapes around the shape centers
+            s->rotation += angle;                            // rotate the vertices of the shapes around the shape centers
 
             // prevent overflow of rotation value
             if (s->rotation > (M_PI * 2)) {s->rotation -= M_PI * 2;}
@@ -89,6 +89,16 @@ namespace Msfl2D {
             s->position = s->position.rotate(angle, center); // rotate the center of the shapes around the specified point
         }
         update_center();
+    }
+
+
+    void Body::reset_forces() {forces.clear();}
+    void Body::register_force(Vec2D force) {forces.emplace_back(force, Vec2D(0, 0));}
+    void Body::register_force(Vec2D force, Vec2D application_point) {forces.emplace_back(force, application_point);}
+
+
+    void Body::apply_forces(double delta_t) {
+
     }
 
 

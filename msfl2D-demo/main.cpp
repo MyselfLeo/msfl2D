@@ -75,12 +75,12 @@ int main(int argc, char *argv[]) {
     std::shared_ptr<ConvexPolygon> shape_3 = std::make_shared<ConvexPolygon>(ConvexPolygon(4, 1, {-3, -5}));
     std::shared_ptr<Body> body_3 = std::make_shared<Body>(Body());
     body_3->add_shape(shape_3);
-    body_3->rotate(M_PI / 4);
+    //body_3->rotate(M_PI / 4);
 
     std::shared_ptr<ConvexPolygon> shape_4 = std::make_shared<ConvexPolygon>(ConvexPolygon(4, 2, {-3, -10}));
     std::shared_ptr<Body> body_4 = std::make_shared<Body>(Body());
     body_4->add_shape(shape_4);
-    body_4->rotate(M_PI / 4);
+    //body_4->rotate(M_PI / 4);
 
 
 
@@ -112,21 +112,21 @@ int main(int argc, char *argv[]) {
        SATResult result = CollisionDetector::sat(shape_1, shape_2);
         if (result.collide) {
 
-            auto l1 = Line::from_director_vector(std::get<0>(result.reference_side.coordinates()), result.minimum_penetration_vector);
+            /*auto l1 = Line::from_director_vector(std::get<0>(result.reference_side.coordinates()), result.minimum_penetration_vector);
             auto l2 = Line::from_director_vector(std::get<1>(result.reference_side.coordinates()), result.minimum_penetration_vector);
 
 
             interface.draw_point(result.nearest_point, 9, Interface::COLOR_YELLOW);
             interface.draw_segment(result.reference_side);
             interface.draw_line(l1);
-            interface.draw_line(l2);
+            interface.draw_line(l2);*/
 
 
             for (int i=0; i<result.nb_collision_points; i++) {
                 interface.draw_point(result.collision_points[i], 5, Interface::COLOR_RED);
             }
 
-            debug_print_penetrations(interface, result.reference_shape, result.incident_shape, result.nearest_point);
+            //debug_print_penetrations(interface, result.reference_shape, result.incident_shape, result.nearest_point);
         }
 
 
@@ -136,21 +136,21 @@ int main(int argc, char *argv[]) {
         result = CollisionDetector::sat(shape_3, shape_4);
         if (result.collide) {
 
-            auto l1 = Line::from_director_vector(std::get<0>(result.reference_side.coordinates()), result.minimum_penetration_vector);
+            /*auto l1 = Line::from_director_vector(std::get<0>(result.reference_side.coordinates()), result.minimum_penetration_vector);
             auto l2 = Line::from_director_vector(std::get<1>(result.reference_side.coordinates()), result.minimum_penetration_vector);
 
 
             interface.draw_point(result.nearest_point, 9, Interface::COLOR_YELLOW);
             interface.draw_segment(result.reference_side);
             interface.draw_line(l1);
-            interface.draw_line(l2);
+            interface.draw_line(l2);*/
 
 
             for (int i=0; i<result.nb_collision_points; i++) {
                 interface.draw_point(result.collision_points[i], 5, Interface::COLOR_RED);
             }
 
-            debug_print_penetrations(interface, result.reference_shape, result.incident_shape, result.nearest_point);
+            //debug_print_penetrations(interface, result.reference_shape, result.incident_shape, result.nearest_point);
         }
 
 

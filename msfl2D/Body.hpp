@@ -89,11 +89,39 @@ namespace Msfl2D {
         void rotate(double angle, const Vec2D& center);
 
 
+        /**
+         * Reset the forces applied to this body. Should be called at the beginning of every simulation steps.
+         */
+        void reset_forces();
+
+        /**
+         * Register a force to be applied to the body. The force will be applied at the center of the body.
+         */
+        void register_force(Vec2D force);
+
+        /**
+         * Register a force to be applied to the body. The given position must be relative to the body center.
+         * You can obtain this position simply by doing absolute_force_position - body.position
+         */
+        void register_force(Vec2D force, Vec2D application_point);
+
+        /**
+         * Apply the forces previously registered (using register_force) to the body.
+         * @param delta_t time to simulate, in seconds.
+         */
+        void apply_forces(double delta_t);
+
+
 
     private:
         // Like for vertices in ComplexPolygons, the center of a body is the average position of its shapes.
         // The constructors of the Body takes care of updating body center.
         std::vector<std::shared_ptr<Shape>> shapes;
+
+
+        // Collision resolution (among other things, like gravity application) will add a force to this vector along
+        // with the application point of the force (relative to the body center).
+        std::vector<std::tuple<Vec2D, Vec2D>> forces;
 
         /**
          * Update the center of the body so it is at the average position of each shape.
