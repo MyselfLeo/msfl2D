@@ -191,7 +191,7 @@ namespace Msfl2D {
             double projection = p.project(reference_side.line);
             if (projection < reference_side.segment.min || projection > reference_side.segment.max) {continue;}
 
-            double current_distance = p.distance_squared(reference_side.line);
+            double current_distance = std::round(p.distance_squared(reference_side.line) * 1e6) / 1e6;
 
             // only keep the farest potential_collision_points from the reference side
             if (nb_points == 0 || current_distance > max_distance) {
@@ -199,12 +199,10 @@ namespace Msfl2D {
                 max_distance = current_distance;
                 nb_points = 1;
             }
-            else if (current_distance == max_distance && nb_points < 2) {
+            else if (current_distance == max_distance && nb_points == 1) {
                 col_points[1] = p;
                 nb_points = 2;
             }
-
-            // change if
         }
 
 
