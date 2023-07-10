@@ -15,6 +15,9 @@ namespace Msfl2D {
         return *this;
     }
 
+    Vec2D Body::get_center() const {
+        return position;
+    }
 
 
     void Body::update_center() {

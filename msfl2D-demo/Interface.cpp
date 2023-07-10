@@ -139,7 +139,7 @@ namespace Msfl2Demo {
                     for (auto& b: world->get_bodies()) {
                         if (is_body_hovered(b.second)) {
                             selected_body = b.second;
-                            selection_pixel_offset = world_to_screen(b.second->position) - get_mouse_pos();
+                            selection_pixel_offset = world_to_screen(b.second->get_center()) - get_mouse_pos();
                             break;
                         }
                     }
@@ -178,7 +178,8 @@ namespace Msfl2Demo {
 
 
 
-    void Interface::render(bool update) {
+    void Interface::render(double
+    delta_t, bool update) {
         if (renderer == nullptr) {
             std::cerr << "Called render on an uninitialised Interface" << std::endl;
             exit(EXIT_FAILURE);
@@ -208,6 +209,7 @@ namespace Msfl2Demo {
         create_camera_window();
         create_debug_tools_window();
         create_world_info_window();
+        create_performance_window(delta_t);
 
 
         // frame rendering
@@ -386,8 +388,8 @@ namespace Msfl2Demo {
             exit(EXIT_FAILURE);
         }
 
-        if (debug_centers) { draw_point(body->position, 3, COLOR_GREEN);}
-        if (debug_bodyids) { draw_text(std::to_string(body_id).c_str(), body->position, COLOR_GREEN);}
+        if (debug_centers) { draw_point(body->get_center(), 3, COLOR_GREEN);}
+        if (debug_bodyids) { draw_text(std::to_string(body_id).c_str(), body->get_center(), COLOR_GREEN);}
     }
 
 
@@ -511,7 +513,7 @@ namespace Msfl2Demo {
 
 
 
-    void Interface::update() {
+    void Interface::update(double delta_t) {
         update_grabbing();
 
 
@@ -544,5 +546,21 @@ namespace Msfl2Demo {
         ImGui::Text("Body count: %d", world->nb_bodies());
         ImGui::End();
 
+    }
+
+    void Interface::create_performance_window(double delta_t) {
+        static double fps[20];
+        static int start = 0;
+
+        double average_fps = 0;
+        for (auto n: fps) {average_fps += n;}
+        average_fps /= 20;
+
+        ImGui::Begin("Performances", nullptr, IMGUI_WINDOW_FLAGS);
+        ImGui::Text("Framerate: %.0f", average_fps);
+        ImGui::End();
+
+        fps[start] = 1 / delta_t;
+        start = (start + 1) % 20;
     }
 } // Msfl2Demo

@@ -19,23 +19,27 @@ namespace Msfl2D {
     class Body {
     public:
         /**
-         * Position, or "center" of the body. It must be the average position of each shape position.
-         * This value will update each time you add/remove a shape from the body.
-         * Most of the time, your body will only have one shape, so its position is "obvious" (the center of the shape).
-         * It may become less obvious when constructing bodies with multiple shapes.
-         */
-        Vec2D position;
-
-        /**
          * Velocity vector.
          */
-        Vec2D velocity;
+        Vec2D velocity = {0, 0};
+
+        /**
+         * Bodies can be made static, which mean they won't be affected by any forces. To move them, use move() instead
+         * of applying forces to it.
+         */
+        bool is_static = false;
 
         /**
          * Create a body with no shape. Its position will be set to (0, 0), but it's useless as it will update
          * when adding a shape.
          */
         Body() = default;
+
+
+        /**
+         * Remove the center of the body, in world-space coordinates. This is its {0, 0} relative position.
+         */
+        Vec2D get_center() const;
 
 
         /**
@@ -119,6 +123,12 @@ namespace Msfl2D {
 
 
     private:
+        // Position, or "center" of the body. It must be the average position of each shape position.
+        // This value will update each time you add/remove a shape from the body.
+        // Most of the time, your body will only have one shape, so its position is "obvious" (the center of the shape).
+        // It may become less obvious when constructing bodies with multiple shapes.
+        Vec2D position = {0, 0};
+
         // Like for vertices in ComplexPolygons, the center of a body is the average position of its shapes.
         // The constructors of the Body takes care of updating body center.
         std::vector<std::shared_ptr<Shape>> shapes;

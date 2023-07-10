@@ -96,7 +96,12 @@ int main(int argc, char *argv[]) {
 
     // Main loop
     bool stop = false;
+    Uint64 old_time = SDL_GetTicks64();
     while (!stop) {
+        Uint64 new_time = SDL_GetTicks64();
+        double delta_t = (double)(new_time - old_time) / 1000;        // time since last loop in seconds
+        old_time = new_time;
+
         // Process I/O events
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
@@ -105,9 +110,9 @@ int main(int argc, char *argv[]) {
         }
 
         interface.process_io();
-        interface.update();
+        interface.update(delta_t);
 
-        interface.render(false);
+        interface.render(delta_t, false);
 
        SATResult result = CollisionDetector::sat(shape_1, shape_2);
         if (result.collide) {

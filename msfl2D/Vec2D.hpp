@@ -137,7 +137,7 @@ namespace Msfl2D {
         Vec2D operator-() const;
 
 
-        // std::cout operators
+        //  operators
         friend std::ostream& operator<<(std::ostream& os, const Vec2D& v);
 
     private:

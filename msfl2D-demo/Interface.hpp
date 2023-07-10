@@ -71,7 +71,7 @@ namespace Msfl2Demo {
          *   if you want to draw something to the screen after calling this function. Be sure to call "update_screen"
          *   afterward!
          */
-        void render(bool update = true);
+        void render(double delta_t, bool update = true);
 
         /**
          * Update manually the screen. To be used only after a call to render() with update = false.
@@ -91,7 +91,7 @@ namespace Msfl2Demo {
         /**
          * Update the world
          */
-        void update();
+        void update(double delta_t);
 
 
 
@@ -178,6 +178,7 @@ namespace Msfl2Demo {
         void create_camera_window();
         void create_debug_tools_window();
         void create_world_info_window();
+        void create_performance_window(double delta_t);
 
 
         // Methods used to update the World.

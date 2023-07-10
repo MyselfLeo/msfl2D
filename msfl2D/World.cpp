@@ -55,4 +55,22 @@ namespace Msfl2D {
     const std::unordered_map<BodyID, std::shared_ptr<Body>> &World::get_bodies() const {
         return bodies;
     }
+
+
+
+    void World::update(double delta_t) {
+        // Apply the constant force (most of the time, gravity) to every body
+        for (auto& b: bodies) {
+            b.second->reset_forces();       // Clear forces from the last step
+            b.second->register_force(constant_force);
+        }
+
+
+        // todo: collision detection & resolution
+
+        // Update each body
+        for (auto& b: bodies) {
+            b.second->apply_forces(delta_t);
+        }
+    }
 } // Msfl2D

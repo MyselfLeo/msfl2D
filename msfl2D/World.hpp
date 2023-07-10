@@ -24,6 +24,13 @@ namespace Msfl2D {
         World();
 
         /**
+         * Force constantly applied to every body in the world. Most of the time, it's the gravity.
+         * The default value is {0, -9.8}.
+         */
+        Vec2D constant_force = {0, -9.8};
+
+
+        /**
          * Add a body to the world and return its newly created BodyID.
          * @return
          */
@@ -53,6 +60,12 @@ namespace Msfl2D {
          * Return a read-only reference to the map containing the bodies of this world.
          */
         const std::unordered_map<BodyID, std::shared_ptr<Body>>& get_bodies() const;
+
+        /**
+         * Update the world for the given duration
+         * @param delta_t duration of the update, in seconds.
+         */
+        void update(double delta_t);
 
 
     private:
