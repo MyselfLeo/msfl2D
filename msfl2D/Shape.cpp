@@ -3,6 +3,7 @@
 //
 
 #include "Shape.hpp"
+#include "Body.hpp"
 
 namespace Msfl2D {
     const Vec2D &Shape::get_position() const {
@@ -10,4 +11,8 @@ namespace Msfl2D {
     }
 
     double Shape::get_rotation() const {return rotation;}
+
+    std::shared_ptr<Body> Shape::get_body() const {
+        return body;
+    }
 } // Msfl2D

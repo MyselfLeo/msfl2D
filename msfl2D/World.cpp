@@ -68,6 +68,7 @@ namespace Msfl2D {
 
         // todo: collision detection & resolution
 
+
         // Update each body
         for (auto& b: bodies) {
             b.second->apply_forces(delta_t);

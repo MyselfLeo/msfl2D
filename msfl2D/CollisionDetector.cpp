@@ -11,18 +11,16 @@
 namespace Msfl2D {
 
     SATResult SATResult::no_collision() {
-        return {false, Msfl2D::Vec2D(), 0, 0, nullptr/*, {}, {}, nullptr, nullptr*/}; // pen_vec and depth values are not important
+        return {false, Msfl2D::Vec2D(), 0, 0, nullptr, nullptr, nullptr}; // pen_vec and depth values are not important
     }
 
-    SATResult::SATResult(bool collide, Vec2D pen_vec, double depth, int nb_col_points, Vec2D col_points[2]/*, LineSegment ref_side, Vec2D DEBUG, std::shared_ptr<ConvexPolygon> ref, std::shared_ptr<ConvexPolygon> inc*/):
+    SATResult::SATResult(bool collide, Vec2D pen_vec, double depth, int nb_col_points, Vec2D col_points[2], std::shared_ptr<ConvexPolygon> ref, std::shared_ptr<ConvexPolygon> inc):
         collide(collide),
         minimum_penetration_vector(pen_vec),
         depth(depth),
-        nb_collision_points(nb_col_points)
-        //reference_side(ref_side),
-        //nearest_point(DEBUG),
-        //reference_shape(std::move(ref)),
-        //incident_shape(std::move(inc))
+        nb_collision_points(nb_col_points),
+        reference_shape(std::move(ref)),
+        incident_shape(std::move(inc))
         {
         if (col_points != nullptr) {
             for (int i=0; i<2; i++) {
@@ -44,7 +42,7 @@ namespace Msfl2D {
         LineSegment reference_side;
         double min_dist_from_ref_side;
         Vec2D min_dist_point;
-        //std::shared_ptr<ConvexPolygon> reference_polygon;       // Polygon owning the reference side
+        std::shared_ptr<ConvexPolygon> reference_polygon;       // Polygon owning the reference side
         std::shared_ptr<ConvexPolygon> incident_polygon;        // Polygon "entering" the reference polygon
 
 
@@ -84,12 +82,10 @@ namespace Msfl2D {
             // & the potential reference side. This is to prevent a parallel side to the desired side to be considered
             // reference side.
             double min_dist = -1;
-            //Vec2D min_point;
             for (int j=0; j<shape2->nb_vertices(); j++) {
                 double dist = shape2->get_global_vertex(j).distance_squared(tested_side.line);
                 if (dist < min_dist || min_dist == -1) {
                     min_dist = dist;
-                    //min_point = shape2->get_global_vertex(j);
                 }
             }
 
@@ -100,10 +96,9 @@ namespace Msfl2D {
                 depth = current_penetration;
                 minimum_penetration_vector = proj_axis;
                 reference_side = tested_side;
-                //reference_polygon = shape1;
+                reference_polygon = shape1;
                 incident_polygon = shape2;
                 min_dist_from_ref_side = min_dist;
-                //min_dist_point = min_point;
             }
 
             else if (current_penetration == depth) {
@@ -111,10 +106,9 @@ namespace Msfl2D {
                     depth = current_penetration;
                     minimum_penetration_vector = proj_axis;
                     reference_side = tested_side;
-                    //reference_polygon = shape1;
+                    reference_polygon = shape1;
                     incident_polygon = shape2;
                     min_dist_from_ref_side = min_dist;
-                    //min_dist_point = min_point;
                 }
             }
 
@@ -215,11 +209,9 @@ namespace Msfl2D {
                 minimum_penetration_vector,
                 depth,
                 nb_points,
-                col_points
-                //reference_side,
-                //min_dist_point,
-                //reference_polygon,
-                //incident_polygon
+                col_points,
+                reference_polygon,
+                incident_polygon
                 };
     }
 } // Msfl2D

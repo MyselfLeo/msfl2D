@@ -16,7 +16,7 @@ namespace Msfl2D {
     /**
      * A body is a simulation element with specific parameters (position, speed, mass, etc.).
      */
-    class Body {
+    class Body: public std::enable_shared_from_this<Body> {
     public:
         /**
          * Velocity vector.
@@ -121,6 +121,19 @@ namespace Msfl2D {
         void apply_forces(double delta_t);
 
 
+        /**
+         * Return the bounciness of the body.
+         */
+        double get_bounciness() const;
+
+        /**
+         * Set the bounciness of the body.
+         * Throw SimulationException if the value is not between 0 & 1.
+         */
+        void set_bounciness(double b);
+
+
+
 
     private:
         // Position, or "center" of the body. It must be the average position of each shape position.
@@ -137,6 +150,11 @@ namespace Msfl2D {
         // Collision resolution (among other things, like gravity application) will add a force to this vector along
         // with the application point of the force (relative to the body center).
         std::vector<std::tuple<Vec2D, Vec2D>> forces;
+
+        /**
+         * A value between 0 & 1 representing how bouncy the body is. 0 = not bouncy at all, 1 = as bouncy as possible.
+         */
+        double bounciness = 0.5;
 
         /**
          * Update the center of the body so it is at the average position of each shape.

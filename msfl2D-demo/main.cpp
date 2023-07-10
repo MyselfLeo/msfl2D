@@ -10,6 +10,7 @@
 #include "msfl2D/World.hpp"
 #include "Interface.hpp"
 #include "msfl2D/CollisionDetector.hpp"
+#include "msfl2D/CollisionResolver.hpp"
 
 using namespace Msfl2D;
 using namespace Msfl2Demo;
@@ -113,6 +114,8 @@ int main(int argc, char *argv[]) {
         interface.process_io();
         interface.update(delta_t);
 
+
+
         interface.render(delta_t, false);
 
        SATResult result = CollisionDetector::sat(shape_1, shape_2);
@@ -133,6 +136,8 @@ int main(int argc, char *argv[]) {
             }
 
             //debug_print_penetrations(interface, result.reference_shape, result.incident_shape, result.nearest_point);
+
+            CollisionResolver::resolve(result);
         }
 
 
@@ -157,6 +162,7 @@ int main(int argc, char *argv[]) {
             }
 
             //debug_print_penetrations(interface, result.reference_shape, result.incident_shape, result.nearest_point);
+            CollisionResolver::resolve(result);
         }
 
 

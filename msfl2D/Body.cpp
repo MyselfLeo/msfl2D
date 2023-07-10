@@ -11,6 +11,7 @@
 namespace Msfl2D {
     Body& Body::add_shape(const std::shared_ptr<Shape>& shape) {
         shapes.push_back(shape);
+        shape->body = shared_from_this();
         update_center();
         return *this;
     }
@@ -116,6 +117,15 @@ namespace Msfl2D {
 
         // apply velocity & inertia
         move(position + (velocity * delta_t));
+    }
+
+    double Body::get_bounciness() const {
+        return bounciness;
+    }
+
+    void Body::set_bounciness(double b) {
+        if (b < 0 || b > 1) {throw SimulationException("The bouncines must be a number between 0 & 1.");}
+        bounciness = b;
     }
 
 

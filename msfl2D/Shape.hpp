@@ -8,7 +8,12 @@
 #include "Line.hpp"
 #include "LineSegment.hpp"
 
+#include <memory>
+
 namespace Msfl2D {
+    // pre-declare body because the compiler wants it so bad
+    class Body;
+
     /**
      * Base class for the shapes used in the physic engine.
      * Derived shapes must implement the `project` method, which is used for performing SAT
@@ -22,6 +27,8 @@ namespace Msfl2D {
 
         const Vec2D& get_position() const;
         double get_rotation() const;
+
+        std::shared_ptr<Body> get_body() const;
 
         /**
          * Check if the given point is inside or outside the shape. This function should return true if the
@@ -40,8 +47,12 @@ namespace Msfl2D {
 
     protected:
         friend class Body;
+
+        // Body owning this shape, set by the body.
+        std::shared_ptr<Body> body{};
+
         Vec2D position;
-        double rotation; // in radians
+        double rotation{}; // in radians
     };
 
 } // Msfl2D

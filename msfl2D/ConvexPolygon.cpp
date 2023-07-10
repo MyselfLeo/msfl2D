@@ -11,6 +11,7 @@ namespace Msfl2D {
 
     ConvexPolygon::ConvexPolygon(const std::vector<Vec2D> &vertices, Vec2D zero) {
         this->rotation = 0;
+        this->body = nullptr;
 
         // Add the given vertices to the shape, adding the zero coordinates to it (make it absolute).
         // At that point, the vertices coordinates are absolute; we'll make them relative to the center later
@@ -35,6 +36,7 @@ namespace Msfl2D {
 
     ConvexPolygon::ConvexPolygon(const std::vector<Vec2D> &vertices) {
         this->rotation = 0;
+        this->body = nullptr;
 
         // Compute the center of the polygon.
         this->position = vec2D_average(vertices);
@@ -57,6 +59,7 @@ namespace Msfl2D {
 
         this->position = center;
         this->rotation = 0;
+        this->body = nullptr;
 
         for (int i=0; i<vertex_nb; i++) {
             double rad = i * -2 * M_PI / vertex_nb;
