@@ -27,6 +27,11 @@ namespace Msfl2D {
         Vec2D position;
 
         /**
+         * Velocity vector.
+         */
+        Vec2D velocity;
+
+        /**
          * Create a body with no shape. Its position will be set to (0, 0), but it's useless as it will update
          * when adding a shape.
          */
