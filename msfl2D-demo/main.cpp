@@ -75,12 +75,13 @@ int main(int argc, char *argv[]) {
     std::shared_ptr<ConvexPolygon> shape_3 = std::make_shared<ConvexPolygon>(ConvexPolygon(4, 1, {-3, -5}));
     std::shared_ptr<Body> body_3 = std::make_shared<Body>(Body());
     body_3->add_shape(shape_3);
-    //body_3->rotate(M_PI / 4);
+    body_3->rotate(M_PI / 4);
 
-    std::shared_ptr<ConvexPolygon> shape_4 = std::make_shared<ConvexPolygon>(ConvexPolygon(4, 2, {-3, -10}));
+    std::shared_ptr<ConvexPolygon> shape_4 = std::make_shared<ConvexPolygon>(ConvexPolygon(4, 3, {-3, -10}));
     std::shared_ptr<Body> body_4 = std::make_shared<Body>(Body());
+    body_4->is_static = true;
     body_4->add_shape(shape_4);
-    //body_4->rotate(M_PI / 4);
+    body_4->rotate(M_PI / 4);
 
 
 

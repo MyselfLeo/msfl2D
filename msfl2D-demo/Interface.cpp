@@ -178,8 +178,7 @@ namespace Msfl2Demo {
 
 
 
-    void Interface::render(double
-    delta_t, bool update) {
+    void Interface::render(double delta_t, bool update) {
         if (renderer == nullptr) {
             std::cerr << "Called render on an uninitialised Interface" << std::endl;
             exit(EXIT_FAILURE);
@@ -515,14 +514,14 @@ namespace Msfl2Demo {
 
     void Interface::update(double delta_t) {
         update_grabbing();
-
-
+        world->update(delta_t);
     }
 
 
 
     void Interface::update_grabbing() {
         if (selected_body != nullptr) {
+            selected_body->velocity = {0,0};
             selected_body->move(screen_to_world(get_mouse_pos() + selection_pixel_offset));
         }
     }
