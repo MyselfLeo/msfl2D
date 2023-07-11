@@ -4,6 +4,8 @@
 
 #include "World.hpp"
 #include "MsflExceptions.hpp"
+#include "CollisionDetector.hpp"
+#include "CollisionResolver.hpp"
 
 #include <random>
 #include <climits>
@@ -67,6 +69,31 @@ namespace Msfl2D {
 
 
         // todo: collision detection & resolution
+        // todo: should be based on shapes & not bodies
+
+        // temporary: compute each pairs of bodies
+        std::vector<std::tuple<std::shared_ptr<Body>, std::shared_ptr<Body>>> pairs;
+        for (auto& b1: bodies) {
+            for (auto& b2: bodies) {
+                if (b1.first < b2.first) {
+                    pairs.emplace_back(b1.second, b2.second);
+                }
+            }
+        }
+
+        // check for collision, resolve if needed
+        for (auto& p: pairs) {
+            std::shared_ptr<ConvexPolygon> bs1 = (const std::shared_ptr<Msfl2D::ConvexPolygon> &) std::get<0>(
+                    p)->get_shapes()[0];
+            std::shared_ptr<ConvexPolygon> bs2 = (const std::shared_ptr<Msfl2D::ConvexPolygon> &) std::get<1>(
+                    p)->get_shapes()[0];
+            SATResult collision_data = CollisionDetector::sat(bs1, bs2);
+
+            if (collision_data.collide) {
+                CollisionResolver::resolve(collision_data);
+            }
+        }
+
 
 
         // Update each body

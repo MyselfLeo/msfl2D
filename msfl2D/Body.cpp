@@ -128,5 +128,14 @@ namespace Msfl2D {
         bounciness = b;
     }
 
+    void Body::set_mass(double mass) {
+        if (is_static) {this->TEMPORARY_mass = 0;}
+        else {this->TEMPORARY_mass = mass;}
+    }
+
+    double Body::get_mass() const {
+        return TEMPORARY_mass;
+    }
+
 
 } // Mslf2D

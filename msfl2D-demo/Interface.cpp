@@ -387,8 +387,14 @@ namespace Msfl2Demo {
             exit(EXIT_FAILURE);
         }
 
-        if (debug_centers) { draw_point(body->get_center(), 3, COLOR_GREEN);}
-        if (debug_bodyids) { draw_text(std::to_string(body_id).c_str(), body->get_center(), COLOR_GREEN);}
+        if (debug_centers) {draw_point(body->get_center(), 3, COLOR_GREEN);}
+        if (debug_bodyids) {draw_text(std::to_string(body_id).c_str(), body->get_center(), COLOR_GREEN);}
+        if (debug_velocities) {
+            if (body->velocity.norm() > 0) {
+                LineSegment vel_vec = {body->get_center(), body->get_center() + body->velocity};
+                draw_segment(vel_vec, COLOR_YELLOW);
+            }
+        }
     }
 
 
@@ -504,6 +510,7 @@ namespace Msfl2Demo {
         ImGui::Begin("Debug tools", nullptr, IMGUI_WINDOW_FLAGS);
         ImGui::Checkbox("Show shape & body centers", &debug_centers);
         ImGui::Checkbox("Show body IDs", &debug_bodyids);
+        ImGui::Checkbox("Show velocity vectors", &debug_velocities);
 
         ImGui::End();
     }

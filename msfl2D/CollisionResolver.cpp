@@ -5,18 +5,26 @@
 #include "CollisionResolver.hpp"
 
 namespace Msfl2D {
-    void
-    CollisionResolver::resolve(const SATResult &col_result) {
+    void CollisionResolver::resolve(const SATResult &col_result) {
         if (col_result.nb_collision_points == 0) {
-            std::cout << "No collision point" << std::endl;
             return;
         }
 
         std::shared_ptr<Body> ref_body = col_result.reference_shape->get_body();
         std::shared_ptr<Body> inc_body = col_result.incident_shape->get_body();
 
+        std::cout << "inc velocity: " << inc_body->velocity << std::endl;
+        std::cout << "ref velocity: " << ref_body->velocity << std::endl;
+
         // Return early as no body can move
         if (ref_body->is_static && inc_body->is_static) {return;}
+
+        // return early if the two shapes are receding
+        double current_dist = Vec2D::distance_squared(ref_body->get_center(), inc_body->get_center());
+        double next_dist = Vec2D::distance_squared(
+                ref_body->get_center() + ref_body->velocity * APPROACHING_PRECISION,
+                inc_body->get_center() + inc_body->velocity * APPROACHING_PRECISION);
+        if (current_dist < next_dist) {return;}
 
         Vec2D min_pen_vec_normalised = col_result.minimum_penetration_vector.normalized();
 
@@ -35,48 +43,49 @@ namespace Msfl2D {
         }
 
 
+        // Now, we nullify the relative velocity of one-another
+        Vec2D relative_velocity = inc_body->velocity - ref_body->velocity; // velocity of inc relative to ref
+        Vec2D projected_rel_velocity = min_pen_vec_normalised * Vec2D::dot(min_pen_vec_normalised, relative_velocity);
+        if (ref_body->is_static) {
+            inc_body->velocity -= projected_rel_velocity;
+        }
+        else if (inc_body->is_static) {
+            ref_body->velocity += projected_rel_velocity;
+        }
+        else {
+            inc_body->velocity -= projected_rel_velocity/2;
+            ref_body->velocity += projected_rel_velocity/2;
+        }
 
-        // Average the bounciness of the 2 bodies so we have a value for it.
+        // Compute collision force
         double bounciness = (ref_body->get_bounciness() + inc_body->get_bounciness()) / 2;
+        Vec2D collision_force = projected_rel_velocity * bounciness * (ref_body->get_mass() + inc_body->get_mass());
+        //collision_force *= 10;
 
-        // compute the collision velocities of the 2 bodies
-        Vec2D relative_velocity = inc_body->velocity - ref_body->velocity;
-        Vec2D inc_body_collision_velocity = min_pen_vec_normalised * Vec2D::dot(min_pen_vec_normalised, relative_velocity);
-
-        relative_velocity = ref_body->velocity - inc_body->velocity;
-        Vec2D ref_body_collision_velocity = min_pen_vec_normalised * Vec2D::dot(min_pen_vec_normalised, relative_velocity);
-
-        // nullify velocity of the 2 bodies
-        inc_body->velocity -= inc_body_collision_velocity;
-        ref_body->velocity -= ref_body_collision_velocity;
-
-
-        // apply bounciness
-        inc_body_collision_velocity *= bounciness;
-        ref_body_collision_velocity *= bounciness;
-        inc_body_collision_velocity /= col_result.nb_collision_points;
-        ref_body_collision_velocity /= col_result.nb_collision_points;
+        /*
+        std::cout << "projected_rel_velocity: " << projected_rel_velocity << std::endl;
+        std::cout << "bounciness: " << bounciness << std::endl;
+        std::cout << "collision force: " << collision_force << std::endl;
+        std::cout << "mass sum: " << (ref_body->get_mass() + inc_body->get_mass()) << std::endl;
+         */
 
         // todo: take mass into account
 
         if (ref_body->is_static) {
-            std::cout << "only applying to ref body" << std::endl;
             for (int i=0; i<col_result.nb_collision_points; i++) {
-                inc_body->register_force(-inc_body_collision_velocity, col_result.collision_points[i]);
+                inc_body->register_force(-collision_force, col_result.collision_points[i]);
             }
         }
         else if (inc_body->is_static) {
-            std::cout << "only applying to inc body" << std::endl;
             for (int i=0; i<col_result.nb_collision_points; i++) {
-                ref_body->register_force(ref_body_collision_velocity, col_result.collision_points[i]);
+                std::cout << "applying " << collision_force << " to ref" << std::endl;
+                ref_body->register_force(collision_force, col_result.collision_points[i]);
             }
         }
         else {
             for (int i=0; i<col_result.nb_collision_points; i++) {
-                inc_body->register_force(-inc_body_collision_velocity/2, col_result.collision_points[i]);
-            }
-            for (int i=0; i<col_result.nb_collision_points; i++) {
-                ref_body->register_force(ref_body_collision_velocity/2, col_result.collision_points[i]);
+                inc_body->register_force(-collision_force / inc_body->get_mass(), col_result.collision_points[i]);
+                ref_body->register_force(collision_force / ref_body->get_mass(), col_result.collision_points[i]);
             }
         }
     }

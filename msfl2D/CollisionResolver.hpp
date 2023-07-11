@@ -13,6 +13,10 @@ namespace Msfl2D {
     /** This static class is used to resolve collision by separating the bodies and applying correct forces to them. */
     class CollisionResolver {
     public:
+
+        /** Precision of approaching detection */
+        static constexpr double APPROACHING_PRECISION = 0.001;
+
         /**
          * Resolve the collision
          */

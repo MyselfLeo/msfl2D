@@ -157,6 +157,7 @@ namespace Msfl2Demo {
         // Flags to display specific debug infos
         bool debug_centers = false;
         bool debug_bodyids = false;
+        bool debug_velocities = false;
 
         /** Convert coordinates from the world-space to the screen-space */
         Vec2D world_to_screen(const Vec2D& coo) const;

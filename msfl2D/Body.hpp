@@ -132,6 +132,15 @@ namespace Msfl2D {
          */
         void set_bounciness(double b);
 
+        /**
+         * Set mass of the body.
+         * Doesn't do anything if the body is static.
+         */
+        void set_mass(double mass);
+
+
+        double get_mass() const;
+
 
 
 
@@ -155,6 +164,9 @@ namespace Msfl2D {
          * A value between 0 & 1 representing how bouncy the body is. 0 = not bouncy at all, 1 = as bouncy as possible.
          */
         double bounciness = 0.5;
+
+        double TEMPORARY_mass = 1;
+
 
         /**
          * Update the center of the body so it is at the average position of each shape.
