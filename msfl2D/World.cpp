@@ -61,6 +61,8 @@ namespace Msfl2D {
 
 
     void World::update(double delta_t) {
+        nb_collision_points = 0;
+
         // Apply the constant force (most of the time, gravity) to every body
         for (auto& b: bodies) {
             b.second->reset_forces();       // Clear forces from the last step
@@ -90,6 +92,14 @@ namespace Msfl2D {
             SATResult collision_data = CollisionDetector::sat(bs1, bs2);
 
             if (collision_data.collide) {
+
+                // add collision points to array
+                for (int i=0; i <collision_data.nb_collision_points; i++) {
+                    if (nb_collision_points == MAX_COLLISION_POINTS) {break;}
+                    collision_points[nb_collision_points] = collision_data.collision_points[i];
+                    nb_collision_points++;
+                }
+
                 CollisionResolver::resolve(collision_data);
             }
         }

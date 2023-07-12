@@ -21,7 +21,22 @@ namespace Msfl2D {
      */
     class World {
     public:
-        World();
+
+        /** Maximum number of collision points the World can store & be retrieved after calling update() */
+        static const int MAX_COLLISION_POINTS = 200;
+
+        /**
+         * Number of collision points stored in the collision_points array, resulting from the last call to update()
+         */
+        int nb_collision_points = 0;
+
+
+        /**
+         * Array of collision points from the last call to update(). The number of points is nb_collision_points,
+         * and its maxed by MAX_COLLISION_POINTS.
+         */
+        Vec2D collision_points[MAX_COLLISION_POINTS];
+
 
         /**
          * Force constantly applied to every body in the world. Most of the time, it's the gravity.
@@ -29,6 +44,8 @@ namespace Msfl2D {
          */
         Vec2D constant_force = {0, -9.8};
 
+
+        World();
 
         /**
          * Add a body to the world and return its newly created BodyID.

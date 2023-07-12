@@ -198,6 +198,14 @@ namespace Msfl2Demo {
         // World drawing
         draw_background();
 
+        // draw collision points
+
+        if (debug_collision_points) {
+            for (int i=0; i<world->nb_collision_points; i++) {
+                draw_point(world->collision_points[i], 5, COLOR_RED);
+            }
+        }
+
         for (auto& b: world->get_bodies()) {
             draw_body(b);
         }
