@@ -419,7 +419,6 @@ namespace Msfl2Demo {
 
         Vec2D p_center = world_to_screen(p.get_position());
         SDL_Vertex center_vertex = {
-        SDL_Vertex center_vertex = {
                 static_cast<float>(p_center.x),
                 static_cast<float>(p_center.y),
                 (SDL_Color) color,

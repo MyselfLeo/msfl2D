@@ -52,7 +52,7 @@ namespace Msfl2D {
         else if (inc_body->is_static) {
             ref_body->velocity += projected_rel_velocity;
         }
-        else {
+        else { // todo: take mass into account
             inc_body->velocity -= projected_rel_velocity/2;
             ref_body->velocity += projected_rel_velocity/2;
         }
