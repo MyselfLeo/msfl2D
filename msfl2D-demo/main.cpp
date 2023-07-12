@@ -74,7 +74,9 @@ int main(int argc, char *argv[]) {
     std::shared_ptr<ConvexPolygon> shape_2 = std::make_shared<ConvexPolygon>(ConvexPolygon(6, 2, {-1, -3}));
     std::shared_ptr<Body> body_2 = std::make_shared<Body>(Body());
     body_2->add_shape(shape_2);
-    body_2->set_mass(20);
+    body_2->is_static = true;
+    body_2->set_mass(100);
+    body_2->set_bounciness(0.1);
 
     std::shared_ptr<ConvexPolygon> shape_3 = std::make_shared<ConvexPolygon>(ConvexPolygon(4, 1, {-3, -5}));
     std::shared_ptr<Body> body_3 = std::make_shared<Body>(Body());
@@ -84,18 +86,18 @@ int main(int argc, char *argv[]) {
 
     std::shared_ptr<ConvexPolygon> shape_4 = std::make_shared<ConvexPolygon>(ConvexPolygon(4, 3, {-3, -10}));
     std::shared_ptr<Body> body_4 = std::make_shared<Body>(Body());
-    body_4->is_static = true;
     body_4->add_shape(shape_4);
     body_4->rotate(M_PI / 4);
     body_4->set_mass(50);
+    body_4->set_bounciness(0.1);
 
 
 
     std::shared_ptr<World> world = std::make_shared<World>(World());
-    //world->add_body(body_1);
+    world->add_body(body_1);
     world->add_body(body_2);
-    //world->add_body(body_3);
-    world->add_body(body_4);
+    world->add_body(body_3);
+    //world->add_body(body_4);
 
     Interface interface = Interface(world);
 

@@ -419,6 +419,7 @@ namespace Msfl2Demo {
 
         Vec2D p_center = world_to_screen(p.get_position());
         SDL_Vertex center_vertex = {
+        SDL_Vertex center_vertex = {
                 static_cast<float>(p_center.x),
                 static_cast<float>(p_center.y),
                 (SDL_Color) color,
@@ -490,7 +491,9 @@ namespace Msfl2Demo {
         ImGui::Text("Camera position");
         ImGui::SameLine();
         ImGui::PushItemWidth(75);
-        ImGui::InputInt2("##", cam_pos, ImGuiInputTextFlags_ReadOnly);
+        if (ImGui::InputInt2("##", cam_pos)) {
+            camera_pos = {static_cast<double>(cam_pos[0]), static_cast<double>(cam_pos[1])};
+        }
         ImGui::SameLine();
         if (ImGui::Button("Reset##camera")) {camera_pos = {0, 0};}
 
@@ -511,6 +514,7 @@ namespace Msfl2Demo {
         ImGui::Checkbox("Show shape & body centers", &debug_centers);
         ImGui::Checkbox("Show body IDs", &debug_bodyids);
         ImGui::Checkbox("Show velocity vectors", &debug_velocities);
+        ImGui::Checkbox("Show collision points", &debug_collision_points);
 
         ImGui::End();
     }
