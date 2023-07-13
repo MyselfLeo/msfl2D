@@ -61,9 +61,25 @@ namespace Msfl2D {
 
 
     void World::update(double delta_t) {
+        // Steps:
+        // 1. Update body (apply forces)
+        // 2. Reset forces and recompute them
+        // 3. Resolve collision
+
+        // This order might seem weird, but resolving collision AFTER updating the body prevent a situation
+        // where the shapes are overlapping after calling update().
+        // They overlap after step 1, then are separated in step 3.
+
+        // Update each body with the forces computed in the last update
+        for (auto& b: bodies) {
+            b.second->apply_forces(delta_t);
+        }
+
+
         nb_collision_points = 0;
 
-        // Apply the constant force (most of the time, gravity) to every body
+        // Reset forces & apply the constant
+        // force (most of the time, gravity) to every body
         for (auto& b: bodies) {
             b.second->reset_forces();       // Clear forces from the last step
             b.second->register_force(constant_force);
@@ -102,13 +118,6 @@ namespace Msfl2D {
 
                 CollisionResolver::resolve(collision_data);
             }
-        }
-
-
-
-        // Update each body
-        for (auto& b: bodies) {
-            b.second->apply_forces(delta_t);
         }
     }
 } // Msfl2D

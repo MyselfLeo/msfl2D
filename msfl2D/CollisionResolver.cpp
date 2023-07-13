@@ -13,9 +13,6 @@ namespace Msfl2D {
         std::shared_ptr<Body> ref_body = col_result.reference_shape->get_body();
         std::shared_ptr<Body> inc_body = col_result.incident_shape->get_body();
 
-        std::cout << "inc velocity: " << inc_body->velocity << std::endl;
-        std::cout << "ref velocity: " << ref_body->velocity << std::endl;
-
         // Return early as no body can move
         if (ref_body->is_static && inc_body->is_static) {return;}
 
@@ -29,7 +26,6 @@ namespace Msfl2D {
         Vec2D min_pen_vec_normalised = col_result.minimum_penetration_vector.normalized();
 
         // first, we move the shapes so they are not intersecting.
-        // todo: take mass into account
         Vec2D correction_vector = min_pen_vec_normalised * col_result.depth;
         if (ref_body->is_static) {
             inc_body->move(inc_body->get_center() - correction_vector);
@@ -46,21 +42,23 @@ namespace Msfl2D {
         // Now, we nullify the relative velocity of one-another
         Vec2D relative_velocity = inc_body->velocity - ref_body->velocity; // velocity of inc relative to ref
         Vec2D projected_rel_velocity = min_pen_vec_normalised * Vec2D::dot(min_pen_vec_normalised, relative_velocity);
-        if (ref_body->is_static) {
-            inc_body->velocity -= projected_rel_velocity;
+        if (ref_body->is_static) {inc_body->velocity -= projected_rel_velocity;}
+        else if (inc_body->is_static) {ref_body->velocity += projected_rel_velocity;}
+
+        else if (inc_body->get_mass() > ref_body->get_mass()) {
+            double ratio = ref_body->get_mass() / inc_body->get_mass();
+            inc_body->velocity -= projected_rel_velocity * (1 - ratio);
+            ref_body->velocity += projected_rel_velocity * ratio;
         }
-        else if (inc_body->is_static) {
-            ref_body->velocity += projected_rel_velocity;
-        }
-        else { // todo: take mass into account
-            inc_body->velocity -= projected_rel_velocity/2;
-            ref_body->velocity += projected_rel_velocity/2;
+        else {
+            double ratio = inc_body->get_mass() / ref_body->get_mass();
+            inc_body->velocity -= projected_rel_velocity * ratio;
+            ref_body->velocity += projected_rel_velocity * (1 - ratio);
         }
 
         // Compute collision force
         double bounciness = (ref_body->get_bounciness() + inc_body->get_bounciness()) / 2;
         Vec2D collision_force = projected_rel_velocity * bounciness * (ref_body->get_mass() + inc_body->get_mass());
-        //collision_force *= 10;
 
         /*
         std::cout << "projected_rel_velocity: " << projected_rel_velocity << std::endl;
@@ -69,7 +67,6 @@ namespace Msfl2D {
         std::cout << "mass sum: " << (ref_body->get_mass() + inc_body->get_mass()) << std::endl;
          */
 
-        // todo: take mass into account
 
         if (ref_body->is_static) {
             for (int i=0; i<col_result.nb_collision_points; i++) {
@@ -78,7 +75,6 @@ namespace Msfl2D {
         }
         else if (inc_body->is_static) {
             for (int i=0; i<col_result.nb_collision_points; i++) {
-                std::cout << "applying " << collision_force << " to ref" << std::endl;
                 ref_body->register_force(collision_force, col_result.collision_points[i]);
             }
         }

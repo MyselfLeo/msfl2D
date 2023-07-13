@@ -104,7 +104,9 @@ namespace Msfl2D {
         void reset_forces();
 
         /**
-         * Register a force to be applied to the body. The force will be applied at the center of the body.
+         * Register a force to be applied to the body.
+         * The force will virtually be applied to every point of the body. In reality, the force is multiplied by
+         * the body mass, then applied to its center.
          */
         void register_force(Vec2D force);
 

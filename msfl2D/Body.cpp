@@ -99,7 +99,7 @@ namespace Msfl2D {
     void Body::reset_forces() {forces.clear();}
     void Body::register_force(Vec2D force) {
         if (is_static) {return;}
-        forces.emplace_back(force, Vec2D(0, 0));
+        forces.emplace_back(force * get_mass(), Vec2D(0, 0));
     }
     void Body::register_force(Vec2D force, Vec2D application_point) {
         if (is_static) {return;}
@@ -111,8 +111,7 @@ namespace Msfl2D {
         // apply each forces, modifying velocity & inertia
         for (auto& f: forces) {
 
-            // todo: take mass into account
-            velocity += std::get<0>(f) * delta_t;
+            velocity += std::get<0>(f) * delta_t / get_mass();
         }
 
         // apply velocity & inertia
