@@ -20,7 +20,7 @@ namespace Msfl2D {
         /**
          * Resolve the collision
          */
-        static void resolve(const SATResult& col_result);
+        static void resolve(const SATResult& col_result, double delta_t);
 
     };
 

@@ -66,28 +66,32 @@ int main(int argc, char *argv[]) {
     init_sdl();
 
 
-    std::shared_ptr<ConvexPolygon> shape_1 = std::make_shared<ConvexPolygon>(ConvexPolygon(3, 1, {0, 7}));
+    // triangle
+    std::shared_ptr<ConvexPolygon> shape_1 = std::make_shared<ConvexPolygon>(ConvexPolygon(3, 1, {-10, 2}));
     std::shared_ptr<Body> body_1 = std::make_shared<Body>(Body());
     body_1->add_shape(shape_1);
-    body_1->set_mass(5);
+    body_1->set_mass(100);
     body_1->set_bounciness(0.9);
 
-    std::shared_ptr<ConvexPolygon> shape_2 = std::make_shared<ConvexPolygon>(ConvexPolygon(6, 2, {0, -3}));
+    // hexagon
+    std::shared_ptr<ConvexPolygon> shape_2 = std::make_shared<ConvexPolygon>(ConvexPolygon(6, 2, {0, 0}));
     std::shared_ptr<Body> body_2 = std::make_shared<Body>(Body());
     body_2->add_shape(shape_2);
     body_2->is_static = true;
     body_2->set_mass(100);
     body_2->set_bounciness(0.9);
 
-    std::shared_ptr<ConvexPolygon> shape_3 = std::make_shared<ConvexPolygon>(ConvexPolygon(4, 1, {0, 20}));
+    // small square
+    std::shared_ptr<ConvexPolygon> shape_3 = std::make_shared<ConvexPolygon>(ConvexPolygon(4, 1, {-10, 0}));
     std::shared_ptr<Body> body_3 = std::make_shared<Body>(Body());
     body_3->add_shape(shape_3);
     body_3->is_static = true;
     body_3->rotate(M_PI / 4);
-    body_3->set_mass(5);
+    body_3->set_mass(100);
     body_3->set_bounciness(0.9);
 
-    std::shared_ptr<ConvexPolygon> shape_4 = std::make_shared<ConvexPolygon>(ConvexPolygon(4, 3, {0, 30}));
+    // big square
+    std::shared_ptr<ConvexPolygon> shape_4 = std::make_shared<ConvexPolygon>(ConvexPolygon(4, 3, {0, 10}));
     std::shared_ptr<Body> body_4 = std::make_shared<Body>(Body());
     body_4->add_shape(shape_4);
     body_4->rotate(M_PI / 4);
@@ -97,7 +101,7 @@ int main(int argc, char *argv[]) {
 
 
     std::shared_ptr<World> world = std::make_shared<World>(World());
-    //world->add_body(body_1);
+    world->add_body(body_1);
     world->add_body(body_2);
     world->add_body(body_3);
     world->add_body(body_4);

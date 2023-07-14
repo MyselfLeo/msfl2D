@@ -116,7 +116,7 @@ namespace Msfl2D {
                     nb_collision_points++;
                 }
 
-                CollisionResolver::resolve(collision_data);
+                CollisionResolver::resolve(collision_data, delta_t);
             }
         }
     }
