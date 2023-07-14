@@ -16,7 +16,7 @@ namespace Msfl2D {
         // Return early as no body can move
         if (ref_body->is_static && inc_body->is_static) {return;}
 
-        // return early if the two shapes are receding
+        // Return early if the two shapes are receding
         double current_dist = Vec2D::distance_squared(ref_body->get_center(), inc_body->get_center());
         double next_dist = Vec2D::distance_squared(
                 ref_body->get_center() + ref_body->velocity * APPROACHING_PRECISION,
@@ -25,7 +25,10 @@ namespace Msfl2D {
 
         Vec2D min_pen_vec_normalised = col_result.minimum_penetration_vector.normalized();
 
-        // first, we move the shapes so they are not intersecting.
+
+
+
+        // Move the shapes so they are not intersecting.
         Vec2D correction_vector = min_pen_vec_normalised * col_result.depth;
         if (ref_body->is_static) {
             inc_body->move(inc_body->get_center() - correction_vector);
@@ -39,7 +42,10 @@ namespace Msfl2D {
         }
 
 
-        // Now, we nullify the relative velocity of one-another
+
+
+
+        // Nullify the relative velocity of one-another
         Vec2D relative_velocity = inc_body->velocity - ref_body->velocity; // velocity of inc relative to ref
         Vec2D projected_rel_velocity = min_pen_vec_normalised * Vec2D::dot(min_pen_vec_normalised, relative_velocity);
         if (ref_body->is_static) {inc_body->velocity -= projected_rel_velocity;}
@@ -56,32 +62,53 @@ namespace Msfl2D {
             ref_body->velocity += projected_rel_velocity * (1 - ratio);
         }
 
-        // Compute collision force
+
+
+
+
+
+
+
+
+        // Compute collision force in the case of a total restitution (the final values will be weighted by the bounciness)
+        // 1. Compute the final velocities of the 2 bodies using their initial velocities, using the conservation of
+        //    momentum principle.
+
+        Vec2D ref_body_momentum = ref_body->velocity * ref_body->get_mass();
+        Vec2D inc_body_momentum = inc_body->velocity * inc_body->get_mass();
+        Vec2D total_momentum = ref_body_momentum + inc_body_momentum;
+        Vec2D velocity_diff = ref_body->velocity - inc_body->velocity;
+        double total_sum = ref_body->get_mass() + inc_body->get_mass();
+        Vec2D ref_body_final_velocity = (total_momentum - velocity_diff * inc_body->get_mass()) / (total_sum);
+        Vec2D inc_body_final_velocity = (total_momentum - velocity_diff * ref_body->get_mass()) / (total_sum);
+
+        // 2. We can now compute the collision force using the difference in velocity of each body.
+        Vec2D ref_velocity_change = ref_body->velocity - ref_body_final_velocity;
+        Vec2D inc_velocity_change = inc_body->velocity - inc_body_final_velocity;
+
         double bounciness = (ref_body->get_bounciness() + inc_body->get_bounciness()) / 2;
-        Vec2D collision_force = projected_rel_velocity * bounciness * (ref_body->get_mass() + inc_body->get_mass());
 
-        /*
-        std::cout << "projected_rel_velocity: " << projected_rel_velocity << std::endl;
-        std::cout << "bounciness: " << bounciness << std::endl;
-        std::cout << "collision force: " << collision_force << std::endl;
-        std::cout << "mass sum: " << (ref_body->get_mass() + inc_body->get_mass()) << std::endl;
-         */
-
+        // Force experienced by the ref body due to the inc body
+        Vec2D ref_force = -inc_velocity_change * inc_body->get_mass() * bounciness;
+        // The inverse
+        Vec2D inc_force = ref_velocity_change * ref_body->get_mass() * bounciness;
 
         if (ref_body->is_static) {
+            Vec2D force = inc_force * inc_body->get_mass() / col_result.nb_collision_points;
             for (int i=0; i<col_result.nb_collision_points; i++) {
-                inc_body->register_force(-collision_force, col_result.collision_points[i]);
+                inc_body->register_force(force, col_result.collision_points[i]);
             }
         }
         else if (inc_body->is_static) {
+            Vec2D force = ref_force * ref_body->get_mass() / col_result.nb_collision_points;
             for (int i=0; i<col_result.nb_collision_points; i++) {
-                ref_body->register_force(collision_force, col_result.collision_points[i]);
+                ref_body->register_force(force, col_result.collision_points[i]);
             }
         }
         else {
             for (int i=0; i<col_result.nb_collision_points; i++) {
-                inc_body->register_force(-collision_force / inc_body->get_mass(), col_result.collision_points[i]);
-                ref_body->register_force(collision_force / ref_body->get_mass(), col_result.collision_points[i]);
+                inc_body->register_force(inc_force / col_result.nb_collision_points, col_result.collision_points[i]);
+                ref_body->register_force(ref_force / col_result.nb_collision_points, col_result.collision_points[i]);
             }
         }
     }
