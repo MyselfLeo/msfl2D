@@ -5,6 +5,10 @@
 #include "CollisionResolver.hpp"
 
 namespace Msfl2D {
+
+    const double VELOCITY_THRESHOLD = 0.1;
+
+
     void CollisionResolver::resolve(const SATResult &col_result, double delta_t) {
         if (col_result.nb_collision_points == 0) {
             return;
@@ -48,35 +52,13 @@ namespace Msfl2D {
 
 
 
-        // Compute collision force in the case of a total restitution (the final values will be weighted by the bounciness)
-        // 1. Compute the final velocities of the 2 bodies using their initial velocities, using the conservation of
-        //    momentum principle.
-
-        /*Vec2D ref_body_momentum = ref_body->velocity * ref_body->get_mass();
-        Vec2D inc_body_momentum = inc_body->velocity * inc_body->get_mass();
-        Vec2D total_momentum = ref_body_momentum + inc_body_momentum;
-        Vec2D velocity_diff = ref_body->velocity - inc_body->velocity;
-        double total_sum = ref_body->get_mass() + inc_body->get_mass();
-        Vec2D ref_body_final_velocity = (total_momentum - velocity_diff * inc_body->get_mass()) / (total_sum);
-        Vec2D inc_body_final_velocity = (total_momentum - velocity_diff * ref_body->get_mass()) / (total_sum);
-
-        // 2. We can now compute the collision force using the difference in velocity of each body.
-        Vec2D ref_velocity_change = ref_body->velocity - ref_body_final_velocity;
-        Vec2D inc_velocity_change = inc_body->velocity - inc_body_final_velocity;
-
-        double bounciness = (ref_body->get_bounciness() + inc_body->get_bounciness()) / 2;
-
-        // Force experienced by the ref body due to the inc body
-        Vec2D ref_force = -inc_velocity_change * inc_body->get_mass() * bounciness / delta_t;
-        // The inverse
-        Vec2D inc_force = ref_velocity_change * ref_body->get_mass() * bounciness / delta_t;*/
-
 
 
 
         // Compute the component of each body velocity in the direction of the collision
         Vec2D ref_coll_velocity = min_pen_vec_normalised * Vec2D::dot(min_pen_vec_normalised, ref_body->velocity);
         Vec2D inc_coll_velocity = min_pen_vec_normalised * Vec2D::dot(min_pen_vec_normalised, inc_body->velocity);
+
 
         Vec2D ref_coll_momentum = ref_coll_velocity * ref_body->get_mass();
         Vec2D inc_coll_momentum = inc_coll_velocity * inc_body->get_mass();

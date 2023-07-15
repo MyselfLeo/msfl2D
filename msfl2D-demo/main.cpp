@@ -70,7 +70,7 @@ int main(int argc, char *argv[]) {
     std::shared_ptr<ConvexPolygon> shape_1 = std::make_shared<ConvexPolygon>(ConvexPolygon(3, 1, {-10, 2}));
     std::shared_ptr<Body> body_1 = std::make_shared<Body>(Body());
     body_1->add_shape(shape_1);
-    body_1->set_mass(100);
+    body_1->set_mass(20);
     body_1->set_bounciness(0.9);
 
     // hexagon
