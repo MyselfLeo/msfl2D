@@ -126,9 +126,9 @@ namespace Msfl2D {
         bounciness = b;
     }
 
-    void Body::set_mass(double mass) {
+    void Body::set_mass(double m) {
         if (is_static) {this->mass = 0;}
-        else {this->mass = mass;}
+        else {this->mass = m;}
     }
 
     double Body::get_mass() const {

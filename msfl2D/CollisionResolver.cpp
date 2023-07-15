@@ -6,9 +6,6 @@
 
 namespace Msfl2D {
 
-    const double MIN_PENETRATION = 0.005;
-
-
     void CollisionResolver::resolve(const SATResult &col_result, double delta_t) {
         if (col_result.nb_collision_points == 0) {
             return;
@@ -20,6 +17,12 @@ namespace Msfl2D {
         // Return early as no body can move
         if (ref_body->is_static && inc_body->is_static) {return;}
 
+
+
+        Vec2D min_pen_vec_normalised = col_result.minimum_penetration_vector.normalized();
+
+
+
         // Return early if the two shapes are receding
         double current_dist = Vec2D::distance_squared(ref_body->get_center(), inc_body->get_center());
         double next_dist = Vec2D::distance_squared(
@@ -27,7 +30,9 @@ namespace Msfl2D {
                 inc_body->get_center() + inc_body->velocity * APPROACHING_PRECISION);
         if (current_dist < next_dist) {return;}
 
-        Vec2D min_pen_vec_normalised = col_result.minimum_penetration_vector.normalized();
+
+
+
 
 
         // Move the shapes so they are not intersecting.
@@ -43,6 +48,9 @@ namespace Msfl2D {
             double inc_body_mass_ratio = 1 - ref_body_mass_ratio;
             inc_body->move(inc_body->get_center() + correction_vector * ref_body_mass_ratio);
             ref_body->move(ref_body->get_center() - correction_vector * inc_body_mass_ratio);
+
+            std::cout << correction_vector << std::endl;
+            std::cout << correction_vector * ref_body_mass_ratio + correction_vector * inc_body_mass_ratio << std::endl;
         }
 
 

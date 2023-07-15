@@ -135,10 +135,10 @@ namespace Msfl2D {
         void set_bounciness(double b);
 
         /**
-         * Set mass of the body.
+         * Set m of the body.
          * Doesn't do anything if the body is static.
          */
-        void set_mass(double mass);
+        void set_mass(double m);
 
 
         double get_mass() const;

@@ -121,11 +121,9 @@ int main(int argc, char *argv[]) {
             if (event.type == SDL_QUIT) {stop = true;} // end condition
         }
 
+
         interface.process_io();
         interface.update(delta_t);
-
-
-
         interface.render(delta_t);
     }
 

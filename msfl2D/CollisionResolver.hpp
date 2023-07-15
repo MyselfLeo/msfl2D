@@ -15,7 +15,7 @@ namespace Msfl2D {
     public:
 
         /** Precision of approaching detection */
-        static constexpr double APPROACHING_PRECISION = 0.001;
+        static constexpr double APPROACHING_PRECISION = 0.01;
 
         /**
          * Resolve the collision
