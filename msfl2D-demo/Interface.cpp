@@ -402,6 +402,7 @@ namespace Msfl2Demo {
                 LineSegment vel_vec = {body->get_center(), body->get_center() + body->velocity};
                 draw_segment(vel_vec, COLOR_YELLOW);
             }
+            draw_text(std::to_string(body->velocity.norm()).c_str(), body->get_center(), COLOR_YELLOW);
         }
     }
 

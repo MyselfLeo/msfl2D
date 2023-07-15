@@ -6,7 +6,7 @@
 
 namespace Msfl2D {
 
-    const double VELOCITY_THRESHOLD = 0.1;
+    const double MIN_PENETRATION = 0.005;
 
 
     void CollisionResolver::resolve(const SATResult &col_result, double delta_t) {
@@ -30,8 +30,6 @@ namespace Msfl2D {
         Vec2D min_pen_vec_normalised = col_result.minimum_penetration_vector.normalized();
 
 
-
-
         // Move the shapes so they are not intersecting.
         Vec2D correction_vector = min_pen_vec_normalised * col_result.depth;
         if (ref_body->is_static) {
@@ -41,13 +39,11 @@ namespace Msfl2D {
             ref_body->move(ref_body->get_center() + correction_vector);
         }
         else {
-            inc_body->move(inc_body->get_center() + correction_vector/2);
-            ref_body->move(ref_body->get_center() - correction_vector/2);
+            double ref_body_mass_ratio = ref_body->get_mass() / (ref_body->get_mass() + inc_body->get_mass());
+            double inc_body_mass_ratio = 1 - ref_body_mass_ratio;
+            inc_body->move(inc_body->get_center() + correction_vector * ref_body_mass_ratio);
+            ref_body->move(ref_body->get_center() - correction_vector * inc_body_mass_ratio);
         }
-
-
-
-
 
 
 
@@ -101,12 +97,9 @@ namespace Msfl2D {
             inc_force =  {0, 0};
         }
         else {
-            //ref_force = inc_velocity_change * inc_body->get_mass() * bounciness / delta_t;
-            //inc_force = ref_velocity_change * ref_body->get_mass() * bounciness / delta_t;
             ref_force = ref_velocity_change * ref_body->get_mass() * bounciness / delta_t;
             inc_force = inc_velocity_change * inc_body->get_mass() * bounciness / delta_t;
         }
-
 
 
 

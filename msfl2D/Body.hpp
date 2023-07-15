@@ -165,9 +165,10 @@ namespace Msfl2D {
         /**
          * A value between 0 & 1 representing how bouncy the body is. 0 = not bouncy at all, 1 = as bouncy as possible.
          */
-        double bounciness = 0.5;
+        double bounciness = 0.7;
 
-        double TEMPORARY_mass = 1;
+        // Might prefer to use the inverse of the mass to speed up the computing
+        double mass = 1;
 
 
         /**

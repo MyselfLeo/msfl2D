@@ -110,7 +110,6 @@ namespace Msfl2D {
     void Body::apply_forces(double delta_t) {
         // apply each forces, modifying velocity & inertia
         for (auto& f: forces) {
-
             velocity += std::get<0>(f) * delta_t / get_mass();
         }
 
@@ -128,12 +127,12 @@ namespace Msfl2D {
     }
 
     void Body::set_mass(double mass) {
-        if (is_static) {this->TEMPORARY_mass = 0;}
-        else {this->TEMPORARY_mass = mass;}
+        if (is_static) {this->mass = 0;}
+        else {this->mass = mass;}
     }
 
     double Body::get_mass() const {
-        return TEMPORARY_mass;
+        return mass;
     }
 
 
