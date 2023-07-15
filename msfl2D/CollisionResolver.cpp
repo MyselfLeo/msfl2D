@@ -6,6 +6,8 @@
 
 namespace Msfl2D {
 
+    const double VELOCITY_DIFF_THRESHOLD = 0.1;
+
     void CollisionResolver::resolve(const SATResult &col_result, double delta_t) {
         if (col_result.nb_collision_points == 0) {
             return;
@@ -90,6 +92,7 @@ namespace Msfl2D {
 
         Vec2D ref_velocity_change = ref_body_final_velocity - ref_coll_velocity;
         Vec2D inc_velocity_change = inc_body_final_velocity - inc_coll_velocity;
+
 
         double bounciness = (ref_body->get_bounciness() + inc_body->get_bounciness()) / 2;
 
