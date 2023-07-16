@@ -70,11 +70,11 @@ namespace Msfl2D {
         // where the shapes are overlapping after calling update().
         // They overlap after step 1, then are separated in step 3.
 
-        // Update each body with the forces computed in the last update
+        // Update each body with the forces computed in the last update and the friction of the environment
         for (auto& b: bodies) {
             b.second->apply_forces(delta_t);
+            b.second->velocity *= (1 - friction * delta_t);
         }
-
 
         nb_collision_points = 0;
 
@@ -119,5 +119,14 @@ namespace Msfl2D {
                 CollisionResolver::resolve(collision_data, delta_t);
             }
         }
+    }
+
+    double World::get_friction() const {
+        return friction;
+    }
+
+    void World::set_friction(double f) {
+        if (f < 0 || f > 1) {throw SimulationException("The friction must be a value between 0 & 1");}
+        friction = f;
     }
 } // Msfl2D

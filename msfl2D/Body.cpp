@@ -122,7 +122,7 @@ namespace Msfl2D {
     }
 
     void Body::set_bounciness(double b) {
-        if (b < 0 || b > 1) {throw SimulationException("The bouncines must be a number between 0 & 1.");}
+        if (b < 0 || b > 1) {throw SimulationException("The bounciness must be a number between 0 & 1.");}
         bounciness = b;
     }
 
@@ -133,6 +133,15 @@ namespace Msfl2D {
 
     double Body::get_mass() const {
         return mass;
+    }
+
+    void Body::set_friction(double f) {
+        if (f < 0 || f > 1) {throw SimulationException("The friction must be a number between 0 & 1.");}
+        friction = f;
+    }
+
+    double Body::get_friction() const {
+        return friction;
     }
 
 

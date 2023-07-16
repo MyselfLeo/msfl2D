@@ -135,13 +135,17 @@ namespace Msfl2D {
         void set_bounciness(double b);
 
         /**
-         * Set m of the body.
+         * Set mass of the body.
          * Doesn't do anything if the body is static.
          */
         void set_mass(double m);
 
 
         double get_mass() const;
+
+        void set_friction(double f);
+
+        double get_friction() const;
 
 
 
@@ -166,6 +170,11 @@ namespace Msfl2D {
          * A value between 0 & 1 representing how bouncy the body is. 0 = not bouncy at all, 1 = as bouncy as possible.
          */
         double bounciness = 0.7;
+
+        /**
+         * A value between 0 & 1 representing the amount of resistance the body applies to friction forces.
+         */
+        double friction = 0.3;
 
         // Might prefer to use the inverse of the mass to speed up the computing
         double mass = 1;

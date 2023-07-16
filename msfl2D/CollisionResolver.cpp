@@ -9,9 +9,8 @@ namespace Msfl2D {
     const double VELOCITY_DIFF_THRESHOLD = 0.1;
 
     void CollisionResolver::resolve(const SATResult &col_result, double delta_t) {
-        if (col_result.nb_collision_points == 0) {
-            return;
-        }
+        // Return early if CollisionDetector lies (its not our problem)
+        if (col_result.nb_collision_points == 0) {return;}
 
         std::shared_ptr<Body> ref_body = col_result.reference_shape->get_body();
         std::shared_ptr<Body> inc_body = col_result.incident_shape->get_body();
@@ -20,10 +19,19 @@ namespace Msfl2D {
         if (ref_body->is_static && inc_body->is_static) {return;}
 
 
+        collision(col_result, delta_t);
+        friction(col_result, delta_t);
+    }
+
+
+
+
+
+    void CollisionResolver::collision(const SATResult &col_result, double delta_t) {
+        std::shared_ptr<Body> ref_body = col_result.reference_shape->get_body();
+        std::shared_ptr<Body> inc_body = col_result.incident_shape->get_body();
 
         Vec2D min_pen_vec_normalised = col_result.minimum_penetration_vector.normalized();
-
-
 
         // Return early if the two shapes are receding
         double current_dist = Vec2D::distance_squared(ref_body->get_center(), inc_body->get_center());
@@ -31,7 +39,6 @@ namespace Msfl2D {
                 ref_body->get_center() + ref_body->velocity * APPROACHING_PRECISION,
                 inc_body->get_center() + inc_body->velocity * APPROACHING_PRECISION);
         if (current_dist < next_dist) {return;}
-
 
 
 
@@ -135,5 +142,18 @@ namespace Msfl2D {
                 ref_body->register_force(ref_force / col_result.nb_collision_points, col_result.collision_points[i]);
             }
         }
+    }
+
+
+
+
+
+
+
+    void CollisionResolver::friction(const SATResult &col_result, double delta_t) {
+        std::shared_ptr<Body> ref_body = col_result.reference_shape->get_body();
+        std::shared_ptr<Body> inc_body = col_result.incident_shape->get_body();
+
+
     }
 } // Msfl2D

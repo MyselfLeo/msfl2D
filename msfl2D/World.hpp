@@ -45,6 +45,7 @@ namespace Msfl2D {
         Vec2D constant_force = {0, -9.8};
 
 
+
         World();
 
         /**
@@ -85,11 +86,27 @@ namespace Msfl2D {
         void update(double delta_t);
 
 
+        /**
+         * Return the friction of the environment, i.e. the percentage of the velocity removed to the bodies each second.
+         */
+        double get_friction() const;
+
+
+        /**
+         * Set the friction of the environment.
+         * Throws SimulationException if the value is not between 0 & 1.
+         * @param f
+         */
+        void set_friction(double f);
+
+
     private:
         std::unordered_map<BodyID, std::shared_ptr<Body>> bodies;
 
         // random number generator
         std::mt19937 rng_gen;
+
+        double friction = 0.1;
 
         /**
          * Return a new unused BodyID.
