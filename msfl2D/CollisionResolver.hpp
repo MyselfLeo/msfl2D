@@ -22,6 +22,8 @@ namespace Msfl2D {
          */
         static void resolve(const SATResult& col_result, double delta_t);
 
+        /** Separate the 2 colliding bodies */
+        static void separate(const SATResult& col_result);
 
         /** Resolve collision force */
         static void collision(const SATResult& col_result, double delta_t);
@@ -29,7 +31,6 @@ namespace Msfl2D {
 
         /** Resolve friction to the collision */
         static void friction(const SATResult& col_result, double delta_t);
-
     };
 
 } // Msfl2D

@@ -43,28 +43,8 @@ namespace Msfl2D {
 
 
 
-
         // Move the shapes so they are not intersecting.
-        Vec2D correction_vector = min_pen_vec_normalised * col_result.depth;
-        if (ref_body->is_static) {
-            inc_body->move(inc_body->get_center() - correction_vector);
-        }
-        else if (inc_body->is_static) {
-            ref_body->move(ref_body->get_center() + correction_vector);
-        }
-        else {
-            double ref_body_mass_ratio = ref_body->get_mass() / (ref_body->get_mass() + inc_body->get_mass());
-            double inc_body_mass_ratio = 1 - ref_body_mass_ratio;
-            inc_body->move(inc_body->get_center() + correction_vector * ref_body_mass_ratio);
-            ref_body->move(ref_body->get_center() - correction_vector * inc_body_mass_ratio);
-
-            std::cout << correction_vector << std::endl;
-            std::cout << correction_vector * ref_body_mass_ratio + correction_vector * inc_body_mass_ratio << std::endl;
-        }
-
-
-
-
+        separate(col_result);
 
 
 
@@ -155,5 +135,26 @@ namespace Msfl2D {
         std::shared_ptr<Body> inc_body = col_result.incident_shape->get_body();
 
 
+    }
+
+
+    void CollisionResolver::separate(const SATResult &col_result) {
+        std::shared_ptr<Body> ref_body = col_result.reference_shape->get_body();
+        std::shared_ptr<Body> inc_body = col_result.incident_shape->get_body();
+
+        // Move the shapes so they are not intersecting.
+        Vec2D correction_vector = col_result.minimum_penetration_vector.normalized() * col_result.depth;
+        if (ref_body->is_static) {
+            inc_body->move(inc_body->get_center() - correction_vector);
+        }
+        else if (inc_body->is_static) {
+            ref_body->move(ref_body->get_center() + correction_vector);
+        }
+        else {
+            double ref_body_mass_ratio = ref_body->get_mass() / (ref_body->get_mass() + inc_body->get_mass());
+            double inc_body_mass_ratio = 1 - ref_body_mass_ratio;
+            inc_body->move(inc_body->get_center() + correction_vector * ref_body_mass_ratio);
+            ref_body->move(ref_body->get_center() - correction_vector * inc_body_mass_ratio);
+        }
     }
 } // Msfl2D

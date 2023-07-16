@@ -70,6 +70,7 @@ namespace Msfl2D {
         // where the shapes are overlapping after calling update().
         // They overlap after step 1, then are separated in step 3.
 
+
         // Update each body with the forces computed in the last update and the friction of the environment
         for (auto& b: bodies) {
             b.second->apply_forces(delta_t);
@@ -84,6 +85,7 @@ namespace Msfl2D {
             b.second->reset_forces();       // Clear forces from the last step
             b.second->register_force(constant_force);
         }
+
 
 
         // todo: collision detection & resolution
