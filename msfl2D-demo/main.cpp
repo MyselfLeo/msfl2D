@@ -70,6 +70,7 @@ int main(int argc, char *argv[]) {
     std::shared_ptr<Body> body_floor = std::make_shared<Body>(Body());
     body_floor->add_shape(floor);
     body_floor->is_static = true;
+    body_floor->set_bounciness(0.1);
 
 
     // triangle
@@ -78,6 +79,7 @@ int main(int argc, char *argv[]) {
     body_1->add_shape(shape_1);
     body_1->is_static = true;
     body_1->rotate(M_PI / 2);
+    body_floor->set_bounciness(0.1);
 
     // hexagon
     /*std::shared_ptr<ConvexPolygon> shape_2 = std::make_shared<ConvexPolygon>(ConvexPolygon(6, 2, {0, 2}));
@@ -91,13 +93,15 @@ int main(int argc, char *argv[]) {
     body_3->add_shape(shape_3);
     body_3->rotate(M_PI / 4);
     body_3->set_mass(50);
+    body_3->set_bounciness(1);
 
-    // big square
+    // small square
     std::shared_ptr<ConvexPolygon> shape_4 = std::make_shared<ConvexPolygon>(ConvexPolygon(4, 1, {0, 10}));
     std::shared_ptr<Body> body_4 = std::make_shared<Body>(Body());
     body_4->add_shape(shape_4);
     body_4->rotate(M_PI / 4);
     body_4->set_mass(50);
+    body_4->set_bounciness(1);
 
 
 
@@ -107,6 +111,8 @@ int main(int argc, char *argv[]) {
     //world->add_body(body_2);
     world->add_body(body_3);
     world->add_body(body_4);
+
+    world->set_friction(0);
 
     Interface interface = Interface(world);
 

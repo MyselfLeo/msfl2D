@@ -33,11 +33,15 @@ namespace Msfl2D {
 
         Vec2D min_pen_vec_normalised = col_result.minimum_penetration_vector.normalized();
 
-        // Return early if the two shapes are receding
+        // Compute the component of each body velocity in the direction of the collision
+        Vec2D ref_coll_velocity = min_pen_vec_normalised * Vec2D::dot(min_pen_vec_normalised, ref_body->velocity);
+        Vec2D inc_coll_velocity = min_pen_vec_normalised * Vec2D::dot(min_pen_vec_normalised, inc_body->velocity);
+
+        // Return early if the two shapes are receding in the axis of penetration
         double current_dist = Vec2D::distance_squared(ref_body->get_center(), inc_body->get_center());
         double next_dist = Vec2D::distance_squared(
-                ref_body->get_center() + ref_body->velocity * APPROACHING_PRECISION,
-                inc_body->get_center() + inc_body->velocity * APPROACHING_PRECISION);
+                ref_body->get_center() + ref_coll_velocity * APPROACHING_PRECISION,
+                inc_body->get_center() + inc_coll_velocity * APPROACHING_PRECISION);
         if (current_dist < next_dist) {return;}
 
 
@@ -47,10 +51,6 @@ namespace Msfl2D {
         separate(col_result);
 
 
-
-        // Compute the component of each body velocity in the direction of the collision
-        Vec2D ref_coll_velocity = min_pen_vec_normalised * Vec2D::dot(min_pen_vec_normalised, ref_body->velocity);
-        Vec2D inc_coll_velocity = min_pen_vec_normalised * Vec2D::dot(min_pen_vec_normalised, inc_body->velocity);
 
 
         Vec2D ref_coll_momentum = ref_coll_velocity * ref_body->get_mass();
