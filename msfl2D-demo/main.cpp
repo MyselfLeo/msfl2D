@@ -65,31 +65,35 @@ void debug_print_penetrations(Interface& interface, std::shared_ptr<ConvexPolygo
 int main(int argc, char *argv[]) {
     init_sdl();
 
+    // Floor
+    std::shared_ptr<ConvexPolygon> floor = std::make_shared<ConvexPolygon>(ConvexPolygon({{-20, 0}, {20, 0}, {20, -1}, {-20, -1}}));
+    std::shared_ptr<Body> body_floor = std::make_shared<Body>(Body());
+    body_floor->add_shape(floor);
+    body_floor->is_static = true;
+
 
     // triangle
-    std::shared_ptr<ConvexPolygon> shape_1 = std::make_shared<ConvexPolygon>(ConvexPolygon(4, 1, {-10, 2}));
+    std::shared_ptr<ConvexPolygon> shape_1 = std::make_shared<ConvexPolygon>(ConvexPolygon(3, 3, {-20, 1.5}));
     std::shared_ptr<Body> body_1 = std::make_shared<Body>(Body());
     body_1->add_shape(shape_1);
-    body_1->set_mass(20);
-    body_1->rotate(M_PI / 4);
+    body_1->is_static = true;
+    body_1->rotate(M_PI / 2);
 
     // hexagon
-    std::shared_ptr<ConvexPolygon> shape_2 = std::make_shared<ConvexPolygon>(ConvexPolygon(6, 2, {0, 0}));
+    /*std::shared_ptr<ConvexPolygon> shape_2 = std::make_shared<ConvexPolygon>(ConvexPolygon(6, 2, {0, 2}));
     std::shared_ptr<Body> body_2 = std::make_shared<Body>(Body());
     body_2->add_shape(shape_2);
-    body_2->is_static = true;
-    body_2->set_mass(100);
+    body_2->set_mass(100);*/
 
     // small square
-    std::shared_ptr<ConvexPolygon> shape_3 = std::make_shared<ConvexPolygon>(ConvexPolygon(4, 1, {-10, 0}));
+    std::shared_ptr<ConvexPolygon> shape_3 = std::make_shared<ConvexPolygon>(ConvexPolygon(4, 1, {-6, 2}));
     std::shared_ptr<Body> body_3 = std::make_shared<Body>(Body());
     body_3->add_shape(shape_3);
-    body_3->is_static = true;
     body_3->rotate(M_PI / 4);
-    body_3->set_mass(100);
+    body_3->set_mass(50);
 
     // big square
-    std::shared_ptr<ConvexPolygon> shape_4 = std::make_shared<ConvexPolygon>(ConvexPolygon(4, 3, {0, 10}));
+    std::shared_ptr<ConvexPolygon> shape_4 = std::make_shared<ConvexPolygon>(ConvexPolygon(4, 1, {0, 10}));
     std::shared_ptr<Body> body_4 = std::make_shared<Body>(Body());
     body_4->add_shape(shape_4);
     body_4->rotate(M_PI / 4);
@@ -98,8 +102,9 @@ int main(int argc, char *argv[]) {
 
 
     std::shared_ptr<World> world = std::make_shared<World>(World());
+    world->add_body(body_floor);
     world->add_body(body_1);
-    world->add_body(body_2);
+    //world->add_body(body_2);
     world->add_body(body_3);
     world->add_body(body_4);
 
