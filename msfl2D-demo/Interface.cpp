@@ -156,6 +156,15 @@ namespace Msfl2Demo {
                 camera_zoom_lvl *= pow(1.10, event->wheel.y);
                 if (camera_zoom_lvl < 1) {camera_zoom_lvl = 1;}
             } break;
+
+
+            case SDL_WINDOWEVENT: {
+                if (event->window.event == SDL_WINDOWEVENT_RESIZED) {
+                    int w, h;
+                    SDL_GetWindowSize(window, &w, &h);
+                    window_size = {static_cast<double>(w), static_cast<double>(h)};
+                }
+            } break;
         }
     }
 

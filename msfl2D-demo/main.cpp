@@ -133,9 +133,14 @@ int main(int argc, char *argv[]) {
             if (event.type == SDL_QUIT) {stop = true;} // end condition
         }
 
+        std::cout << delta_t << std::endl;
+
 
         interface.process_io();
-        interface.update(delta_t);
+
+        // if delta_t is too high, a lag may have happened (window moved for example)
+        // we don't update to prevent unexpected simulation behavior
+        if (delta_t < 0.5) { interface.update(delta_t); }
         interface.render(delta_t);
     }
 
