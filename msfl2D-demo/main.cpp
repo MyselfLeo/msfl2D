@@ -81,11 +81,13 @@ int main(int argc, char *argv[]) {
     body_1->rotate(M_PI / 2);
     body_floor->set_bounciness(0.1);
 
-    // hexagon
-    /*std::shared_ptr<ConvexPolygon> shape_2 = std::make_shared<ConvexPolygon>(ConvexPolygon(6, 2, {0, 2}));
+    // small square
+    std::shared_ptr<ConvexPolygon> shape_2 = std::make_shared<ConvexPolygon>(ConvexPolygon(4, 1, {-4, 2}));
     std::shared_ptr<Body> body_2 = std::make_shared<Body>(Body());
     body_2->add_shape(shape_2);
-    body_2->set_mass(100);*/
+    body_2->rotate(M_PI / 4);
+    body_2->set_mass(50);
+    body_2->set_bounciness(1);
 
     // small square
     std::shared_ptr<ConvexPolygon> shape_3 = std::make_shared<ConvexPolygon>(ConvexPolygon(4, 1, {-6, 2}));
@@ -108,7 +110,7 @@ int main(int argc, char *argv[]) {
     std::shared_ptr<World> world = std::make_shared<World>(World());
     world->add_body(body_floor);
     world->add_body(body_1);
-    //world->add_body(body_2);
+    world->add_body(body_2);
     world->add_body(body_3);
     world->add_body(body_4);
 
@@ -132,8 +134,6 @@ int main(int argc, char *argv[]) {
             interface.process(&event);
             if (event.type == SDL_QUIT) {stop = true;} // end condition
         }
-
-        std::cout << delta_t << std::endl;
 
 
         interface.process_io();
