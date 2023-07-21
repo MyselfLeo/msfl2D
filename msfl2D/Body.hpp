@@ -19,9 +19,14 @@ namespace Msfl2D {
     class Body: public std::enable_shared_from_this<Body> {
     public:
         /**
-         * Velocity vector.
+         * Velocity vector, in units per second
          */
         Vec2D velocity = {0, 0};
+
+        /**
+         * Angular velocity, in radians per second
+         */
+        double angular_vel = 0;
 
         /**
          * Bodies can be made static, which mean they won't be affected by any forces. To move them, use move() instead

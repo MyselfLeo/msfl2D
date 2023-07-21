@@ -110,11 +110,32 @@ namespace Msfl2D {
     void Body::apply_forces(double delta_t) {
         // apply each forces, modifying velocity & inertia
         for (auto& f: forces) {
-            velocity += std::get<0>(f) * delta_t / get_mass();
+            Vec2D force = std::get<0>(f);
+            Vec2D point_of_application = std::get<1>(f);
+
+            velocity += force * delta_t / get_mass();
+
+
+            if (point_of_application != get_center()) {
+                // compute angular velocity
+                double torque = Vec2D::cross(force, -point_of_application);
+
+                // moment of inertia. Lets assume its a circle. // todo: maybe really compute this ?
+                // lets compute the moment of inertia of a circle that has the same mass and density as the body
+                //todo: replace mass by area when we'll compute it (to compute mass using density)
+                double fallacious_circle_radius = sqrt(get_mass() / M_PI);
+                double moment_inertia = M_PI * pow(fallacious_circle_radius, 4) / 4;
+                double angular_acceleration = torque / moment_inertia;
+
+                angular_vel += angular_acceleration * delta_t;
+            }
         }
 
         // apply velocity & inertia
         move(position + (velocity * delta_t));
+
+        // apply angular velocity
+        rotate(angular_vel * delta_t);
     }
 
     double Body::get_bounciness() const {

@@ -107,19 +107,23 @@ namespace Msfl2D {
         if (ref_body->is_static) {
             Vec2D force = inc_force / col_result.nb_collision_points;
             for (int i=0; i<col_result.nb_collision_points; i++) {
-                inc_body->register_force(force, col_result.collision_points[i]);
+                Vec2D rel_pos = col_result.collision_points[i] - inc_body->get_center();
+                inc_body->register_force(force, rel_pos);
             }
         }
         else if (inc_body->is_static) {
             Vec2D force = ref_force / col_result.nb_collision_points;
             for (int i=0; i<col_result.nb_collision_points; i++) {
-                ref_body->register_force(force, col_result.collision_points[i]);
+                Vec2D rel_pos = col_result.collision_points[i] - ref_body->get_center();
+                ref_body->register_force(force, rel_pos);
             }
         }
         else {
             for (int i=0; i<col_result.nb_collision_points; i++) {
-                inc_body->register_force(inc_force / col_result.nb_collision_points, col_result.collision_points[i]);
-                ref_body->register_force(ref_force / col_result.nb_collision_points, col_result.collision_points[i]);
+                Vec2D rel_pos_ref = col_result.collision_points[i] - ref_body->get_center();
+                Vec2D rel_pos_inc = col_result.collision_points[i] - inc_body->get_center();
+                inc_body->register_force(inc_force / col_result.nb_collision_points, rel_pos_inc);
+                ref_body->register_force(ref_force / col_result.nb_collision_points, rel_pos_ref);
             }
         }
     }
