@@ -114,7 +114,7 @@ int main(int argc, char *argv[]) {
     world->add_body(body_3);
     world->add_body(body_4);
 
-    world->set_friction(0);
+    world->set_friction(0.1);
 
     Interface interface = Interface(world);
 
