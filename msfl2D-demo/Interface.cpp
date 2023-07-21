@@ -215,6 +215,12 @@ namespace Msfl2Demo {
             }
         }
 
+        if (debug_collision_vectors) {
+            for (int i=0; i<world->nb_collision_vectors; i++) {
+                draw_segment(world->collision_vector[i], COLOR_RED);
+            }
+        }
+
         for (auto& b: world->get_bodies()) {
             draw_body(b);
         }
@@ -532,6 +538,7 @@ namespace Msfl2Demo {
         ImGui::Checkbox("Show body IDs", &debug_bodyids);
         ImGui::Checkbox("Show velocity vectors", &debug_velocities);
         ImGui::Checkbox("Show collision points", &debug_collision_points);
+        ImGui::Checkbox("Show collision vectors", &debug_collision_vectors);
 
         ImGui::End();
     }

@@ -22,8 +22,8 @@ namespace Msfl2D {
     class World {
     public:
 
-        /** Maximum number of collision points the World can store & be retrieved after calling update() */
         static const int MAX_COLLISION_POINTS = 200;
+        static const int MAX_COLLISION_VECTORS = 200;
 
         /**
          * Number of collision points stored in the collision_points array, resulting from the last call to update()
@@ -36,6 +36,15 @@ namespace Msfl2D {
          * and its maxed by MAX_COLLISION_POINTS.
          */
         Vec2D collision_points[MAX_COLLISION_POINTS];
+
+
+        /**
+         * Number of collision vectors stored in the collision_vector array, resulting from the last call to update()
+         */
+        int nb_collision_vectors = 0;
+
+
+        LineSegment collision_vector[MAX_COLLISION_VECTORS];
 
 
         /**

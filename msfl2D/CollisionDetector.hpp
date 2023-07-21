@@ -19,6 +19,8 @@ namespace Msfl2D {
      *              so that they barely touch.
      * @param nb_collision_points the number of collision points. There may be 1 or 2.
      * @param collision_point The collision points. They are the points that collided first, hence the limit of 2.
+     * @param reference_shape Pointer to the reference shape
+     * @param incident_shape Pointer to the other shape
      */
     struct SATResult {
         bool collide;

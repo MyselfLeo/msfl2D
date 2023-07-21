@@ -78,6 +78,7 @@ namespace Msfl2D {
         }
 
         nb_collision_points = 0;
+        nb_collision_vectors = 0;
 
         // Reset forces & apply the constant
         // force (most of the time, gravity) to every body
@@ -111,11 +112,20 @@ namespace Msfl2D {
 
             if (collision_data.collide) {
 
-                // add collision points to array
+                // add collision data to output arrays
                 for (int i=0; i <collision_data.nb_collision_points; i++) {
                     if (nb_collision_points == MAX_COLLISION_POINTS) {break;}
                     collision_points[nb_collision_points] = collision_data.collision_points[i];
                     nb_collision_points++;
+                }
+
+                if (nb_collision_vectors != MAX_COLLISION_VECTORS && collision_data.nb_collision_points > 0) {
+                    if (collision_data.depth > 0) {
+                        Vec2D p1 = collision_data.collision_points[0];
+                        Vec2D p2 = p1 - collision_data.minimum_penetration_vector.normalized() * collision_data.depth;
+                        collision_vector[nb_collision_vectors] = LineSegment(p1, p2);
+                        nb_collision_vectors++;
+                    }
                 }
 
                 CollisionResolver::resolve(collision_data, delta_t);

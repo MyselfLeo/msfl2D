@@ -159,6 +159,7 @@ namespace Msfl2Demo {
         bool debug_bodyids = false;
         bool debug_velocities = false;
         bool debug_collision_points = false;
+        bool debug_collision_vectors = false;
 
         /** Convert coordinates from the world-space to the screen-space */
         Vec2D world_to_screen(const Vec2D& coo) const;

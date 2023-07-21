@@ -142,8 +142,17 @@ namespace Msfl2D {
         std::shared_ptr<Body> ref_body = col_result.reference_shape->get_body();
         std::shared_ptr<Body> inc_body = col_result.incident_shape->get_body();
 
+        Vec2D min_pen_vec_normalised = col_result.minimum_penetration_vector.normalized();
+
+        // Compute the component of each body velocity in the direction of the collision
+        Vec2D ref_coll_velocity = min_pen_vec_normalised * Vec2D::dot(min_pen_vec_normalised, ref_body->velocity);
+        Vec2D inc_coll_velocity = min_pen_vec_normalised * Vec2D::dot(min_pen_vec_normalised, inc_body->velocity);
+
+        double ref_col_speed = ref_coll_velocity.norm();
+        double inc_col_speed = inc_coll_velocity.norm();
+
         // Move the shapes so they are not intersecting.
-        Vec2D correction_vector = col_result.minimum_penetration_vector.normalized() * col_result.depth;
+        Vec2D correction_vector = min_pen_vec_normalised * col_result.depth;
         if (ref_body->is_static) {
             inc_body->move(inc_body->get_center() - correction_vector);
         }
@@ -151,10 +160,10 @@ namespace Msfl2D {
             ref_body->move(ref_body->get_center() + correction_vector);
         }
         else {
-            double ref_body_mass_ratio = ref_body->get_mass() / (ref_body->get_mass() + inc_body->get_mass());
-            double inc_body_mass_ratio = 1 - ref_body_mass_ratio;
-            inc_body->move(inc_body->get_center() + correction_vector * ref_body_mass_ratio);
-            ref_body->move(ref_body->get_center() - correction_vector * inc_body_mass_ratio);
+            double ref_body_speed_ratio = ref_col_speed / (ref_col_speed + inc_col_speed);
+            double inc_body_speed_ratio = 1 - ref_body_speed_ratio;
+            inc_body->move(inc_body->get_center() + correction_vector * ref_body_speed_ratio);
+            ref_body->move(ref_body->get_center() - correction_vector * inc_body_speed_ratio);
         }
     }
 } // Msfl2D
