@@ -5,9 +5,6 @@
 #include "CollisionResolver.hpp"
 
 namespace Msfl2D {
-
-    const double VELOCITY_DIFF_THRESHOLD = 0.1;
-
     void CollisionResolver::resolve(const SATResult &col_result, double delta_t) {
         // Return early if CollisionDetector lies (its not our problem)
         if (col_result.nb_collision_points == 0) {return;}
