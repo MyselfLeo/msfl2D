@@ -157,6 +157,8 @@ namespace Msfl2D {
 
         // Move the shapes so they are not intersecting.
         Vec2D correction_vector = min_pen_vec_normalised * col_result.depth;
+
+
         if (ref_body->is_static) {
             inc_body->move(inc_body->get_center() - correction_vector);
         }
@@ -165,9 +167,10 @@ namespace Msfl2D {
         }
         else {
             double ref_body_speed_ratio = ref_col_speed / (ref_col_speed + inc_col_speed);
+            if (ref_col_speed + inc_col_speed == 0) {ref_body_speed_ratio = 0.5;}
             double inc_body_speed_ratio = 1 - ref_body_speed_ratio;
-            inc_body->move(inc_body->get_center() + correction_vector * ref_body_speed_ratio);
-            ref_body->move(ref_body->get_center() - correction_vector * inc_body_speed_ratio);
+            inc_body->move(inc_body->get_center() - correction_vector * ref_body_speed_ratio);
+            ref_body->move(ref_body->get_center() + correction_vector * inc_body_speed_ratio);
         }
     }
 } // Msfl2D

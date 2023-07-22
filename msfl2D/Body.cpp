@@ -58,6 +58,10 @@ namespace Msfl2D {
         // That way, the center of the body will be exactly where we want it.
         Vec2D displacement = pos - position;
 
+        std::cout << "pos: " << pos << std::endl;
+        std::cout << "position: " << position << std::endl;
+        std::cout << "displacement: " << displacement << std::endl;
+
         for (auto& s: shapes) {
             s->position += displacement;
         }
@@ -127,7 +131,7 @@ namespace Msfl2D {
                 double moment_inertia = M_PI * pow(fallacious_circle_radius, 4) / 4;
                 double angular_acceleration = torque / moment_inertia;
 
-                angular_vel += angular_acceleration * delta_t;
+                //angular_vel += angular_acceleration * delta_t;
             }
         }
 
@@ -135,7 +139,7 @@ namespace Msfl2D {
         move(position + (velocity * delta_t));
 
         // apply angular velocity
-        rotate(angular_vel * delta_t);
+        //rotate(angular_vel * delta_t);
     }
 
     double Body::get_bounciness() const {

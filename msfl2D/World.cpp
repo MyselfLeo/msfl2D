@@ -75,7 +75,7 @@ namespace Msfl2D {
         for (auto& b: bodies) {
             b.second->apply_forces(delta_t);
             b.second->velocity *= (1 - friction * delta_t);
-            b.second->angular_vel *= (1 - friction * delta_t);
+            //b.second->angular_vel *= (1 - friction * delta_t);
         }
 
         nb_collision_points = 0;

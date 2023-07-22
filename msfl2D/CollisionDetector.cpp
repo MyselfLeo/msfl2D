@@ -55,6 +55,7 @@ namespace Msfl2D {
         // The axis of minimal penetration will the normal of one of the shapes debug_sides. So, we iterate of the debug_sides of each shape.
         int i;
         for (i=0; i<shape1->nb_vertices(); i++) {
+
             // Get the side we're checking
             LineSegment tested_side = LineSegment(
                     shape1->get_global_vertex(i),
@@ -64,12 +65,14 @@ namespace Msfl2D {
             Vec2D side_vec = tested_side.get_vec();
             Vec2D proj_axis = {side_vec.y, -side_vec.x}; // normal of the side
 
+
             // Project the shapes onto a line with this orientation (passing through the origin because i said so)
             Line proj_line = Line::from_director_vector({0, 0}, proj_axis);
             LineSegment proj_shape_1 = shape1->project(proj_line);
             LineSegment proj_shape_2 = shape2->project(proj_line);
 
-            LineSegment penetration = LineSegment::intersection(proj_shape_1, proj_shape_2);
+            LineSegment penetration;
+            penetration = LineSegment::intersection(proj_shape_1, proj_shape_2);
 
             // No intersection => we found a separating axis
             if (penetration.length() == 0) {

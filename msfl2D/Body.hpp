@@ -26,7 +26,7 @@ namespace Msfl2D {
         /**
          * Angular velocity, in radians per second
          */
-        double angular_vel = 0;
+        //double angular_vel = 0;
 
         /**
          * Bodies can be made static, which mean they won't be affected by any forces. To move them, use move() instead
