@@ -58,10 +58,6 @@ namespace Msfl2D {
         // That way, the center of the body will be exactly where we want it.
         Vec2D displacement = pos - position;
 
-        std::cout << "pos: " << pos << std::endl;
-        std::cout << "position: " << position << std::endl;
-        std::cout << "displacement: " << displacement << std::endl;
-
         for (auto& s: shapes) {
             s->position += displacement;
         }
