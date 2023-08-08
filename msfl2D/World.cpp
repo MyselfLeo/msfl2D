@@ -86,6 +86,9 @@ namespace Msfl2D {
         for (auto& b: bodies) {
             b.second->reset_forces();       // Clear forces from the last step
             b.second->register_force(constant_force);
+
+            // Reset collision point number for following collision detection
+            b.second->nb_colliding_points = 0;
         }
 
 

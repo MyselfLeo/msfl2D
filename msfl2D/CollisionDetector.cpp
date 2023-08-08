@@ -2,25 +2,38 @@
 // Created by myselfleo on 01/07/2023.
 //
 
-#include "CollisionDetector.hpp"
-
 #include <utility>
 #include <cmath>
+
+#include "CollisionDetector.hpp"
 #include "MsflExceptions.hpp"
+#include "Body.hpp"
 
 namespace Msfl2D {
 
     SATResult SATResult::no_collision() {
-        return {false, Msfl2D::Vec2D(), 0, 0, nullptr, nullptr, nullptr}; // pen_vec and depth values are not important
+        return {false, Msfl2D::Vec2D(), 0, 0, nullptr, nullptr, nullptr, nullptr, nullptr}; // pen_vec and depth values are not important
     }
 
-    SATResult::SATResult(bool collide, Vec2D pen_vec, double depth, int nb_col_points, Vec2D col_points[2], std::shared_ptr<ConvexPolygon> ref, std::shared_ptr<ConvexPolygon> inc):
+    SATResult::SATResult(
+            bool collide,
+            Vec2D pen_vec,
+            double depth,
+            int nb_col_points,
+            Vec2D col_points[2],
+            std::shared_ptr<ConvexPolygon> ref,
+            std::shared_ptr<ConvexPolygon> inc,
+            std::shared_ptr<Body> refb,
+            std::shared_ptr<Body> incb
+            ):
         collide(collide),
         minimum_penetration_vector(pen_vec),
         depth(depth),
         nb_collision_points(nb_col_points),
         reference_shape(std::move(ref)),
-        incident_shape(std::move(inc))
+        incident_shape(std::move(inc)),
+        ref_body(std::move(refb)),
+        inc_body(std::move(incb))
         {
         if (col_points != nullptr) {
             for (int i=0; i<2; i++) {
@@ -204,17 +217,26 @@ namespace Msfl2D {
         }
 
 
+        // Increase collision point counter to the shapes
+        std::shared_ptr<Body> ref_body = reference_polygon->get_body();
+        std::shared_ptr<Body> inc_body =  incident_polygon->get_body();
+
+        inc_body->nb_colliding_points += nb_points;
+
+
 
         // 4. Now, we have everything for the SATResult
 
         return {
                 true,
-                minimum_penetration_vector,
+                minimum_penetration_vector.normalized(),
                 depth,
                 nb_points,
                 col_points,
                 reference_polygon,
-                incident_polygon
+                incident_polygon,
+                ref_body,
+                inc_body
                 };
     }
 } // Msfl2D

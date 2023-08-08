@@ -13,7 +13,7 @@ namespace Msfl2D {
     /**
      * Results of an SAT (Separated Axis Theorem) collision test.
      * @param collide Whether or not the tested shapes collide or not. If `false`, the following values must be ignored.
-     * @param minimum_penetration_vector The vector (from shape1 to shape2) for which the penetration is minimal
+     * @param minimum_penetration_vector The vector (from shape1 to shape2) for which the penetration is minimal, normalized
      * @param depth the penetration distance between the 2 shapes, along the minimum_penetration_vector.
      *              this is the distance to move one of the shape from the other (along the minimum_penetration_vector)
      *              so that they barely touch.
@@ -21,6 +21,8 @@ namespace Msfl2D {
      * @param collision_point The collision points. They are the points that collided first, hence the limit of 2.
      * @param reference_shape Pointer to the reference shape
      * @param incident_shape Pointer to the other shape
+     * @param ref_body Pointer to the reference body (owner of the reference shape)
+     * @param inc_body Pointer to the incident body (the other body)
      */
     struct SATResult {
         bool collide;
@@ -30,6 +32,8 @@ namespace Msfl2D {
         Vec2D collision_points[2];
         std::shared_ptr<ConvexPolygon> reference_shape;
         std::shared_ptr<ConvexPolygon> incident_shape;
+        std::shared_ptr<Body> ref_body;
+        std::shared_ptr<Body> inc_body;
 
 
         SATResult(
@@ -39,7 +43,9 @@ namespace Msfl2D {
                 int nb_col_points,
                 Vec2D col_points[2],
                 std::shared_ptr<ConvexPolygon> ref_shape,
-                std::shared_ptr<ConvexPolygon> inc_shape
+                std::shared_ptr<ConvexPolygon> inc_shape,
+                std::shared_ptr<Body> ref_body,
+                std::shared_ptr<Body> inc_body
                 );
 
         /** Return a "no collision" SATResult */

@@ -22,13 +22,25 @@ namespace Msfl2D {
 
 
     /**
-     * This exception is raised an impossible simulation action is effected.
+     * This exception is raised when an impossible simulation action is effected.
      */
     class SimulationException: public std::exception {
     private:
         const char* message;
     public:
         explicit SimulationException(const char * msg);
+        [[nodiscard]] const char* what() const noexcept override;
+    };
+
+
+    /**
+     * This exception is raised when an internal error occurred. Sorry :(
+     */
+    class InternalException: public std::exception {
+    private:
+        const char* message;
+    public:
+        explicit InternalException(const char * msg);
         [[nodiscard]] const char* what() const noexcept override;
     };
 

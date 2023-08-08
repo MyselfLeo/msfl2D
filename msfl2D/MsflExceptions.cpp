@@ -12,4 +12,8 @@ namespace Msfl2D {
 
     SimulationException::SimulationException(const char *msg): message(msg) {}
     const char *SimulationException::what() const noexcept {return message;}
+
+
+    InternalException::InternalException(const char *msg): message(msg) {}
+    const char *InternalException::what() const noexcept {return message;}
 } // Msfl2D

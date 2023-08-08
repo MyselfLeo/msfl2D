@@ -18,9 +18,14 @@ namespace Msfl2D {
         static constexpr double APPROACHING_PRECISION = 0.01;
 
         /**
-         * Resolve the collision
+         * Resolve the collision. This is done in 3 steps:
+         * - Compute collision forces
+         * - Separate the intersecting bodies
+         * - Apply friction
          */
         static void resolve(const SATResult& col_result, double delta_t);
+
+    private:
 
         /** Separate the 2 colliding bodies */
         static void separate(const SATResult& col_result);
@@ -28,6 +33,8 @@ namespace Msfl2D {
         /** Resolve collision force */
         static void collision(const SATResult& col_result, double delta_t);
 
+        /** Resolve collision for the specified collision point in col_result */
+        static void point_collision(const SATResult& col_result, double delta_t, int point_idx);
 
         /** Resolve friction to the collision */
         static void friction(const SATResult& col_result, double delta_t);

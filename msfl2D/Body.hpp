@@ -26,7 +26,7 @@ namespace Msfl2D {
         /**
          * Angular velocity, in radians per second
          */
-        //double angular_vel = 0;
+        double angular_vel = 0;
 
         /**
          * Bodies can be made static, which mean they won't be affected by any forces. To move them, use move() instead
@@ -153,6 +153,30 @@ namespace Msfl2D {
         double get_friction() const;
 
 
+        /** Return the velocity of a point of the Body at the given coordinates, relative to the body center.
+         * This will include linear velocity from the body and tangential velocity induced by body rotation
+         */
+        Vec2D get_point_velocity(const Vec2D& point) const;
+
+
+        /**
+         * Return the number of collisions endured by this body currently. This value is updated
+         * by the World during each update() call.
+         * @return
+         */
+        int get_nb_collisions() const;
+
+
+
+    protected:
+        friend class World;
+        friend class CollisionDetector;
+
+        /**
+         * Count the number of points of this body colliding at a given moment.
+         * This value is managed by the World updating system and is used internally.
+         */
+        int nb_colliding_points = 0;
 
 
     private:

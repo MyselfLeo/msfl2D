@@ -70,7 +70,7 @@ int main(int argc, char *argv[]) {
     std::shared_ptr<Body> body_floor = std::make_shared<Body>(Body());
     body_floor->add_shape(floor);
     body_floor->is_static = true;
-    body_floor->set_bounciness(0.1);
+    //body_floor->set_bounciness(0.1);
 
 
     // triangle
@@ -81,29 +81,29 @@ int main(int argc, char *argv[]) {
     body_1->rotate(M_PI / 2);
     body_floor->set_bounciness(0.1);*/
 
-    // small square
+    // square
     std::shared_ptr<ConvexPolygon> shape_2 = std::make_shared<ConvexPolygon>(ConvexPolygon(4, 1, {-4, 100}));
     std::shared_ptr<Body> body_2 = std::make_shared<Body>(Body());
     body_2->add_shape(shape_2);
     body_2->rotate(M_PI / 4);
     body_2->set_mass(50);
-    body_2->set_bounciness(1);
+    //body_2->set_bounciness(1);
 
-    // small square
-    std::shared_ptr<ConvexPolygon> shape_3 = std::make_shared<ConvexPolygon>(ConvexPolygon(4, 1, {-4, 2}));
+    // square
+    std::shared_ptr<ConvexPolygon> shape_3 = std::make_shared<ConvexPolygon>(ConvexPolygon(4, 3, {-4, 3}));
     std::shared_ptr<Body> body_3 = std::make_shared<Body>(Body());
     body_3->add_shape(shape_3);
     body_3->rotate(M_PI / 4);
     body_3->set_mass(50);
-    body_3->set_bounciness(1);
+    //body_3->set_bounciness(1);
 
-    // small square
-    std::shared_ptr<ConvexPolygon> shape_4 = std::make_shared<ConvexPolygon>(ConvexPolygon(4, 1, {0, 100}));
+    // square
+    std::shared_ptr<ConvexPolygon> shape_4 = std::make_shared<ConvexPolygon>(ConvexPolygon(4, 5, {4, 100}));
     std::shared_ptr<Body> body_4 = std::make_shared<Body>(Body());
     body_4->add_shape(shape_4);
     body_4->rotate(M_PI / 4);
     body_4->set_mass(50);
-    body_4->set_bounciness(1);
+    //body_4->set_bounciness(1);
 
 
 

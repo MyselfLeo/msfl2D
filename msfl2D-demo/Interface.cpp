@@ -410,14 +410,28 @@ namespace Msfl2Demo {
             exit(EXIT_FAILURE);
         }
 
-        if (debug_centers) {draw_point(body->get_center(), 3, COLOR_GREEN);}
-        if (debug_bodyids) {draw_text(std::to_string(body_id).c_str(), body->get_center(), COLOR_GREEN);}
+        if (debug_centers) {
+            draw_point(body->get_center(), 3, COLOR_YELLOW);
+        }
+        if (debug_bodyids) {
+            std::string text = "id: " + std::to_string(body_id);
+            draw_text(text.c_str(), body->get_center(), COLOR_YELLOW);
+        }
         if (debug_velocities) {
             if (body->velocity.norm() > 0) {
                 LineSegment vel_vec = {body->get_center(), body->get_center() + body->velocity};
                 draw_segment(vel_vec, COLOR_YELLOW);
             }
-            draw_text(std::to_string(body->velocity.norm()).c_str(), body->get_center(), COLOR_YELLOW);
+            std::string text = "vel: " + std::to_string(body->velocity.norm());
+            draw_text(text.c_str(), body->get_center(), COLOR_YELLOW);
+        }
+        if (debug_collision_number) {
+            std::string text = "col num: " + std::to_string(body->get_nb_collisions());
+            draw_text(text.c_str(), body->get_center(), COLOR_YELLOW);
+        }
+        if (debug_mass) {
+            std::string text = "mass: " + std::to_string(body->get_mass());
+            draw_text(text.c_str(), body->get_center(), COLOR_YELLOW);
         }
     }
 
@@ -539,6 +553,8 @@ namespace Msfl2Demo {
         ImGui::Checkbox("Show velocity vectors", &debug_velocities);
         ImGui::Checkbox("Show collision points", &debug_collision_points);
         ImGui::Checkbox("Show collision vectors", &debug_collision_vectors);
+        ImGui::Checkbox("Show number of collisions", &debug_collision_number);
+        ImGui::Checkbox("Show body mass", &debug_mass);
 
         ImGui::End();
     }
@@ -556,6 +572,7 @@ namespace Msfl2Demo {
 
     void Interface::update_grabbing() {
         if (selected_body != nullptr) {
+            selected_body->angular_vel = 0;
             selected_body->velocity = {0,0};
             selected_body->move(screen_to_world(get_mouse_pos() + selection_pixel_offset));
         }

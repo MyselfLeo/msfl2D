@@ -127,7 +127,7 @@ namespace Msfl2D {
                 double moment_inertia = M_PI * pow(fallacious_circle_radius, 4) / 4;
                 double angular_acceleration = torque / moment_inertia;
 
-                //angular_vel += angular_acceleration * delta_t;
+                angular_vel += angular_acceleration * delta_t;
             }
         }
 
@@ -135,7 +135,7 @@ namespace Msfl2D {
         move(position + (velocity * delta_t));
 
         // apply angular velocity
-        //rotate(angular_vel * delta_t);
+        rotate(angular_vel * delta_t);
     }
 
     double Body::get_bounciness() const {
@@ -153,6 +153,7 @@ namespace Msfl2D {
     }
 
     double Body::get_mass() const {
+        if (is_static) {return 0;}
         return mass;
     }
 
@@ -164,6 +165,16 @@ namespace Msfl2D {
     double Body::get_friction() const {
         return friction;
     }
+
+    Vec2D Body::get_point_velocity(const Vec2D &point) const {
+        double radius = point.norm();
+        double tangential_speed = radius * angular_vel;
+        Vec2D tangent = Vec2D(-point.y, point.x).normalized();
+
+        return tangent * tangential_speed + velocity;
+    }
+
+    int Body::get_nb_collisions() const {return nb_colliding_points;}
 
 
 } // Mslf2D
