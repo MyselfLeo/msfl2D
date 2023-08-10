@@ -43,9 +43,10 @@ namespace Msfl2D {
 
         Vec2D min_pen_vec = col_result.minimum_penetration_vector;
 
-        // We work relative to the velocity of the point, NOT of the bodies
-        Vec2D ref_velocity = ref_body->get_point_angular_velocity(point - ref_body->get_center());
-        Vec2D inc_velocity = inc_body->get_point_angular_velocity(point - inc_body->get_center());
+        // We use the body's velocity, not the points one.
+        // The angular velocity of the collision point will be used later in the collision resolution process.
+        Vec2D ref_velocity = ref_body->velocity;
+        Vec2D inc_velocity = inc_body->velocity;
 
         // We keep only the component of each velocity that goes in the direction of the collision
         // Compute the component of each body velocity in the direction of the collision
@@ -60,6 +61,8 @@ namespace Msfl2D {
                 ref_body->get_center() + ref_coll_velocity * APPROACHING_PRECISION,
                 inc_body->get_center() + inc_coll_velocity * APPROACHING_PRECISION);
         if (current_dist < next_dist) {return;}*/
+
+
 
         // Compute linear momentum of the collision
         Vec2D ref_lin_momentum = ref_coll_velocity * reference_mass;
@@ -76,7 +79,8 @@ namespace Msfl2D {
         // Find the final velocity of the points, after the collision, in order
         // to compute the forces to be applied
         Vec2D velocity_diff = ref_coll_velocity - inc_coll_velocity;
-        Vec2D lin_velocity_diff = ref_lin_momentum - inc_lin_momentum;
+
+
 
         Vec2D ref_final_velocity;
         Vec2D inc_final_velocity;
@@ -87,23 +91,14 @@ namespace Msfl2D {
         if (col_result.ref_body->is_static) {
             ref_final_velocity = {0, 0};
             inc_final_velocity = -total_lin_momentum / mass_sum;
-
-            ref_final_lin_momentum = {0, 0};
-            inc_final_lin_momentum = -total_lin_momentum;
         }
         else if (col_result.inc_body->is_static) {
             inc_final_velocity = {0, 0};
             ref_final_velocity = -total_lin_momentum / mass_sum;
-
-            inc_final_lin_momentum = {0, 0};
-            ref_final_lin_momentum = -total_lin_momentum;
         }
         else {
             ref_final_velocity = (total_lin_momentum - velocity_diff * incident_mass) / mass_sum;
             inc_final_velocity = (total_lin_momentum + velocity_diff * reference_mass) / mass_sum;
-
-            ref_final_lin_momentum = total_lin_momentum - velocity_diff * incident_mass;
-            inc_final_lin_momentum = total_lin_momentum + velocity_diff * reference_mass;
         }
 
         Vec2D ref_velocity_change = ref_final_velocity - ref_coll_velocity;
