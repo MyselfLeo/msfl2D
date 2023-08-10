@@ -153,10 +153,15 @@ namespace Msfl2D {
         double get_friction() const;
 
 
-        /** Return the velocity of a point of the Body at the given coordinates, relative to the body center.
-         * This will include linear velocity from the body and tangential velocity induced by body rotation
+        /**
+         * Return the angular velocity of a point of the Body at the given coordinates, relative to the body center.
          */
-        Vec2D get_point_velocity(const Vec2D& point) const;
+        Vec2D get_point_angular_velocity(const Vec2D& point) const;
+
+        /**
+         * Return the angular momentum of a point of the Body at the given coordinates, relative to the body center.
+         */
+        Vec2D get_point_angular_momentum(const Vec2D& point) const;
 
 
         /**

@@ -166,15 +166,25 @@ namespace Msfl2D {
         return friction;
     }
 
-    Vec2D Body::get_point_velocity(const Vec2D &point) const {
+    Vec2D Body::get_point_angular_velocity(const Vec2D &point) const {
         double radius = point.norm();
         double tangential_speed = radius * angular_vel;
         Vec2D tangent = Vec2D(-point.y, point.x).normalized();
 
-        return tangent * tangential_speed + velocity;
+        return tangent * tangential_speed;
     }
 
-    int Body::get_nb_collisions() const {return nb_colliding_points;}
 
+    Vec2D Body::get_point_angular_momentum(const Vec2D &point) const {
+
+        // Lets consider the body as a circle (moment of inertia: 1/2 m R²)
+        double radius = point.norm();
+        double moment_inertia = 0.5 * get_mass() * radius * radius;
+
+        return get_point_angular_velocity(point) * moment_inertia;
+    }
+
+
+    int Body::get_nb_collisions() const {return nb_colliding_points;}
 
 } // Mslf2D
