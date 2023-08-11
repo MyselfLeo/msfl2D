@@ -66,7 +66,7 @@ int main(int argc, char *argv[]) {
     init_sdl();
 
     // Floor
-    std::shared_ptr<ConvexPolygon> floor = std::make_shared<ConvexPolygon>(ConvexPolygon({{-20, 0}, {20, 0}, {20, -1}, {-20, -1}}));
+    std::shared_ptr<ConvexPolygon> floor = std::make_shared<ConvexPolygon>(ConvexPolygon({{-40, 0}, {40, 0}, {40, -5}, {-40, -5}}));
     std::shared_ptr<Body> body_floor = std::make_shared<Body>(Body());
     body_floor->add_shape(floor);
     body_floor->is_static = true;
@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
     //body_2->set_bounciness(1);
 
     // square
-    std::shared_ptr<ConvexPolygon> shape_3 = std::make_shared<ConvexPolygon>(ConvexPolygon(4, 3, {-4, 3}));
+    std::shared_ptr<ConvexPolygon> shape_3 = std::make_shared<ConvexPolygon>(ConvexPolygon(4, 3, {-4, 10}));
     std::shared_ptr<Body> body_3 = std::make_shared<Body>(Body());
     body_3->add_shape(shape_3);
     body_3->rotate(M_PI / 4);

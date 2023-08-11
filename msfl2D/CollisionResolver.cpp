@@ -69,10 +69,7 @@ namespace Msfl2D {
         Vec2D inc_lin_momentum = inc_coll_velocity * incident_mass;
         Vec2D total_lin_momentum = ref_lin_momentum + inc_lin_momentum;
 
-        // Compute angular momentum of the collision
-        Vec2D ref_ang_momentum = ref_body->get_point_angular_momentum(point - ref_body->get_center());
-        Vec2D inc_ang_momentum = inc_body->get_point_angular_momentum(point - inc_body->get_center());
-        Vec2D total_ang_momentum = ref_ang_momentum + inc_ang_momentum;
+
 
 
 
@@ -110,9 +107,18 @@ namespace Msfl2D {
 
 
 
-        // Force experienced by the ref body due to the inc body (and vice-versa)
-        Vec2D ref_force = ref_velocity_change * reference_mass * bounciness / delta_t;
-        Vec2D inc_force = inc_velocity_change * incident_mass * bounciness / delta_t;
+        // Tangential direction of the colliding point (will be 0 is the incident body is not rotating)
+        Vec2D inc_ang_momentum = inc_body->get_point_angular_momentum(point - inc_body->get_center());
+        Vec2D collision_point_tangent = inc_ang_momentum.normalized();
+
+        Vec2D
+
+
+
+        // Linear component of the force experienced by the ref body due to the inc body (and vice-versa)
+        // We'll build a new force vector with those values as linear components, with added angular component
+        Vec2D ref_lin_force = ref_velocity_change * reference_mass * bounciness / delta_t;
+        Vec2D inc_lin_force = inc_velocity_change * incident_mass * bounciness / delta_t;
 
 
         // Apply collision force
