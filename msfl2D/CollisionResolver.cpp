@@ -183,18 +183,6 @@ namespace Msfl2D {
         Vec2D ref_towards_inc = (inc_body->get_center() - ref_body->get_center()).normalized();
         Vec2D inc_towards_ref = (ref_body->get_center() - inc_body->get_center()).normalized();
 
-        double ref_rel_vel = Vec2D::dot(ref_towards_inc, ref_body->velocity);
-        if (ref_rel_vel < 0) {ref_rel_vel = 0;}
-        double inc_rel_vel = Vec2D::dot(inc_towards_ref, inc_body->velocity);
-        if (inc_rel_vel < 0) {inc_rel_vel = 0;}
-
-        // Both should not be negative, because in that case the collision wouldn't be detected.
-        double speed_sum = ref_rel_vel + inc_rel_vel;
-
-        if (speed_sum == 0) {
-            std::cout << "speed sum equal to 0" << std::endl;
-            return;
-        }
 
         if (ref_body->is_static) {
             inc_body->move(inc_body->get_center() - correction_vector);
@@ -203,11 +191,24 @@ namespace Msfl2D {
             ref_body->move(ref_body->get_center() + correction_vector);
         }
         else {
-            double ref_body_speed_ratio = ref_rel_vel / speed_sum;
-            double inc_body_speed_ratio = 1 - ref_body_speed_ratio;
-            std::cout << "ref_body_speed_ratio: " << ref_body_speed_ratio << std::endl;
-            inc_body->move(inc_body->get_center() - correction_vector * inc_body_speed_ratio);
-            ref_body->move(ref_body->get_center() + correction_vector * ref_body_speed_ratio);
+            // Choose how to separate both bodies and using which value.
+            // Firstly, we separate them using their relative velocity.
+            // However, if both bodies are not moving, we do it by mass instead.
+            double ref_rel_vel = Vec2D::dot(ref_towards_inc, ref_body->velocity);
+            if (ref_rel_vel < 0) {ref_rel_vel = 0;}
+            double inc_rel_vel = Vec2D::dot(inc_towards_ref, inc_body->velocity);
+            if (inc_rel_vel < 0) {inc_rel_vel = 0;}
+
+
+            double speed_sum = ref_rel_vel + inc_rel_vel;
+
+            double ref_body_ratio;
+            if (speed_sum == 0) {ref_body_ratio = ref_body->get_mass() / (ref_body->get_mass() + inc_body->get_mass());}
+            else {ref_body_ratio = ref_rel_vel / speed_sum;}
+            double inc_body_ratio = 1 - ref_body_ratio;
+
+            inc_body->move(inc_body->get_center() - correction_vector * inc_body_ratio);
+            ref_body->move(ref_body->get_center() + correction_vector * ref_body_ratio);
         }
     }
 } // Msfl2D
