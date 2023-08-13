@@ -158,8 +158,8 @@ namespace Msfl2Demo {
         bool debug_centers = false;
         bool debug_bodyids = false;
         bool debug_velocities = false;
-        bool debug_collision_points = false;
-        bool debug_collision_vectors = false;
+        bool debug_collision_points = true;
+        bool debug_collision_vectors = true;
         bool debug_collision_number = false;
         bool debug_mass = false;
 

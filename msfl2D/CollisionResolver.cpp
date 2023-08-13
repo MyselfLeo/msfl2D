@@ -111,7 +111,7 @@ namespace Msfl2D {
         Vec2D inc_ang_momentum = inc_body->get_point_angular_momentum(point - inc_body->get_center());
         Vec2D collision_point_tangent = inc_ang_momentum.normalized();
 
-        Vec2D
+        //Vec2D
 
 
 
@@ -122,8 +122,8 @@ namespace Msfl2D {
 
 
         // Apply collision force
-        ref_body->register_force(ref_force, point - ref_body->get_center());
-        inc_body->register_force(inc_force, point - inc_body->get_center());
+        ref_body->register_force(ref_lin_force, point - ref_body->get_center());
+        inc_body->register_force(inc_lin_force, point - inc_body->get_center());
 
 
         /*if (col_result.ref_body->is_static) {
