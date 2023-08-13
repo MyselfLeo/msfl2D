@@ -111,7 +111,6 @@ namespace Msfl2D {
         Vec2D inc_ang_momentum = inc_body->get_point_angular_momentum(point - inc_body->get_center());
         Vec2D collision_point_tangent = inc_ang_momentum.normalized();
 
-        //Vec2D
 
 
 
