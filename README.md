@@ -3,6 +3,9 @@
 **msfl2D** is my essay at creating a working 2D physics engine in C++. This is a toy project, still in development,
 that I started with the goal of understanding how a physics engine works.
 
+![msfl2D screenshot 1](screenshots/screenshot1.png) 
+![msfl2D screenshot 2](screenshots/screenshot2.png) 
+
 ## Repository
 
 The repository is currently separated in 2 CMake targets, `msfl2D` and `msfl2D-demo`. `msfl2D` is the actual
