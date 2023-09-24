@@ -127,7 +127,7 @@ namespace Msfl2D {
                 double moment_inertia = M_PI * pow(fallacious_circle_radius, 4) / 4;
                 double angular_acceleration = torque / moment_inertia;
 
-                angular_vel += angular_acceleration * delta_t;
+                //angular_vel += angular_acceleration * delta_t;
             }
         }
 
